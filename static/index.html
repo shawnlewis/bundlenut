@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<html>
+    <head>
+        <rel="stylesheet" type="text/css" href="css/main.css" />
+        <meta http-equiv="content-type" content="text/php; charset=utf-8" />
+
+        <script type="text/javascript" src="/static/jquery-1.7.1.js"></script>
+        <script type="text/javascript" src="/static/logged-ajax.js"></script>
+
+        <title>Lasso 'em</title>
+    </head>
+
+    <body>
+        <input type="text" id="request_url" /><br>
+        <select id="request_type">
+            <option value="get">get</option>
+            <option value="post">post</option>
+            <option value="put">put</option>
+            <option value="delete">delete</option>
+        </select><br>
+        <textarea id="request_data" cols=100 rows=20></textarea><br>
+        <input id="request_submit" type="submit" value="Submit" />
+
+        <hr>
+
+        <input type="text" id="debug_ajax_url" size=100 /><br>
+        <textarea id="debug_ajax_data" cols=100 rows=20></textarea><br>
+        <iframe id="debug_ajax_result" width="100%"></iframe>
+
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $('#request_submit').click(function() {
+                    $.ajax({
+                        url: $('#request_url').val(),
+                        type: $('#request_type').val(),
+                        data: $('#request_data').val()
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>
