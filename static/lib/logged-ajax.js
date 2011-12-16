@@ -35,7 +35,8 @@ var ajax_complete = function(ev, xhr, options) {
         $('#debug_ajax_url').val(options.url);
         $('#debug_ajax_data').val(options.data);
         var result = xhr.responseText;
-        if (xhr.getResponseHeader('content-type') == 'application/json') {
+        contentType = xhr.getResponseHeader('content-type')
+        if (contentType == 'application/json' || /text\/plain/.exec(contentType)) {
             result =
                 '<pre style="word-wrap: break-word; white-space: pre-wrap;">'
                 + result

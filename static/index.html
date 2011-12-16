@@ -7,8 +7,11 @@
         <rel="stylesheet" type="text/css" href="css/main.css" />
         <meta http-equiv="content-type" content="text/php; charset=utf-8" />
 
-        <script type="text/javascript" src="/static/jquery-1.7.1.js"></script>
-        <script type="text/javascript" src="/static/logged-ajax.js"></script>
+        <script type="text/javascript" src="/static/lib/jquery-1.7.1.js"></script>
+        <script type="text/javascript" src="/static/lib/json2.js"></script>
+        <script type="text/javascript" src="/static/lib/underscore.js"></script>
+        <script type="text/javascript" src="/static/lib/backbone.js"></script>
+        <script type="text/javascript" src="/static/lib/logged-ajax.js"></script>
 
         <title>Lasso 'em</title>
     </head>
@@ -30,12 +33,13 @@
         <textarea id="debug_ajax_data" cols=100 rows=20></textarea><br>
         <iframe id="debug_ajax_result" width="100%"></iframe>
 
-        <script type="text/javascript">
+        <script type="text/javascript" src="static/main.js">
             $(document).ready(function() {
                 $('#request_submit').click(function() {
                     $.ajax({
                         url: $('#request_url').val(),
                         type: $('#request_type').val(),
+                        contentType: 'application/json',
                         data: $('#request_data').val()
                     });
                 });
