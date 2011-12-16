@@ -6,44 +6,27 @@
     <head>
         <rel="stylesheet" type="text/css" href="css/main.css" />
         <meta http-equiv="content-type" content="text/php; charset=utf-8" />
+        <title>Lasso 'em</title>
 
         <script type="text/javascript" src="/static/lib/jquery-1.7.1.js"></script>
         <script type="text/javascript" src="/static/lib/json2.js"></script>
         <script type="text/javascript" src="/static/lib/underscore.js"></script>
         <script type="text/javascript" src="/static/lib/backbone.js"></script>
         <script type="text/javascript" src="/static/lib/logged-ajax.js"></script>
+        <script type="text/javascript" src="/static/lib/ICanHaz.js"></script>
 
-        <title>Lasso 'em</title>
+        {% block extrahead %} {% endblock %}
+
     </head>
 
     <body>
-        <input type="text" id="request_url" /><br>
-        <select id="request_type">
-            <option value="get">get</option>
-            <option value="post">post</option>
-            <option value="put">put</option>
-            <option value="delete">delete</option>
-        </select><br>
-        <textarea id="request_data" cols=100 rows=20></textarea><br>
-        <input id="request_submit" type="submit" value="Submit" />
+        {% block content %} {% endblock %}
 
         <hr>
-
         <input type="text" id="debug_ajax_url" size=100 /><br>
         <textarea id="debug_ajax_data" cols=100 rows=20></textarea><br>
         <iframe id="debug_ajax_result" width="100%"></iframe>
 
-        <script type="text/javascript" src="static/main.js">
-            $(document).ready(function() {
-                $('#request_submit').click(function() {
-                    $.ajax({
-                        url: $('#request_url').val(),
-                        type: $('#request_type').val(),
-                        contentType: 'application/json',
-                        data: $('#request_data').val()
-                    });
-                });
-            });
-        </script>
+        {% block extrascript %} {% endblock %}
     </body>
 </html>

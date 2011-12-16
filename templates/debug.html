@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <input type="text" id="request_url" /><br>
+    <select id="request_type">
+        <option value="get">get</option>
+        <option value="post">post</option>
+        <option value="put">put</option>
+        <option value="delete">delete</option>
+    </select><br>
+    <textarea id="request_data" cols=100 rows=20></textarea><br>
+    <input id="request_submit" type="submit" value="Submit" />
+{% endblock %}
+
+{% block extrascript %}
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#request_submit').click(function() {
+            $.ajax({
+                url: $('#request_url').val(),
+                type: $('#request_type').val(),
+                contentType: 'application/json',
+                data: $('#request_data').val()
+            });
+        });
+    });
+</script>
+{% endblock %}

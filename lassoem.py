@@ -8,14 +8,23 @@ import webob.exc
 import webapp2
 
 from google.appengine.ext import db
+from google.appengine.ext.webapp import template
 
 import models
 
 
-class MainPage(webapp2.RequestHandler):
+def get_file(rel_path):
+    return os.path.join(os.path.dirname(__file__), rel_path)
+
+class IndexPage(webapp2.RequestHandler):
     def get(self):
-        self.response.headers['Content-Type'] = 'text/plain'
-        self.response.out.write('Hello, webapp World!')
+        self.response.out.write(template.render(
+            get_file('templates/index.html'), {}))
+
+class DebugPage(webapp2.RequestHandler):
+    def get(self):
+        self.response.out.write(template.render(
+            get_file('templates/debug.html'), {}))
 
 def json_group(group):
     return {
@@ -103,7 +112,8 @@ class APIItem(JSONRequestHandler):
 
 app = webapp2.WSGIApplication(
     [
-    ('/', MainPage),
+    ('/', IndexPage),
+    ('/debug.html', DebugPage),
 
     ('/group', APIGroup),
     ('/group/(\d+)', APIGroup),
@@ -113,3 +123,5 @@ app = webapp2.WSGIApplication(
 
     ],
     debug=True)
+
+template.register_template_library('templatetags.templatetags')

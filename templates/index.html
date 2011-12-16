@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="main"></div>
+{% endblock %}
+
+{% block extrascript %}
+
+{% verbatim %}
+
+<script id="tpl_index" type="text/html"> <div>
+    Create Group:
+    <input id="group_name" type="text" />
+    <input id="create" type="submit" />
+</div> </script>
+
+<script id="tpl_groupedit" type="text/html">
+<div>
+    Group: {{ name }}
+    <div id="items"></div>
+</div>
+</script>
+
+{% endverbatim %}
+
+<script type="text/javascript" src="/static/main.js"></script>
+{% endblock %}
