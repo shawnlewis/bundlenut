@@ -2,6 +2,8 @@ from google.appengine.ext.webapp import template
 django_template = template.django.template
 register = template.create_template_register()
 
+# https://gist.github.com/629508
+
 class VerbatimNode(django_template.Node):
     def __init__(self, text):
         self.text = text

@@ -4,7 +4,7 @@
 
 <html>
     <head>
-        <rel="stylesheet" type="text/css" href="css/main.css" />
+        <link rel="stylesheet" type="text/css" href="/static/main.css" />
         <meta http-equiv="content-type" content="text/php; charset=utf-8" />
         <title>Lasso 'em</title>
 
@@ -20,12 +20,25 @@
     </head>
 
     <body>
-        {% block content %} {% endblock %}
+        <div id="home">
+            <div id="header">
+                Header
+            </div>
+            {% block content %} {% endblock %}
+            <div id="footer">
+                Footer
+            </div>
 
-        <hr>
-        <input type="text" id="debug_ajax_url" size=100 /><br>
-        <textarea id="debug_ajax_data" cols=100 rows=20></textarea><br>
-        <iframe id="debug_ajax_result" width="100%"></iframe>
+            {% if debug %}
+            <hr>
+            <input type="text" id="debug_ajax_url" size=100 /><br>
+            <textarea id="debug_ajax_data" cols=100 rows=20></textarea><br>
+            <iframe id="debug_ajax_result" width="100%"></iframe>
+            {% endif %}
+        </div>
+
+        <div id="table_of_contents"></div>
+        <iframe id="other_page"></iframe>
 
         {% block extrascript %} {% endblock %}
     </body>

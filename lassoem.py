@@ -16,7 +16,7 @@ import models
 def get_file(rel_path):
     return os.path.join(os.path.dirname(__file__), rel_path)
 
-class IndexPage(webapp2.RequestHandler):
+class AppPage(webapp2.RequestHandler):
     def get(self):
         self.response.out.write(template.render(
             get_file('templates/index.html'), {}))
@@ -30,7 +30,6 @@ def json_group(group):
     return {
         'name': group.name,
         'key': str(group.key()),
-        'edit_hash': group.edit_hash,
         'id': str(group.key().id()),
         'item_set': [json_item(i) for i in group.item_set],
         'ordering': group.ordering
@@ -72,7 +71,9 @@ class APIGroup(JSONRequestHandler):
         group.edit_hash = edit_hash.hexdigest()
         group.put()
 
-        self.json_response(json_group(group))
+        resp = json_group(group)
+        resp['edit_hash'] = group.edit_hash,
+        self.json_response(resp)
 
     def put(self, id_):
         # edit group
@@ -112,15 +113,15 @@ class APIItem(JSONRequestHandler):
 
 app = webapp2.WSGIApplication(
     [
-    ('/', IndexPage),
     ('/debug.html', DebugPage),
 
-    ('/group', APIGroup),
-    ('/group/(\d+)', APIGroup),
+    ('/api/group', APIGroup),
+    ('/api/group/(\d+)', APIGroup),
     
-    ('/item', APIItem),
-    ('/item/(\d+)', APIItem)
+    ('/api/item', APIItem),
+    ('/api/item/(\d+)', APIItem),
 
+    ('/.*', AppPage),
     ],
     debug=True)
 

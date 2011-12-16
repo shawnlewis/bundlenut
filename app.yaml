@@ -5,7 +5,7 @@ api_version: 1
 threadsafe: false
 
 handlers:
-- url: /static/(.*\.(js|html))
+- url: /static/(.*\.(js|css|html))
   static_files: static/\1
   upload: /static/.*
 
