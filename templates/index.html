@@ -16,8 +16,21 @@
 
 <script id="tpl_groupedit" type="text/html">
 <div>
-    Group: {{ name }}
-    <div id="items"></div>
+    Group: {{ name }} <br>
+    <input id="add_item" type="submit" />
+    <ul id="items"></ul>
+</div>
+</script>
+
+<script id="tpl_groupeditDenied" type="text/html">
+<div>
+    Access Denied.
+</div>
+</script>
+
+<script id="tpl_itemview" type="text/html">
+<div>
+    {{ title }} {{ url }} {{ id }} <span class='delete'>delete</span>
 </div>
 </script>
 

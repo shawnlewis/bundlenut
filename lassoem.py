@@ -12,6 +12,8 @@ from google.appengine.ext.webapp import template
 
 import models
 
+DEBUG = True
+
 
 def get_file(rel_path):
     return os.path.join(os.path.dirname(__file__), rel_path)
@@ -19,12 +21,12 @@ def get_file(rel_path):
 class AppPage(webapp2.RequestHandler):
     def get(self):
         self.response.out.write(template.render(
-            get_file('templates/index.html'), {}))
+            get_file('templates/index.html'), {'debug': DEBUG}))
 
 class DebugPage(webapp2.RequestHandler):
     def get(self):
         self.response.out.write(template.render(
-            get_file('templates/debug.html'), {}))
+            get_file('templates/debug.html'), {'debug': DEBUG}))
 
 def json_group(group):
     return {
@@ -72,7 +74,7 @@ class APIGroup(JSONRequestHandler):
         group.put()
 
         resp = json_group(group)
-        resp['edit_hash'] = group.edit_hash,
+        resp['edit_hash'] = group.edit_hash
         self.json_response(resp)
 
     def put(self, id_):
@@ -96,8 +98,8 @@ class APIItem(JSONRequestHandler):
             raise webob.exc.HTTPUnauthorized
 
         item = models.Item()
-        item.title = params['title']
-        item.url = params['url']
+        item.title = params['title'] or None
+        item.url = params['url'] or None
         item.group = group
         item.put()
 
@@ -107,22 +109,51 @@ class APIItem(JSONRequestHandler):
         # edit item
         pass
 
-    def delete(self, key):
-        # delete item
-        pass
+    def delete(self, id_):
+        params = json.loads(self.request.body)
 
-app = webapp2.WSGIApplication(
-    [
+        group = db.get(db.Key(params['group']))
+        if group.edit_hash != params['edit_hash']:
+            raise webob.exc.HTTPUnauthorized
+
+        item = models.Item.get_by_id(int(id_))
+        item.delete()
+
+        self.json_response('true')
+
+
+class APIEditCheck(JSONRequestHandler):
+    def post(self):
+        params = json.loads(self.request.body)
+        group = models.Group.get_by_id(int(params['id']))
+        if group.edit_hash == params['edit_hash']:
+            self.json_response('true')
+        else:
+            self.json_response('false')
+
+class APIGroupDebug(JSONRequestHandler):
+    def get(self, id_):
+        group = models.Group.get_by_id(int(id_))
+        resp = json_group(group)
+        resp['edit_hash'] = group.edit_hash,
+        self.json_response(resp)
+
+routes = [
     ('/debug.html', DebugPage),
 
     ('/api/group', APIGroup),
     ('/api/group/(\d+)', APIGroup),
-    
     ('/api/item', APIItem),
     ('/api/item/(\d+)', APIItem),
+    ('/api/rpc/group_edit_check', APIEditCheck),
 
     ('/.*', AppPage),
-    ],
-    debug=True)
+    ]
+if DEBUG:
+    routes = [
+    ('/api/groupdebug/(\d+)', APIGroupDebug)
+    ] + routes
+
+app = webapp2.WSGIApplication(routes, debug=DEBUG)
 
 template.register_template_library('templatetags.templatetags')
