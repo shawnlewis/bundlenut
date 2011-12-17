@@ -27,6 +27,7 @@ class Group extends Backbone.Model
         @itemSet.each (item) =>
             item.set('edit_hash': editHash)
 
+
 class Item extends Backbone.Model
     defaults:
         title: ''
@@ -47,8 +48,11 @@ class Index extends Backbone.View
 
     events:
         'click #create': 'submit'
+        'keydown #group_name': 'submit'
 
-    submit: ->
+    submit: (e)->
+        if e.type == 'keydown' and e.keyCode != 13
+            return
         group = new Group
             name: $('#group_name').val()
         group.save(

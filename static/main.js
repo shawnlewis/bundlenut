@@ -113,11 +113,13 @@
     };
 
     Index.prototype.events = {
-      'click #create': 'submit'
+      'click #create': 'submit',
+      'keydown #group_name': 'submit'
     };
 
-    Index.prototype.submit = function() {
+    Index.prototype.submit = function(e) {
       var group;
+      if (e.type === 'keydown' && e.keyCode !== 13) return;
       group = new Group({
         name: $('#group_name').val()
       });
