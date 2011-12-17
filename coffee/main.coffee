@@ -75,7 +75,9 @@ class GroupEdit extends Backbone.View
         @model.bind('change', @render)
 
     render: =>
-        $(@el).html ich.tpl_groupedit(this.model.toJSON())
+        context = this.model.toJSON()
+        context.view_link = '/group_view/' + this.model.id
+        $(@el).html ich.tpl_groupedit(context)
         @model.itemSet.each (item) ->
             @$('#items').append(new ItemEdit(model: item).el)
 
