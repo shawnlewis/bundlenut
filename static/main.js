@@ -1,5 +1,5 @@
 (function() {
-  var App, Group, GroupEdit, Index, Item, ItemSet, Router, jsonRPC;
+  var App, EditableField, Group, GroupEdit, Index, Item, ItemSet, Router, jsonRPC;
   var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; }, __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   jsonRPC = function(funcName, data, success) {
@@ -189,17 +189,29 @@
     __extends(Item, Backbone.View);
 
     function Item() {
+      this.changeURL = __bind(this.changeURL, this);
+      this.changeTitle = __bind(this.changeTitle, this);
       Item.__super__.constructor.apply(this, arguments);
     }
 
-    Item.prototype.tagName = 'li';
+    Item.prototype.tagName = 'tr';
 
     Item.prototype.initialize = function() {
       return this.render();
     };
 
     Item.prototype.render = function() {
-      return $(this.el).html(ich.tpl_itemview(this.model.toJSON()));
+      $(this.el).html(ich.tpl_itemview(this.model.toJSON()));
+      this.titleField = new EditableField({
+        el: this.$('.title'),
+        val: this.model.get('title')
+      });
+      this.titleField.bind('change', this.changeTitle);
+      this.urlField = new EditableField({
+        el: this.$('.url'),
+        val: this.model.get('url')
+      });
+      return this.urlField.bind('change', this.changeURL);
     };
 
     Item.prototype.events = {
@@ -212,7 +224,67 @@
       });
     };
 
+    Item.prototype.changeTitle = function(newTitle) {
+      this.model.set({
+        'title': newTitle
+      });
+      return this.model.save();
+    };
+
+    Item.prototype.changeURL = function(newURL) {
+      this.model.set({
+        'url': newURL
+      });
+      return this.model.save();
+    };
+
     return Item;
+
+  })();
+
+  EditableField = (function() {
+
+    __extends(EditableField, Backbone.View);
+
+    function EditableField() {
+      EditableField.__super__.constructor.apply(this, arguments);
+    }
+
+    EditableField.prototype.initialize = function(options) {
+      this.val = options.val;
+      this.inViewMode = false;
+      return this.viewMode();
+    };
+
+    EditableField.prototype.viewMode = function() {
+      if (this.inViewMode) return;
+      this.inViewMode = true;
+      $(this.el).empty();
+      $(this.el).append('<span class="view">' + this.val + '</span>');
+      return this.delegateEvents({
+        'click .view': 'editMode'
+      });
+    };
+
+    EditableField.prototype.toViewMode = function(e) {
+      if (e.type === 'keydown' && e.keyCode !== 13) return;
+      this.val = this.$('.edit').val();
+      this.trigger('change', this.val);
+      return this.viewMode();
+    };
+
+    EditableField.prototype.editMode = function() {
+      if (!this.inViewMode) return;
+      this.inViewMode = false;
+      $(this.el).empty().append('<input class="edit" value="' + this.val + '" />');
+      this.$('input').focus().select();
+      return this.delegateEvents({
+        'blur .edit': 'toViewMode',
+        'keydown .edit': 'toViewMode'
+      });
+    };
+
+    return EditableField;
 
   })();
 

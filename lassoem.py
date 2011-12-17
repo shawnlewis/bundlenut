@@ -105,9 +105,22 @@ class APIItem(JSONRequestHandler):
 
         self.json_response(json_item(item))
 
-    def put(self, key):
-        # edit item
-        pass
+    def put(self, id_):
+        params = json.loads(self.request.body)
+
+        group = db.get(db.Key(params['group']))
+        if group.edit_hash != params['edit_hash']:
+            raise webob.exc.HTTPUnauthorized
+
+        item = models.Item.get_by_id(int(id_))
+
+        if 'title' in params:
+            item.title = params['title']
+        if 'url' in params:
+            item.url = params['url']
+        item.put()
+
+        self.json_response(json_item(item))
 
     def delete(self, id_):
         params = json.loads(self.request.body)

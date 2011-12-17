@@ -18,7 +18,14 @@
 <div>
     Group: {{ name }} <br>
     <input id="add_item" type="submit" />
-    <ul id="items"></ul>
+    <table id="items">
+        <tr>
+            <td> Title </td>
+            <td> URL </td>
+            <td> id </td>
+            <td> Delete </td>
+        </tr>
+    </table>
 </div>
 </script>
 
@@ -29,9 +36,10 @@
 </script>
 
 <script id="tpl_itemview" type="text/html">
-<div>
-    {{ title }} {{ url }} {{ id }} <span class='delete'>delete</span>
-</div>
+    <td class="title"></td>
+    <td class="url"></td>
+    <td> {{ id }} </td>
+    <td class="delete"> delete </td>
 </script>
 
 {% endverbatim %}

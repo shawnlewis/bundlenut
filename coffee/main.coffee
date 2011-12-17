@@ -88,13 +88,21 @@ class GroupEdit extends Backbone.View
 
 
 class Item extends Backbone.View
-    tagName: 'li'
+    tagName: 'tr'
 
     initialize: ->
         @render()
 
     render: ->
         $(@el).html ich.tpl_itemview(@model.toJSON())
+        @titleField = new EditableField
+            el: @$('.title')
+            val: @model.get('title')
+        @titleField.bind('change', @changeTitle)
+        @urlField = new EditableField
+            el: @$('.url')
+            val: @model.get('url')
+        @urlField.bind('change', @changeURL)
 
     events:
         'click .delete': 'delete'
@@ -103,6 +111,51 @@ class Item extends Backbone.View
         @model.destroy
             data: JSON.stringify(@model.toJSON())
 
+    changeTitle: (newTitle) =>
+        @model.set('title': newTitle)
+        @model.save()
+
+    changeURL: (newURL) =>
+        @model.set('url': newURL)
+        @model.save()
+        
+
+class EditableField extends Backbone.View
+    initialize: (options) ->
+        @val = options.val
+        @inViewMode = false
+        @viewMode()
+
+    viewMode: ->
+        if @inViewMode
+            return
+        @inViewMode = true
+        $(@el).empty()
+        $(@el).append('<span class="view">' + @val + '</span>')
+        @delegateEvents
+            'click .view': 'editMode'
+
+    toViewMode: (e) ->
+        if e.type == 'keydown' and e.keyCode != 13
+            return
+        @val = @$('.edit').val()
+        @trigger('change', @val)
+        @viewMode()
+
+    editMode: ->
+        if not @inViewMode
+            return
+        @inViewMode = false
+        $(@el)
+            .empty()
+            .append('<input class="edit" value="' + @val + '" />')
+        @$('input')
+            .focus()
+            .select()
+        @delegateEvents
+            'blur .edit': 'toViewMode'
+            'keydown .edit': 'toViewMode'
+        
 
 class Router extends Backbone.Router
     routes:
