@@ -1,5 +1,5 @@
 (function() {
-  var App, EditableField, Group, GroupEdit, Index, Item, ItemSet, Router, jsonRPC;
+  var App, EditableField, Group, GroupEdit, GroupView, Index, Item, ItemEdit, ItemSet, ItemView, Router, jsonRPC;
   var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; }, __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   jsonRPC = function(funcName, data, success) {
@@ -159,7 +159,7 @@
     GroupEdit.prototype.render = function() {
       $(this.el).html(ich.tpl_groupedit(this.model.toJSON()));
       return this.model.itemSet.each(function(item) {
-        return this.$('#items').append(new Item({
+        return this.$('#items').append(new ItemEdit({
           model: item
         }).el);
       });
@@ -184,24 +184,24 @@
 
   })();
 
-  Item = (function() {
+  ItemEdit = (function() {
 
-    __extends(Item, Backbone.View);
+    __extends(ItemEdit, Backbone.View);
 
-    function Item() {
+    function ItemEdit() {
       this.changeURL = __bind(this.changeURL, this);
       this.changeTitle = __bind(this.changeTitle, this);
-      Item.__super__.constructor.apply(this, arguments);
+      ItemEdit.__super__.constructor.apply(this, arguments);
     }
 
-    Item.prototype.tagName = 'tr';
+    ItemEdit.prototype.tagName = 'tr';
 
-    Item.prototype.initialize = function() {
+    ItemEdit.prototype.initialize = function() {
       return this.render();
     };
 
-    Item.prototype.render = function() {
-      $(this.el).html(ich.tpl_itemview(this.model.toJSON()));
+    ItemEdit.prototype.render = function() {
+      $(this.el).html(ich.tpl_itemedit(this.model.toJSON()));
       this.titleField = new EditableField({
         el: this.$('.title'),
         val: this.model.get('title')
@@ -214,31 +214,31 @@
       return this.urlField.bind('change', this.changeURL);
     };
 
-    Item.prototype.events = {
+    ItemEdit.prototype.events = {
       'click .delete': 'delete'
     };
 
-    Item.prototype["delete"] = function() {
+    ItemEdit.prototype["delete"] = function() {
       return this.model.destroy({
         data: JSON.stringify(this.model.toJSON())
       });
     };
 
-    Item.prototype.changeTitle = function(newTitle) {
+    ItemEdit.prototype.changeTitle = function(newTitle) {
       this.model.set({
         'title': newTitle
       });
       return this.model.save();
     };
 
-    Item.prototype.changeURL = function(newURL) {
+    ItemEdit.prototype.changeURL = function(newURL) {
       this.model.set({
         'url': newURL
       });
       return this.model.save();
     };
 
-    return Item;
+    return ItemEdit;
 
   })();
 
@@ -288,6 +288,82 @@
 
   })();
 
+  GroupView = (function() {
+
+    __extends(GroupView, Backbone.View);
+
+    function GroupView() {
+      GroupView.__super__.constructor.apply(this, arguments);
+    }
+
+    GroupView.prototype.initialize = function(options) {
+      this.render();
+      return this.open();
+    };
+
+    GroupView.prototype.render = function() {
+      var _this = this;
+      $(this.el).html(ich.tpl_groupview(this.model.toJSON()));
+      return this.model.itemSet.each(function(item) {
+        var itemView;
+        itemView = new ItemView({
+          model: item,
+          groupView: _this
+        });
+        return _this.$('#items').append(itemView.el);
+      });
+    };
+
+    GroupView.prototype.events = {
+      'click .closed': 'open'
+    };
+
+    GroupView.prototype.close = function() {
+      $(this.el).removeClass('open');
+      return $(this.el).addClass('closed');
+    };
+
+    GroupView.prototype.open = function() {
+      $(this.el).addClass('open');
+      return $(this.el).removeClass('closed');
+    };
+
+    return GroupView;
+
+  })();
+
+  ItemView = (function() {
+
+    __extends(ItemView, Backbone.View);
+
+    function ItemView() {
+      ItemView.__super__.constructor.apply(this, arguments);
+    }
+
+    ItemView.prototype.tagName = 'tr';
+
+    ItemView.prototype.initialize = function(options) {
+      this.groupView = options.groupView;
+      return this.render();
+    };
+
+    ItemView.prototype.render = function() {
+      return $(this.el).html(ich.tpl_itemview(this.model.toJSON()));
+    };
+
+    ItemView.prototype.events = {
+      'click .link': 'clickLink'
+    };
+
+    ItemView.prototype.clickLink = function() {
+      window.app.frameGo(this.model.get('url'));
+      return this.groupView.close();
+    };
+
+    return ItemView;
+
+  })();
+
   Router = (function() {
 
     __extends(Router, Backbone.Router);
@@ -298,7 +374,8 @@
 
     Router.prototype.routes = {
       '': 'index',
-      'group_edit/:group_id/:edit_hash': 'groupEdit'
+      'group_edit/:group_id/:edit_hash': 'groupEdit',
+      'group_view/:group_id': 'groupView'
     };
 
     Router.prototype.index = function() {
@@ -317,6 +394,18 @@
             'edit_hash': editHash
           });
           return window.app.groupEdit(group);
+        }
+      });
+    };
+
+    Router.prototype.groupView = function(groupID) {
+      var group;
+      group = new Group({
+        'id': groupID
+      });
+      return group.fetch({
+        success: function() {
+          return window.app.groupView(group);
         }
       });
     };
@@ -358,16 +447,33 @@
       });
     };
 
+    App.prototype.groupView = function(group) {
+      this.showOther();
+      this.view = new GroupView({
+        el: this.tocEl,
+        model: group
+      });
+      return this.frameGo('/static/empty.html');
+    };
+
     App.prototype.showHome = function() {
+      $('html').removeClass('show_other');
+      $('body').removeClass('show_other');
       this.homeEl.removeClass('hide');
       this.tocEl.addClass('hide');
       return this.otherPageEl.addClass('hide');
     };
 
     App.prototype.showOther = function() {
+      $('html').addClass('show_other');
+      $('body').addClass('show_other');
       this.homeEl.addClass('hide');
       this.tocEl.removeClass('hide');
       return this.otherPageEl.removeClass('hide');
+    };
+
+    App.prototype.frameGo = function(url) {
+      return this.otherPageEl[0].src = url;
     };
 
     return App;

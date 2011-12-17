@@ -73,7 +73,7 @@ class GroupEdit extends Backbone.View
     render: =>
         $(@el).html ich.tpl_groupedit(this.model.toJSON())
         @model.itemSet.each (item) ->
-            @$('#items').append(new Item(model: item).el)
+            @$('#items').append(new ItemEdit(model: item).el)
 
     renderDenied: ->
         $(@el).html ich.tpl_groupeditDenied()
@@ -87,14 +87,14 @@ class GroupEdit extends Backbone.View
             edit_hash: @model.get('edit_hash')
 
 
-class Item extends Backbone.View
+class ItemEdit extends Backbone.View
     tagName: 'tr'
 
     initialize: ->
         @render()
 
     render: ->
-        $(@el).html ich.tpl_itemview(@model.toJSON())
+        $(@el).html ich.tpl_itemedit(@model.toJSON())
         @titleField = new EditableField
             el: @$('.title')
             val: @model.get('title')
@@ -155,12 +155,56 @@ class EditableField extends Backbone.View
         @delegateEvents
             'blur .edit': 'toViewMode'
             'keydown .edit': 'toViewMode'
+
+
+class GroupView extends Backbone.View
+    initialize: (options) ->
+        @render()
+        @open()
+
+    render: ->
+        $(@el).html ich.tpl_groupview(@model.toJSON())
+        @model.itemSet.each (item) =>
+            itemView = new ItemView
+                model: item
+                groupView: @
+            @$('#items').append(itemView.el)
+
+    events:
+        'click .closed': 'open'
+
+    close: ->
+        $(@el).removeClass('open')
+        $(@el).addClass('closed')
+
+    open: ->
+        $(@el).addClass('open')
+        $(@el).removeClass('closed')
+
+
+class ItemView extends Backbone.View
+    tagName: 'tr'
+
+    initialize: (options) ->
+        @groupView = options.groupView
+        @render()
+
+    render: ->
+        $(@el).html(ich.tpl_itemview(@model.toJSON()))
+
+    events:
+        'click .link': 'clickLink'
+
+    clickLink: ->
+        window.app.frameGo(@model.get('url'))
+        @groupView.close()
         
 
 class Router extends Backbone.Router
     routes:
         '': 'index'
         'group_edit/:group_id/:edit_hash': 'groupEdit'
+        'group_view/:group_id': 'groupView'
 
     index: ->
         window.app.index()
@@ -172,6 +216,12 @@ class Router extends Backbone.Router
                 group.setEditHash(editHash)
                 group.set('edit_hash': editHash)
                 window.app.groupEdit group
+
+    groupView: (groupID) ->
+        group = new Group({'id': groupID})
+        group.fetch
+            success: ->
+                window.app.groupView group
 
 
 class App extends Backbone.Router
@@ -193,16 +243,30 @@ class App extends Backbone.Router
         @view = new GroupEdit
             el: @homeContentEl
             model: group
+
+    groupView: (group) ->
+        @showOther()
+        @view = new GroupView
+            el: @tocEl
+            model: group
+        @frameGo('/static/empty.html')
         
     showHome: ->
+        $('html').removeClass('show_other')
+        $('body').removeClass('show_other')
         @homeEl.removeClass('hide')
         @tocEl.addClass('hide')
         @otherPageEl.addClass('hide')
 
     showOther: ->
+        $('html').addClass('show_other')
+        $('body').addClass('show_other')
         @homeEl.addClass('hide')
         @tocEl.removeClass('hide')
         @otherPageEl.removeClass('hide')
+
+    frameGo: (url) ->
+        @otherPageEl[0].src = url
 
     
 $( ->

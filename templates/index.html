@@ -15,15 +15,14 @@
 </div> </script>
 
 <script id="tpl_groupedit" type="text/html">
-<div>
-    Group: {{ name }} <br>
-    <input id="add_item" type="submit" />
+<div class="groupedit">
+    <span class="group"> Group: {{ name }} </span>
+    <input id="add_item" type="submit" value="Add Item"/>
     <table id="items">
         <tr>
             <td> Title </td>
             <td> URL </td>
-            <td> id </td>
-            <td> Delete </td>
+            <td></td>
         </tr>
     </table>
 </div>
@@ -35,11 +34,25 @@
 </div>
 </script>
 
-<script id="tpl_itemview" type="text/html">
+<script id="tpl_itemedit" type="text/html">
     <td class="title"></td>
     <td class="url"></td>
-    <td> {{ id }} </td>
-    <td class="delete"> delete </td>
+    <td> <input class="delete" type="submit" value="Delete"></td>
+</script>
+
+<script id="tpl_groupview" type="text/html">
+<div class="open">
+    Group: {{ name }} <br><br>
+    <table id="items">
+    </table>
+</div>
+<div class="closed">
+    Lasso 'Em 
+</div>
+</script>
+
+<script id="tpl_itemview" type="text/html">
+    <td class="title"><span class="link">{{ title }}</span></td>
 </script>
 
 {% endverbatim %}
