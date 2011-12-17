@@ -129,13 +129,14 @@ class App extends Backbone.Router
         @otherPageEl = $('#other_page')
 
     index: ->
+        console.log('here')
         @showHome()
-        window.router.navigate('/')
+        window.router.navigate('')
         @view = new Index(el: @homeContentEl)
 
     groupEdit: (group) ->
         @showHome()
-        window.router.navigate('/group_edit/' + group.id + '/' + group.get('edit_hash'))
+        window.router.navigate('group_edit/' + group.id + '/' + group.get('edit_hash'))
         @view = new GroupEdit
             el: @homeContentEl
             model: group
@@ -151,7 +152,8 @@ class App extends Backbone.Router
         @otherPageEl.removeClass('hide')
 
     
-$(document).ready ->
+$( ->
     window.app = new App()
     window.router = new Router()
-    Backbone.history.start(pushState: true)
+    Backbone.history.start({pushState: true})
+)

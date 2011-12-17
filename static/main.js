@@ -269,8 +269,9 @@
     };
 
     App.prototype.index = function() {
+      console.log('here');
       this.showHome();
-      window.router.navigate('/');
+      window.router.navigate('');
       return this.view = new Index({
         el: this.homeContentEl
       });
@@ -278,7 +279,7 @@
 
     App.prototype.groupEdit = function(group) {
       this.showHome();
-      window.router.navigate('/group_edit/' + group.id + '/' + group.get('edit_hash'));
+      window.router.navigate('group_edit/' + group.id + '/' + group.get('edit_hash'));
       return this.view = new GroupEdit({
         el: this.homeContentEl,
         model: group
@@ -301,7 +302,7 @@
 
   })();
 
-  $(document).ready(function() {
+  $(function() {
     window.app = new App();
     window.router = new Router();
     return Backbone.history.start({
