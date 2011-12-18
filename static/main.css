@@ -90,3 +90,7 @@ html.show_other, body.show_other {
 #table_of_contents.open .closed {
     display: none
 }
+
+.grouview .group {
+    font-weight: bold;
+}

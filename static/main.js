@@ -187,7 +187,7 @@
       context.view_link = '/group_view/' + this.model.id;
       $(this.el).html(ich.tpl_groupedit(context));
       return this.model.itemSet.each(function(item) {
-        return this.$('#items').append(new ItemEdit({
+        return this.$('#items tbody').append(new ItemEdit({
           model: item
         }).el);
       });

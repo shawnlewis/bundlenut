@@ -120,7 +120,7 @@ class GroupEdit extends Backbone.View
         context.view_link = '/group_view/' + this.model.id
         $(@el).html ich.tpl_groupedit(context)
         @model.itemSet.each (item) ->
-            @$('#items').append(new ItemEdit(model: item).el)
+            @$('#items tbody').append(new ItemEdit(model: item).el)
 
     renderDenied: ->
         $(@el).html ich.tpl_groupeditDenied()
