@@ -7,6 +7,53 @@ jsonRPC = (funcName, data, success) ->
         contentType: 'application/json'
         data: JSON.stringify(data)
         success: onSuccess
+
+# Make Backbone.sync pass edit_hash in url for PUT and DELETE operations.
+# Stripped out emulateJSON and emulateHTTP and added code at
+# "Custom code here."
+
+methodMap =
+    'create': 'POST',
+    'update': 'PUT',
+    'delete': 'DELETE',
+    'read'  : 'GET'
+
+getUrl = (object) ->
+    if not (object && object.url)
+        return null
+    return if _.isFunction(object.url) then object.url() else object.url
+
+Backbone.sync = (method, model, options) ->
+    type = methodMap[method]
+
+    # Default JSON-request options.
+    params = _.extend({
+        type:         type,
+        dataType:     'json'
+    }, options)
+
+    # Ensure that we have a URL.
+    if (!params.url)
+        params.url = getUrl(model) || urlError()
+
+    # Ensure that we have the appropriate request data.
+    if !params.data && model && (method == 'create' || method == 'update')
+        params.contentType = 'application/json'
+        params.data = JSON.stringify(model.toJSON())
+
+    # Don't process data on a non-GET request.
+    if params.type != 'GET'
+      params.processData = false
+
+    # Custom code here.
+    if params.type == 'PUT' or params.type == 'DELETE'
+        if model instanceof Item
+            params.url += '/' + model.collection.group.get('edit_hash')
+        else if model instanceof Group
+            params.url += '/' + model.get('edit_hash')
+
+    # Make the request.
+    return $.ajax(params)
         
 
 class Group extends Backbone.Model
@@ -14,18 +61,12 @@ class Group extends Backbone.Model
 
     parse: (data) ->
         @itemSet = new ItemSet data.item_set
-        @itemSet.each (item) =>
-            item.set('group': data['key'])
         delete data.item_set
+        @itemSet.group = @
         @itemSet.bind('change', => @change())
         @itemSet.bind('add', => @change())
         @itemSet.bind('remove', => @change())
         super data
-
-    setEditHash: (editHash) ->
-        @set(edit_hash: editHash)
-        @itemSet.each (item) =>
-            item.set('edit_hash': editHash)
 
 
 class Item extends Backbone.Model
@@ -219,15 +260,13 @@ class Router extends Backbone.Router
         group = new Group({'id': groupID})
         group.fetch
             success: ->
-                group.setEditHash(editHash)
-                group.set('edit_hash': editHash)
+                group.set(edit_hash: editHash)
                 window.app.groupEdit group
 
     groupView: (groupID) ->
         group = new Group({'id': groupID})
         group.fetch
-            success: ->
-                window.app.groupView group
+            success: -> window.app.groupView group
 
 
 class App extends Backbone.Router

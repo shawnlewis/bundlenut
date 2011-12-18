@@ -1,5 +1,5 @@
 (function() {
-  var App, EditableField, Group, GroupEdit, GroupView, Index, Item, ItemEdit, ItemSet, ItemView, Router, jsonRPC;
+  var App, EditableField, Group, GroupEdit, GroupView, Index, Item, ItemEdit, ItemSet, ItemView, Router, getUrl, jsonRPC, methodMap;
   var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; }, __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   jsonRPC = function(funcName, data, success) {
@@ -16,6 +16,45 @@
     });
   };
 
+  methodMap = {
+    'create': 'POST',
+    'update': 'PUT',
+    'delete': 'DELETE',
+    'read': 'GET'
+  };
+
+  getUrl = function(object) {
+    if (!(object && object.url)) return null;
+    if (_.isFunction(object.url)) {
+      return object.url();
+    } else {
+      return object.url;
+    }
+  };
+
+  Backbone.sync = function(method, model, options) {
+    var params, type;
+    type = methodMap[method];
+    params = _.extend({
+      type: type,
+      dataType: 'json'
+    }, options);
+    if (!params.url) params.url = getUrl(model) || urlError();
+    if (!params.data && model && (method === 'create' || method === 'update')) {
+      params.contentType = 'application/json';
+      params.data = JSON.stringify(model.toJSON());
+    }
+    if (params.type !== 'GET') params.processData = false;
+    if (params.type === 'PUT' || params.type === 'DELETE') {
+      if (model instanceof Item) {
+        params.url += '/' + model.collection.group.get('edit_hash');
+      } else if (model instanceof Group) {
+        params.url += '/' + model.get('edit_hash');
+      }
+    }
+    return $.ajax(params);
+  };
+
   Group = (function() {
 
     __extends(Group, Backbone.Model);
@@ -29,12 +68,8 @@
     Group.prototype.parse = function(data) {
       var _this = this;
       this.itemSet = new ItemSet(data.item_set);
-      this.itemSet.each(function(item) {
-        return item.set({
-          'group': data['key']
-        });
-      });
       delete data.item_set;
+      this.itemSet.group = this;
       this.itemSet.bind('change', function() {
         return _this.change();
       });
@@ -45,18 +80,6 @@
         return _this.change();
       });
       return Group.__super__.parse.call(this, data);
-    };
-
-    Group.prototype.setEditHash = function(editHash) {
-      var _this = this;
-      this.set({
-        edit_hash: editHash
-      });
-      return this.itemSet.each(function(item) {
-        return item.set({
-          'edit_hash': editHash
-        });
-      });
     };
 
     return Group;
@@ -394,9 +417,8 @@
       });
       return group.fetch({
         success: function() {
-          group.setEditHash(editHash);
           group.set({
-            'edit_hash': editHash
+            edit_hash: editHash
           });
           return window.app.groupEdit(group);
         }

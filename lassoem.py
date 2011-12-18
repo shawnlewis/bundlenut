@@ -105,14 +105,12 @@ class APIItem(JSONRequestHandler):
 
         self.json_response(json_item(item))
 
-    def put(self, id_):
+    def put(self, id_, edit_hash):
         params = json.loads(self.request.body)
 
-        group = db.get(db.Key(params['group']))
-        if group.edit_hash != params['edit_hash']:
-            raise webob.exc.HTTPUnauthorized
-
         item = models.Item.get_by_id(int(id_))
+        if item.group.edit_hash != edit_hash:
+            raise webob.exc.HTTPUnauthorized
 
         if 'title' in params:
             item.title = params['title']
@@ -122,14 +120,13 @@ class APIItem(JSONRequestHandler):
 
         self.json_response(json_item(item))
 
-    def delete(self, id_):
+    def delete(self, id_, edit_hash):
         params = json.loads(self.request.body)
 
-        group = db.get(db.Key(params['group']))
-        if group.edit_hash != params['edit_hash']:
+        item = models.Item.get_by_id(int(id_))
+        if item.group.edit_hash != edit_hash:
             raise webob.exc.HTTPUnauthorized
 
-        item = models.Item.get_by_id(int(id_))
         item.delete()
 
         self.json_response('true')
@@ -158,6 +155,7 @@ routes = [
     ('/api/group/(\d+)', APIGroup),
     ('/api/item', APIItem),
     ('/api/item/(\d+)', APIItem),
+    ('/api/item/(\d+)/(\w+)', APIItem),
     ('/api/rpc/group_edit_check', APIEditCheck),
 
     ('/.*', AppPage),
