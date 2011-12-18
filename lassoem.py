@@ -121,8 +121,6 @@ class APIItem(JSONRequestHandler):
         self.json_response(json_item(item))
 
     def delete(self, id_, edit_hash):
-        params = json.loads(self.request.body)
-
         item = models.Item.get_by_id(int(id_))
         if item.group.edit_hash != edit_hash:
             raise webob.exc.HTTPUnauthorized

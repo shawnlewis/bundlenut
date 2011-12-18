@@ -155,8 +155,7 @@ class ItemEdit extends Backbone.View
         'click .delete': 'delete'
 
     delete: ->
-        @model.destroy
-            data: JSON.stringify(@model.toJSON())
+        @model.destroy()
 
     changeTitle: (newTitle) =>
         @model.set('title': newTitle)

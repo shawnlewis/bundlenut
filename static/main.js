@@ -247,9 +247,7 @@
     };
 
     ItemEdit.prototype["delete"] = function() {
-      return this.model.destroy({
-        data: JSON.stringify(this.model.toJSON())
-      });
+      return this.model.destroy();
     };
 
     ItemEdit.prototype.changeTitle = function(newTitle) {
