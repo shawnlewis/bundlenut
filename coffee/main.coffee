@@ -60,13 +60,39 @@ class Group extends Backbone.Model
     urlRoot: '/api/group'
 
     parse: (data) ->
-        @itemSet = new ItemSet data.item_set
+        # Order data.item_set by data.ordering
+        items = {}
+        for item in data.item_set
+            items[item.id] = item
+        ordered = []
+        for id in data.ordering
+            ordered.push(items[id])
+            delete items[id]
+        for item in _.values(items)
+            ordered.push(item)
+
+        @itemSet = new ItemSet ordered
         delete data.item_set
         @itemSet.group = @
+
         @itemSet.bind('change', => @change())
-        @itemSet.bind('add', => @change())
+        @itemSet.bind('add', => @change)
+        @itemSet.bind('add', @fixOrdering)
         @itemSet.bind('remove', => @change())
+        @itemSet.bind('remove', @fixOrdering)
         super data
+        
+    fixOrdering: =>
+        @set
+            ordering: item.id for item in @itemSet.models
+            silent: true
+        @save()
+
+    setOrdering: (ordering) ->
+        @set(
+            {ordering: parseInt(i) for i in ordering},
+            {silent: true})
+        @save()
 
 
 class Item extends Backbone.Model
@@ -119,19 +145,28 @@ class GroupEdit extends Backbone.View
         context = this.model.toJSON()
         context.view_link = '/group_view/' + this.model.id
         $(@el).html ich.tpl_groupedit(context)
+        tbody = @$('#items')
         @model.itemSet.each (item) ->
-            @$('#items tbody').append(new ItemEdit(model: item).el)
+            el = $(new ItemEdit(model: item).el)
+            el.attr('data-id', item.id)
+            tbody.append(el)
+        tbody.sortable
+            update: @sortUpdate
 
     renderDenied: ->
         $(@el).html ich.tpl_groupeditDenied()
 
     events:
         'click #add_item': 'addItem'
+        'sortupdate #items tbody': 'sortUpdate'
 
     addItem: ->
         @model.itemSet.create
             group: @model.get('key')
             edit_hash: @model.get('edit_hash')
+
+    sortUpdate: =>
+        @model.setOrdering($(i).attr('data-id') for i in @$('#items tr'))
 
 
 class ItemEdit extends Backbone.View

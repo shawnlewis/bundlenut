@@ -1,3 +1,4 @@
+import copy
 import hashlib
 import json
 import os
@@ -12,7 +13,7 @@ from google.appengine.ext.webapp import template
 
 import models
 
-DEBUG = False
+DEBUG = True
 
 
 def get_file(rel_path):
@@ -77,9 +78,20 @@ class APIGroup(JSONRequestHandler):
         resp['edit_hash'] = group.edit_hash
         self.json_response(resp)
 
-    def put(self, id_):
-        # edit group
-        pass
+    def put(self, id_, edit_hash):
+        params = json.loads(self.request.body)
+        group = models.Group.get_by_id(int(id_))
+
+        if group.edit_hash != edit_hash:
+            raise webob.excHTTPUnauthorized
+
+        if 'name' in params:
+            group.name = params['name']
+        if 'ordering' in params:
+            group.ordering = map(int, params['ordering'])
+        group.put()
+
+        self.json_response(json_group(group))
 
     def delete(self, id_):
         # delete group
@@ -140,17 +152,25 @@ class APIEditCheck(JSONRequestHandler):
             self.json_response('false')
 
 class APIGroupDebug(JSONRequestHandler):
-    def get(self, id_):
-        group = models.Group.get_by_id(int(id_))
-        resp = json_group(group)
-        resp['edit_hash'] = group.edit_hash,
-        self.json_response(resp)
+    def get(self, id_=None):
+        if id_ is None:
+            groups = models.Group.all()
+        else:
+            groups = [models.Group.get_by_id(int(id_))]
+
+        resp_list = []    
+        for group in groups:
+            resp = json_group(group)
+            resp['edit_hash'] = group.edit_hash
+            resp_list.append(resp)
+            self.json_response(resp_list)
 
 routes = [
     ('/debug.html', DebugPage),
 
     ('/api/group', APIGroup),
     ('/api/group/(\d+)', APIGroup),
+    ('/api/group/(\d+)/(\w+)', APIGroup),
     ('/api/item', APIItem),
     ('/api/item/(\d+)', APIItem),
     ('/api/item/(\d+)/(\w+)', APIItem),
@@ -160,7 +180,8 @@ routes = [
     ]
 if DEBUG:
     routes = [
-    ('/api/groupdebug/(\d+)', APIGroupDebug)
+    ('/api/groupdebug/(\d+)', APIGroupDebug),
+    ('/api/groupdebug', APIGroupDebug)
     ] + routes
 
 app = webapp2.WSGIApplication(routes, debug=DEBUG)

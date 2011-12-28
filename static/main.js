@@ -1,6 +1,6 @@
 (function() {
   var App, EditableField, Group, GroupEdit, GroupView, Index, Item, ItemEdit, ItemSet, ItemView, Router, getUrl, jsonRPC, methodMap;
-  var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; }, __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
   jsonRPC = function(funcName, data, success) {
     var onSuccess;
@@ -60,26 +60,84 @@
     __extends(Group, Backbone.Model);
 
     function Group() {
+      this.fixOrdering = __bind(this.fixOrdering, this);
       Group.__super__.constructor.apply(this, arguments);
     }
 
     Group.prototype.urlRoot = '/api/group';
 
     Group.prototype.parse = function(data) {
+      var id, item, items, ordered, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
       var _this = this;
-      this.itemSet = new ItemSet(data.item_set);
+      items = {};
+      _ref = data.item_set;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        item = _ref[_i];
+        items[item.id] = item;
+      }
+      ordered = [];
+      _ref2 = data.ordering;
+      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+        id = _ref2[_j];
+        ordered.push(items[id]);
+        delete items[id];
+      }
+      _ref3 = _.values(items);
+      for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
+        item = _ref3[_k];
+        ordered.push(item);
+      }
+      this.itemSet = new ItemSet(ordered);
       delete data.item_set;
       this.itemSet.group = this;
       this.itemSet.bind('change', function() {
         return _this.change();
       });
       this.itemSet.bind('add', function() {
-        return _this.change();
+        return _this.change;
       });
+      this.itemSet.bind('add', this.fixOrdering);
       this.itemSet.bind('remove', function() {
         return _this.change();
       });
+      this.itemSet.bind('remove', this.fixOrdering);
       return Group.__super__.parse.call(this, data);
+    };
+
+    Group.prototype.fixOrdering = function() {
+      var item;
+      this.set({
+        ordering: (function() {
+          var _i, _len, _ref, _results;
+          _ref = this.itemSet.models;
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            item = _ref[_i];
+            _results.push(item.id);
+          }
+          return _results;
+        }).call(this),
+        silent: true
+      });
+      return this.save();
+    };
+
+    Group.prototype.setOrdering = function(ordering) {
+      var i;
+      this.set({
+        ordering: (function() {
+          var _i, _len, _results;
+          _results = [];
+          for (_i = 0, _len = ordering.length; _i < _len; _i++) {
+            i = ordering[_i];
+            _results.push(parseInt(i));
+          }
+          return _results;
+        })()
+      }, {
+        silent: true
+      });
+      return this.save();
     };
 
     return Group;
@@ -162,6 +220,7 @@
     __extends(GroupEdit, Backbone.View);
 
     function GroupEdit() {
+      this.sortUpdate = __bind(this.sortUpdate, this);
       this.render = __bind(this.render, this);
       GroupEdit.__super__.constructor.apply(this, arguments);
     }
@@ -182,14 +241,21 @@
     };
 
     GroupEdit.prototype.render = function() {
-      var context;
+      var context, tbody;
       context = this.model.toJSON();
       context.view_link = '/group_view/' + this.model.id;
       $(this.el).html(ich.tpl_groupedit(context));
-      return this.model.itemSet.each(function(item) {
-        return this.$('#items tbody').append(new ItemEdit({
+      tbody = this.$('#items');
+      this.model.itemSet.each(function(item) {
+        var el;
+        el = $(new ItemEdit({
           model: item
         }).el);
+        el.attr('data-id', item.id);
+        return tbody.append(el);
+      });
+      return tbody.sortable({
+        update: this.sortUpdate
       });
     };
 
@@ -198,7 +264,8 @@
     };
 
     GroupEdit.prototype.events = {
-      'click #add_item': 'addItem'
+      'click #add_item': 'addItem',
+      'sortupdate #items tbody': 'sortUpdate'
     };
 
     GroupEdit.prototype.addItem = function() {
@@ -206,6 +273,20 @@
         group: this.model.get('key'),
         edit_hash: this.model.get('edit_hash')
       });
+    };
+
+    GroupEdit.prototype.sortUpdate = function() {
+      var i;
+      return this.model.setOrdering((function() {
+        var _i, _len, _ref, _results;
+        _ref = this.$('#items tr');
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          i = _ref[_i];
+          _results.push($(i).attr('data-id'));
+        }
+        return _results;
+      }).call(this));
     };
 
     return GroupEdit;
