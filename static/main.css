@@ -40,8 +40,8 @@ html, body {
 }
 
 /* tpl_groupedit */
+
 .groupedit {
-    display: inline-block;
     position: relative;
 }
 
@@ -55,12 +55,31 @@ html, body {
 }
 
 .groupedit table {
+    table-layout: fixed;
+    width: 100%;
     margin-top: 20px;
     border: solid 1px black;
 }
 
 .groupedit table td {
     padding: 10px;
+}
+
+.groupedit table .title, table .url {
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.groupedit table .url {
+    white-space: nowrap;
+}
+
+.groupedit table colgroup.title {
+    width: 20%;
+}
+
+.groupedit table colgroup.delete {
+    width: 70px;
 }
 
 
