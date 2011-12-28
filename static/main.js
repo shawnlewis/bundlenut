@@ -422,17 +422,27 @@
     };
 
     GroupView.prototype.events = {
-      'click .closed': 'open'
+      'click .tab': 'toggle'
+    };
+
+    GroupView.prototype.toggle = function() {
+      if (this.opened) {
+        return this.close();
+      } else {
+        return this.open();
+      }
     };
 
     GroupView.prototype.close = function() {
       $(this.el).removeClass('open');
-      return $(this.el).addClass('closed');
+      $(this.el).addClass('closed');
+      return this.opened = false;
     };
 
     GroupView.prototype.open = function() {
       $(this.el).addClass('open');
-      return $(this.el).removeClass('closed');
+      $(this.el).removeClass('closed');
+      return this.opened = true;
     };
 
     return GroupView;

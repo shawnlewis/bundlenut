@@ -252,15 +252,23 @@ class GroupView extends Backbone.View
             @$('#items').append(itemView.el)
 
     events:
-        'click .closed': 'open'
+        'click .tab': 'toggle'
+
+    toggle: ->
+        if @opened
+            @close()
+        else
+            @open()
 
     close: ->
         $(@el).removeClass('open')
         $(@el).addClass('closed')
+        @opened = false
 
     open: ->
         $(@el).addClass('open')
         $(@el).removeClass('closed')
+        @opened = true
 
 
 class ItemView extends Backbone.View
