@@ -81,6 +81,12 @@ class Group extends Backbone.Model
         @itemSet.bind('remove', => @change())
         @itemSet.bind('remove', @fixOrdering)
         super data
+
+    createItem: (success) ->
+        @itemSet.create(
+            {group: @get('key')
+            edit_hash: @get('edit_hash')},
+            {success: success})
         
     fixOrdering: =>
         @set
@@ -94,11 +100,24 @@ class Group extends Backbone.Model
             {silent: true})
         @save()
 
+    # create a blank item at the end of the list if we don't have one.
+    clean: (success) ->
+        lastIndex = @itemSet.models.length - 1
+        if not @itemSet.models[lastIndex].isBlank()
+            @createItem(success)
+        else
+            success()
+
 
 class Item extends Backbone.Model
     defaults:
         title: ''
         url: ''
+
+    isBlank: ->
+        if not @get('title') and not @get('url')
+            return true
+        return false
 
 
 class ItemSet extends Backbone.Collection
@@ -142,28 +161,30 @@ class GroupEdit extends Backbone.View
         @model.bind('change', @render)
 
     render: =>
-        context = this.model.toJSON()
-        context.view_link = '/group_view/' + this.model.id
-        $(@el).html ich.tpl_groupedit(context)
-        tbody = @$('#items')
-        @model.itemSet.each (item) ->
-            el = $(new ItemEdit(model: item).el)
-            el.attr('data-id', item.id)
-            tbody.append(el)
-        tbody.sortable
-            update: @sortUpdate
+        @model.clean =>
+            context = this.model.toJSON()
+            context.view_link = '/group_view/' + this.model.id
+            $(@el).html ich.tpl_groupedit(context)
+            tbody = @$('#items')
+            @model.itemSet.each (item) ->
+                el = $(new ItemEdit(model: item).el)
+                el.attr('data-id', item.id)
+                tbody.append(el)
+
+            # last item is always a new blank item, don't allow delete
+            tbody.find('td:last').find('.delete').hide()
+
+            tbody.sortable
+                update: @sortUpdate
 
     renderDenied: ->
         $(@el).html ich.tpl_groupeditDenied()
 
     events:
-        'click #add_item': 'addItem'
         'sortupdate #items tbody': 'sortUpdate'
 
     addItem: ->
-        @model.itemSet.create
-            group: @model.get('key')
-            edit_hash: @model.get('edit_hash')
+        @model.createItem()
 
     sortUpdate: =>
         @model.setOrdering($(i).attr('data-id') for i in @$('#items tr'))
@@ -211,8 +232,15 @@ class EditableField extends Backbone.View
         if @inViewMode
             return
         @inViewMode = true
+
         $(@el).empty()
-        $(@el).append('<span class="view">' + @val + '</span>')
+        $(@el).removeClass('blank')
+        val = @val
+        if not @val
+            val = 'blank'
+            $(@el).addClass('blank')
+
+        $(@el).append('<span class="view">' + val + '</span>')
         @delegateEvents
             'click .view': 'editMode'
 

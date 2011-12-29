@@ -49,11 +49,6 @@ html, body {
     font-size: 1.2em;
 }
 
-#add_item {
-    position: absolute;
-    right: 5px;
-}
-
 .groupedit table {
     table-layout: fixed;
     width: 100%;
@@ -80,6 +75,11 @@ html, body {
 
 .groupedit table colgroup.delete {
     width: 70px;
+}
+
+.groupedit .blank {
+    color: #666;
+    font-style: italic;
 }
 
 

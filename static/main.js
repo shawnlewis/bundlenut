@@ -104,6 +104,15 @@
       return Group.__super__.parse.call(this, data);
     };
 
+    Group.prototype.createItem = function(success) {
+      return this.itemSet.create({
+        group: this.get('key'),
+        edit_hash: this.get('edit_hash')
+      }, {
+        success: success
+      });
+    };
+
     Group.prototype.fixOrdering = function() {
       var item;
       this.set({
@@ -140,6 +149,16 @@
       return this.save();
     };
 
+    Group.prototype.clean = function(success) {
+      var lastIndex;
+      lastIndex = this.itemSet.models.length - 1;
+      if (!this.itemSet.models[lastIndex].isBlank()) {
+        return this.createItem(success);
+      } else {
+        return success();
+      }
+    };
+
     return Group;
 
   })();
@@ -155,6 +174,11 @@
     Item.prototype.defaults = {
       title: '',
       url: ''
+    };
+
+    Item.prototype.isBlank = function() {
+      if (!this.get('title') && !this.get('url')) return true;
+      return false;
     };
 
     return Item;
@@ -241,21 +265,25 @@
     };
 
     GroupEdit.prototype.render = function() {
-      var context, tbody;
-      context = this.model.toJSON();
-      context.view_link = '/group_view/' + this.model.id;
-      $(this.el).html(ich.tpl_groupedit(context));
-      tbody = this.$('#items');
-      this.model.itemSet.each(function(item) {
-        var el;
-        el = $(new ItemEdit({
-          model: item
-        }).el);
-        el.attr('data-id', item.id);
-        return tbody.append(el);
-      });
-      return tbody.sortable({
-        update: this.sortUpdate
+      var _this = this;
+      return this.model.clean(function() {
+        var context, tbody;
+        context = _this.model.toJSON();
+        context.view_link = '/group_view/' + _this.model.id;
+        $(_this.el).html(ich.tpl_groupedit(context));
+        tbody = _this.$('#items');
+        _this.model.itemSet.each(function(item) {
+          var el;
+          el = $(new ItemEdit({
+            model: item
+          }).el);
+          el.attr('data-id', item.id);
+          return tbody.append(el);
+        });
+        tbody.find('td:last').find('.delete').hide();
+        return tbody.sortable({
+          update: _this.sortUpdate
+        });
       });
     };
 
@@ -264,15 +292,11 @@
     };
 
     GroupEdit.prototype.events = {
-      'click #add_item': 'addItem',
       'sortupdate #items tbody': 'sortUpdate'
     };
 
     GroupEdit.prototype.addItem = function() {
-      return this.model.itemSet.create({
-        group: this.model.get('key'),
-        edit_hash: this.model.get('edit_hash')
-      });
+      return this.model.createItem();
     };
 
     GroupEdit.prototype.sortUpdate = function() {
@@ -364,10 +388,17 @@
     };
 
     EditableField.prototype.viewMode = function() {
+      var val;
       if (this.inViewMode) return;
       this.inViewMode = true;
       $(this.el).empty();
-      $(this.el).append('<span class="view">' + this.val + '</span>');
+      $(this.el).removeClass('blank');
+      val = this.val;
+      if (!this.val) {
+        val = 'blank';
+        $(this.el).addClass('blank');
+      }
+      $(this.el).append('<span class="view">' + val + '</span>');
       return this.delegateEvents({
         'click .view': 'editMode'
       });
