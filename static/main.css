@@ -96,16 +96,21 @@ html.show_other, body.show_other {
     overflow: hidden;
 }
 
+#toc_outer {
+    position: fixed;
+    top: 0;
+    height: 0;
+    width: 100%;
+}
+
 #table_of_contents {
     position:absolute;
-    top: 0;
     left: 40px;
-    background: white;
 }
 
 #table_of_contents .pane {
     padding: 5px;
-    background: rgb(255, 141, 48);
+    background: #ff9414;
     border-width: 0 1px 1px 1px;
     border-style: solid;
     border-color: gray;
@@ -124,25 +129,27 @@ html.show_other, body.show_other {
 #table_of_contents .tab {
     float: left;
     padding: 5px 13px;
-    background: rgb(255, 141, 48);
+    top: -1px;
+    position: relative;
+    z-index: 102;
+    background: #ff9414;
     border-width: 0 1px 1px 1px;
     border-style: solid;
-    border-color: gray;
-    position: relative;
-    top: -1px;
-    z-index: 102;
+    border-color: #888;
     border-radius: 0 0 8px 8px;
     box-shadow: 1px 1px 2px #888;
     color: #FEFFE8;
 }
 
-#table_of_contents {
-    background: rgba(0, 0, 0, 0);
+#table_of_contents .tab:hover {
+    cursor: pointer;
 }
 
+/*
 #table_of_contents.closed .pane {
     display: none
 }
+*/
 
 .grouview .group {
     font-weight: bold;

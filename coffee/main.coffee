@@ -261,11 +261,13 @@ class GroupView extends Backbone.View
             @open()
 
     close: ->
+        $(@el).animate(bottom: '-30px')
         $(@el).removeClass('open')
         $(@el).addClass('closed')
         @opened = false
 
     open: ->
+        $(@el).animate(bottom: -$(@el).height() + 'px')
         $(@el).addClass('open')
         $(@el).removeClass('closed')
         @opened = true

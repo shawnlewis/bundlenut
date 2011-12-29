@@ -434,12 +434,18 @@
     };
 
     GroupView.prototype.close = function() {
+      $(this.el).animate({
+        bottom: '-30px'
+      });
       $(this.el).removeClass('open');
       $(this.el).addClass('closed');
       return this.opened = false;
     };
 
     GroupView.prototype.open = function() {
+      $(this.el).animate({
+        bottom: -$(this.el).height() + 'px'
+      });
       $(this.el).addClass('open');
       $(this.el).removeClass('closed');
       return this.opened = true;
