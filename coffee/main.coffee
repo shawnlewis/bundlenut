@@ -312,7 +312,7 @@ class GroupView extends Backbone.View
 
 
 class ItemView extends Backbone.View
-    tagName: 'tr'
+    tagName: 'li'
 
     initialize: (options) ->
         @groupView = options.groupView
@@ -323,6 +323,7 @@ class ItemView extends Backbone.View
 
     events:
         'click a': 'clickLink'
+        'click .comment': 'clickLink'
 
     clickLink: (e) ->
         e.preventDefault()

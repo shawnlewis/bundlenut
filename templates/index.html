@@ -55,8 +55,8 @@
     <div class="pane">
         <div class="links">
             <div class="group_name">{{ name }}</div> <br>
-            <table id="items">
-            </table>
+            <ul id="items">
+            </ul>
         </div>
     </div>
     <div class="tab">
@@ -66,10 +66,10 @@
 </script>
 
 <script id="tpl_itemview" type="text/html">
-    <td class="title">
+    <div class="title">
         <a href="{{ url }}">{{ title }}</a>
         <p class="comment">{{ comment }}</p>
-    </td>
+    </div>
 </script>
 
 {% endverbatim %}

@@ -509,7 +509,7 @@
       ItemView.__super__.constructor.apply(this, arguments);
     }
 
-    ItemView.prototype.tagName = 'tr';
+    ItemView.prototype.tagName = 'li';
 
     ItemView.prototype.initialize = function(options) {
       this.groupView = options.groupView;
@@ -521,7 +521,8 @@
     };
 
     ItemView.prototype.events = {
-      'click a': 'clickLink'
+      'click a': 'clickLink',
+      'click .comment': 'clickLink'
     };
 
     ItemView.prototype.clickLink = function(e) {

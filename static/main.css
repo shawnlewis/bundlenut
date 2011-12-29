@@ -164,13 +164,36 @@ html.show_other, body.show_other {
     border-bottom: 1px solid #888;
 }
 
+#table_of_contents ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+#table_of_contents li {
+    padding: 8px;
+    padding-left: 0px;
+    cursor: pointer;
+}
+
+/*
+#table_of_contents li:hover {
+    padding-left: 7px;
+    border-left: 1px solid rgb(70, 121, 179);
+}
+*/
+
 #table_of_contents a {
     /*color: #222;*/
+    display: block;
+    padding-left: 8px;
+    color: rgb(70, 121, 179);
     text-decoration: none;
 }
 
-#table_of_contents a:hover {
-    text-decoration: underline;
+#table_of_contents li:hover a {
+    padding-left: 6px;
+    border-left: 2px solid rgb(70, 121, 179);
 }
 
 #table_of_contents a:visited {
@@ -178,8 +201,8 @@ html.show_other, body.show_other {
 }
 
 #table_of_contents .comment {
-    margin-top: 3px;
-    margin-bottom: 7px;
+    margin: 3px 0 3px 0;
+    padding-left: 8px;
     font-size: .8em;
     color: #555;
 }
