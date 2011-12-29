@@ -42,7 +42,8 @@ def json_item(item):
     return {
         'id': str(item.key().id()),
         'title': item.title,
-        'url': item.url
+        'url': item.url,
+        'comment': item.comment
     }
 
 class JSONRequestHandler(webapp2.RequestHandler):
@@ -112,6 +113,7 @@ class APIItem(JSONRequestHandler):
         item = models.Item()
         item.title = params['title'] or None
         item.url = params['url'] or None
+        item.comment = params['comment'] or None
         item.group = group
         item.put()
 
@@ -128,6 +130,8 @@ class APIItem(JSONRequestHandler):
             item.title = params['title']
         if 'url' in params:
             item.url = params['url']
+        if 'comment' in params:
+            item.comment = params['comment']
         item.put()
 
         self.json_response(json_item(item))

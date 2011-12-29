@@ -173,7 +173,8 @@
 
     Item.prototype.defaults = {
       title: '',
-      url: ''
+      url: '',
+      comment: ''
     };
 
     Item.prototype.isBlank = function() {
@@ -322,6 +323,7 @@
     __extends(ItemEdit, Backbone.View);
 
     function ItemEdit() {
+      this.changeComment = __bind(this.changeComment, this);
       this.changeURL = __bind(this.changeURL, this);
       this.changeTitle = __bind(this.changeTitle, this);
       ItemEdit.__super__.constructor.apply(this, arguments);
@@ -344,7 +346,12 @@
         el: this.$('.url'),
         val: this.model.get('url')
       });
-      return this.urlField.bind('change', this.changeURL);
+      this.urlField.bind('change', this.changeURL);
+      this.commentField = new EditableField({
+        el: this.$('.comment'),
+        val: this.model.get('comment')
+      });
+      return this.commentField.bind('change', this.changeComment);
     };
 
     ItemEdit.prototype.events = {
@@ -365,6 +372,13 @@
     ItemEdit.prototype.changeURL = function(newURL) {
       this.model.set({
         'url': newURL
+      });
+      return this.model.save();
+    };
+
+    ItemEdit.prototype.changeComment = function(newComment) {
+      this.model.set({
+        'comment': newComment
       });
       return this.model.save();
     };

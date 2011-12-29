@@ -73,6 +73,10 @@ html, body {
     width: 20%;
 }
 
+.groupedit table colgroup.comment {
+    width: 30%;
+}
+
 .groupedit table colgroup.delete {
     width: 70px;
 }

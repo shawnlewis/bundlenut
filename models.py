@@ -11,4 +11,5 @@ class Group(db.Model):
 class Item(db.Model):
     title = db.StringProperty()
     url = db.LinkProperty()
+    comment = db.StringProperty()
     group = db.ReferenceProperty(Group)

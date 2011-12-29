@@ -113,6 +113,7 @@ class Item extends Backbone.Model
     defaults:
         title: ''
         url: ''
+        comment: ''
 
     isBlank: ->
         if not @get('title') and not @get('url')
@@ -206,6 +207,10 @@ class ItemEdit extends Backbone.View
             el: @$('.url')
             val: @model.get('url')
         @urlField.bind('change', @changeURL)
+        @commentField = new EditableField
+            el: @$('.comment')
+            val: @model.get('comment')
+        @commentField.bind('change', @changeComment)
 
     events:
         'click .delete': 'delete'
@@ -219,6 +224,10 @@ class ItemEdit extends Backbone.View
 
     changeURL: (newURL) =>
         @model.set('url': newURL)
+        @model.save()
+
+    changeComment: (newComment) =>
+        @model.set('comment': newComment)
         @model.save()
         
 
