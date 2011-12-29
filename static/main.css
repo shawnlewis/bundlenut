@@ -128,7 +128,7 @@ html.show_other, body.show_other {
 
 #table_of_contents .tab {
     float: left;
-    padding: 5px 13px;
+    padding: 5px 17px;
     top: -1px;
     position: relative;
     z-index: 102;
@@ -139,18 +139,13 @@ html.show_other, body.show_other {
     border-radius: 0 0 8px 8px;
     box-shadow: 1px 1px 2px #888;
     color: #FEFFE8;
+    /*text-shadow: -1px -1px 1px #888;*/
 }
 
 #table_of_contents .tab:hover {
     cursor: pointer;
 }
-
-/*
-#table_of_contents.closed .pane {
-    display: none
-}
-*/
-
-.grouview .group {
-    font-weight: bold;
+#table_of_contents .groupview .group_name {
+    font-size: 1.2em;
+    cursor: pointer;
 }

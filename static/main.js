@@ -422,7 +422,8 @@
     };
 
     GroupView.prototype.events = {
-      'click .tab': 'toggle'
+      'click .tab': 'toggle',
+      'click .group_name': 'toggle'
     };
 
     GroupView.prototype.toggle = function() {
@@ -475,10 +476,11 @@
     };
 
     ItemView.prototype.events = {
-      'click .link': 'clickLink'
+      'click a': 'clickLink'
     };
 
-    ItemView.prototype.clickLink = function() {
+    ItemView.prototype.clickLink = function(e) {
+      e.preventDefault();
       window.app.frameGo(this.model.get('url'));
       return this.groupView.close();
     };

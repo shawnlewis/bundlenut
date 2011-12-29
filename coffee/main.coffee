@@ -253,6 +253,7 @@ class GroupView extends Backbone.View
 
     events:
         'click .tab': 'toggle'
+        'click .group_name': 'toggle'
 
     toggle: ->
         if @opened
@@ -284,9 +285,10 @@ class ItemView extends Backbone.View
         $(@el).html(ich.tpl_itemview(@model.toJSON()))
 
     events:
-        'click .link': 'clickLink'
+        'click a': 'clickLink'
 
-    clickLink: ->
+    clickLink: (e) ->
+        e.preventDefault()
         window.app.frameGo(@model.get('url'))
         @groupView.close()
         
