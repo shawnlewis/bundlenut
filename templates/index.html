@@ -52,7 +52,7 @@
 <div class="groupview">
     <div class="pane">
         <div class="links">
-            <span class="group_name">{{ name }}</span> <br><br>
+            <div class="group_name">{{ name }}</div> <br>
             <table id="items">
             </table>
         </div>
@@ -64,7 +64,10 @@
 </script>
 
 <script id="tpl_itemview" type="text/html">
-    <td class="title"><a href="{{ url }}">{{ title }}</a></td>
+    <td class="title">
+        <a href="{{ url }}">{{ title }}</a>
+        <p class="comment">{{ comment }}</p>
+    </td>
 </script>
 
 {% endverbatim %}
