@@ -264,9 +264,11 @@ class EditableField extends Backbone.View
         if not @inViewMode
             return
         @inViewMode = false
-        $(@el)
-            .empty()
-            .append('<input class="edit" value="' + @val + '" />')
+        $(@el).empty()
+        if @val
+            $(@el).append('<input class="edit" value="' + @val + '" />')
+        else
+            $(@el).append('<input class="edit" />')
         @$('input')
             .focus()
             .select()

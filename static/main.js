@@ -428,7 +428,12 @@
     EditableField.prototype.editMode = function() {
       if (!this.inViewMode) return;
       this.inViewMode = false;
-      $(this.el).empty().append('<input class="edit" value="' + this.val + '" />');
+      $(this.el).empty();
+      if (this.val) {
+        $(this.el).append('<input class="edit" value="' + this.val + '" />');
+      } else {
+        $(this.el).append('<input class="edit" />');
+      }
       this.$('input').focus().select();
       return this.delegateEvents({
         'blur .edit': 'toViewMode',
