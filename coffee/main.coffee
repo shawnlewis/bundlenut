@@ -283,6 +283,7 @@ class GroupView extends Backbone.View
         @render()
         @state = 'closed'
         @full()
+        @currentClosed()
 
     render: ->
         $(@el).html ich.tpl_groupview(@model.toJSON())
@@ -290,17 +291,14 @@ class GroupView extends Backbone.View
             itemView = new ItemView
                 model: item
                 groupView: @
+                tagName: 'li'
             @$('#items').append(itemView.el)
 
     events:
         'click .closed .tab': 'full'
-        'mouseover .closed .tab': 'single'
+        'mouseover .closed .tab': 'currentOpened'
+        'mouseleave .closed .tab': 'currentClosed'
 
-        'click .single .tab': 'closed'
-        'mouseleave .single': 'closed'
-        'click .single .title_bar': 'full'
-
-        'click .full .title_bar': 'single'
         'click .full .tab': 'closed'
 
     setState: (state) ->
@@ -325,68 +323,43 @@ class GroupView extends Backbone.View
                     @setState('single')
                     @delegateEvents(@events)
 
+    currentOpened: ->
+        el = @$('.currentview')
+        tab = $('.tab')
+        el.css('left', (tab.offset().left + tab.outerWidth() - 2) + 'px')
+        el.animate(bottom: -el.height() + 'px')
+
+    currentClosed: ->
+        el = @$('.currentview')
+        el.animate(bottom: 0)
+
     closed: ->
-        el = $(@el)
+        el = @$('.groupview')
         @delegateEvents(null)
-        el.animate({top: (-$(@el).height() + 30) + 'px'},
+        el.animate({top: (-el.height() + 30) + 'px'},
             complete: =>
                 @setState('closed')
-                #el.css('bottom', '-30px')
-                #el.css('top', null)
-                el.find('.wrapper').hide()
-                #el.css('bottom', null)
-                el.css('top', (-el.height() + 30) + 'px')
                 @delegateEvents(@events)
         )
 
     full: ->
+        el = @$('.groupview')
         @delegateEvents(null)
         if @state == 'closed'
-            $(@el).animate({top: 0},
+            el.animate({top: 0},
                 complete: =>
                     @setState('full')
                     @delegateEvents(@events)
             )
-        else if @state == 'single'
-            $('.wrapper').slideDown
-                complete: =>
-                    @setState('full')
-                    @delegateEvents(@events)
+        @currentClosed()
 
     setCurItemView: (itemView) ->
-        @curItemView = itemView
-        curEl = $(itemView.el)
-
-        # remove wrappers
-        wrapper = curEl.prev()
-        if wrapper.hasClass('wrapper')
-            wrapper.detach()
-            curEl.before(wrapper.find('li').detach())
-
-        wrapper = curEl.next()
-        if wrapper.hasClass('wrapper')
-            wrapper.detach()
-            curEl.after(wrapper.find('li').detach())
-
-        # add new ones
-        before = curEl.prevAll().detach()
-        wrapped = $('<li />')
-            .append($('<ul />')
-                .append(before))
-        wrapped.addClass('wrapper')
-        curEl.before(wrapped)
-
-        after = curEl.nextAll().detach()
-        wrapped = $('<li />')
-            .append($('<ul />')
-                .append(after))
-        wrapped.addClass('wrapper')
-        curEl.after(wrapped)
-
+        @curView = new ItemView
+            model: itemView.model
+            el: @$('.currentview .current_pane')
+            tagName: 'div'
 
 class ItemView extends Backbone.View
-    tagName: 'li'
-
     initialize: (options) ->
         @groupView = options.groupView
         @render()

@@ -111,10 +111,17 @@ html.show_other, body.show_other {
     width: 100%;
 }
 
-#table_of_contents {
+#table_of_contents .groupview {
     position:absolute;
     left: 40px;
     max-width: 40%;
+}
+
+#table_of_contents .currentview {
+    position:absolute;
+    /*left: 200px;*/
+    max-width: 50%;
+    bottom: 0;
 }
 
 /* saved colors:
@@ -133,7 +140,7 @@ html.show_other, body.show_other {
     box-shadow: 1px 1px 2px #888;
 }
 
-#table_of_contents .links {
+#table_of_contents .inner_pane {
     background: rgb(250, 250, 250);
     padding: 1em;
     border-radius: 3px;
@@ -170,6 +177,23 @@ html.show_other, body.show_other {
     color: white;
     font-size: 1.4em;
     cursor: pointer;
+}
+
+#table_of_contents .currentview .current_pane {
+    padding: 5px 10px;
+    background: rgb(250, 250, 250);
+    border-width: 0 1px 1px 1px;
+    box-shadow: 1px 1px 2px #888;
+    /*border-radius: 0 0 8px 8px;*/
+}
+
+#table_of_contents .currentview a {
+    display: inline;
+    padding-left: 0px;
+}
+
+#table_of_contents .currentview p {
+    display: inline;
 }
 
 #table_of_contents ul {

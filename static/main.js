@@ -457,7 +457,8 @@
       this.currentItemView = null;
       this.render();
       this.state = 'closed';
-      return this.full();
+      this.full();
+      return this.currentClosed();
     };
 
     GroupView.prototype.render = function() {
@@ -467,7 +468,8 @@
         var itemView;
         itemView = new ItemView({
           model: item,
-          groupView: _this
+          groupView: _this,
+          tagName: 'li'
         });
         return _this.$('#items').append(itemView.el);
       });
@@ -475,11 +477,8 @@
 
     GroupView.prototype.events = {
       'click .closed .tab': 'full',
-      'mouseover .closed .tab': 'single',
-      'click .single .tab': 'closed',
-      'mouseleave .single': 'closed',
-      'click .single .title_bar': 'full',
-      'click .full .title_bar': 'single',
+      'mouseover .closed .tab': 'currentOpened',
+      'mouseleave .closed .tab': 'currentClosed',
       'click .full .tab': 'closed'
     };
 
@@ -512,28 +511,46 @@
       }
     };
 
+    GroupView.prototype.currentOpened = function() {
+      var el, tab;
+      el = this.$('.currentview');
+      tab = $('.tab');
+      el.css('left', (tab.offset().left + tab.outerWidth() - 2) + 'px');
+      return el.animate({
+        bottom: -el.height() + 'px'
+      });
+    };
+
+    GroupView.prototype.currentClosed = function() {
+      var el;
+      el = this.$('.currentview');
+      return el.animate({
+        bottom: 0
+      });
+    };
+
     GroupView.prototype.closed = function() {
       var el;
       var _this = this;
-      el = $(this.el);
+      el = this.$('.groupview');
       this.delegateEvents(null);
       return el.animate({
-        top: (-$(this.el).height() + 30) + 'px'
+        top: (-el.height() + 30) + 'px'
       }, {
         complete: function() {
           _this.setState('closed');
-          el.find('.wrapper').hide();
-          el.css('top', (-el.height() + 30) + 'px');
           return _this.delegateEvents(_this.events);
         }
       });
     };
 
     GroupView.prototype.full = function() {
+      var el;
       var _this = this;
+      el = this.$('.groupview');
       this.delegateEvents(null);
       if (this.state === 'closed') {
-        return $(this.el).animate({
+        el.animate({
           top: 0
         }, {
           complete: function() {
@@ -541,38 +558,16 @@
             return _this.delegateEvents(_this.events);
           }
         });
-      } else if (this.state === 'single') {
-        return $('.wrapper').slideDown({
-          complete: function() {
-            _this.setState('full');
-            return _this.delegateEvents(_this.events);
-          }
-        });
       }
+      return this.currentClosed();
     };
 
     GroupView.prototype.setCurItemView = function(itemView) {
-      var after, before, curEl, wrapped, wrapper;
-      this.curItemView = itemView;
-      curEl = $(itemView.el);
-      wrapper = curEl.prev();
-      if (wrapper.hasClass('wrapper')) {
-        wrapper.detach();
-        curEl.before(wrapper.find('li').detach());
-      }
-      wrapper = curEl.next();
-      if (wrapper.hasClass('wrapper')) {
-        wrapper.detach();
-        curEl.after(wrapper.find('li').detach());
-      }
-      before = curEl.prevAll().detach();
-      wrapped = $('<li />').append($('<ul />').append(before));
-      wrapped.addClass('wrapper');
-      curEl.before(wrapped);
-      after = curEl.nextAll().detach();
-      wrapped = $('<li />').append($('<ul />').append(after));
-      wrapped.addClass('wrapper');
-      return curEl.after(wrapped);
+      return this.curView = new ItemView({
+        model: itemView.model,
+        el: this.$('.currentview .current_pane'),
+        tagName: 'div'
+      });
     };
 
     return GroupView;
@@ -586,8 +581,6 @@
     function ItemView() {
       ItemView.__super__.constructor.apply(this, arguments);
     }
-
-    ItemView.prototype.tagName = 'li';
 
     ItemView.prototype.initialize = function(options) {
       this.groupView = options.groupView;
