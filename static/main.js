@@ -152,7 +152,7 @@
     Group.prototype.clean = function(success) {
       var lastIndex;
       lastIndex = this.itemSet.models.length - 1;
-      if (!this.itemSet.models[lastIndex].isBlank()) {
+      if (lastIndex === -1 || !this.itemSet.models[lastIndex].isBlank()) {
         return this.createItem(success);
       } else {
         return success();
@@ -454,8 +454,10 @@
     }
 
     GroupView.prototype.initialize = function(options) {
+      this.currentItemView = null;
       this.render();
-      return this.open();
+      this.state = 'closed';
+      return this.full();
     };
 
     GroupView.prototype.render = function() {
@@ -472,34 +474,105 @@
     };
 
     GroupView.prototype.events = {
-      'click .tab': 'toggle',
-      'click .group_name': 'toggle'
+      'click .closed .tab': 'full',
+      'mouseover .closed .tab': 'single',
+      'click .single .tab': 'closed',
+      'mouseleave .single': 'closed',
+      'click .single .title_bar': 'full',
+      'click .full .title_bar': 'single',
+      'click .full .tab': 'closed'
     };
 
-    GroupView.prototype.toggle = function() {
-      if (this.opened) {
-        return this.close();
-      } else {
-        return this.open();
+    GroupView.prototype.setState = function(state) {
+      this.state = state;
+      this.$('.groupview').removeClass('closed single full');
+      return this.$('.groupview').addClass(state);
+    };
+
+    GroupView.prototype.single = function() {
+      var _this = this;
+      if (!this.curItemView || this.state === 'single') return;
+      this.delegateEvents(null);
+      if (this.state === 'closed') {
+        return $(this.el).animate({
+          top: 0
+        }, {
+          complete: function() {
+            _this.setState('single');
+            return _this.delegateEvents(_this.events);
+          }
+        });
+      } else if (this.state === 'full') {
+        return this.$('.wrapper').slideUp({
+          complete: function() {
+            _this.setState('single');
+            return _this.delegateEvents(_this.events);
+          }
+        });
       }
     };
 
-    GroupView.prototype.close = function() {
-      $(this.el).animate({
-        bottom: '-30px'
+    GroupView.prototype.closed = function() {
+      var el;
+      var _this = this;
+      el = $(this.el);
+      this.delegateEvents(null);
+      return el.animate({
+        top: (-$(this.el).height() + 30) + 'px'
+      }, {
+        complete: function() {
+          _this.setState('closed');
+          el.find('.wrapper').hide();
+          el.css('top', (-el.height() + 30) + 'px');
+          return _this.delegateEvents(_this.events);
+        }
       });
-      $(this.el).removeClass('open');
-      $(this.el).addClass('closed');
-      return this.opened = false;
     };
 
-    GroupView.prototype.open = function() {
-      $(this.el).animate({
-        bottom: -$(this.el).height() + 'px'
-      });
-      $(this.el).addClass('open');
-      $(this.el).removeClass('closed');
-      return this.opened = true;
+    GroupView.prototype.full = function() {
+      var _this = this;
+      this.delegateEvents(null);
+      if (this.state === 'closed') {
+        return $(this.el).animate({
+          top: 0
+        }, {
+          complete: function() {
+            _this.setState('full');
+            return _this.delegateEvents(_this.events);
+          }
+        });
+      } else if (this.state === 'single') {
+        return $('.wrapper').slideDown({
+          complete: function() {
+            _this.setState('full');
+            return _this.delegateEvents(_this.events);
+          }
+        });
+      }
+    };
+
+    GroupView.prototype.setCurItemView = function(itemView) {
+      var after, before, curEl, wrapped, wrapper;
+      this.curItemView = itemView;
+      curEl = $(itemView.el);
+      wrapper = curEl.prev();
+      if (wrapper.hasClass('wrapper')) {
+        wrapper.detach();
+        curEl.before(wrapper.find('li').detach());
+      }
+      wrapper = curEl.next();
+      if (wrapper.hasClass('wrapper')) {
+        wrapper.detach();
+        curEl.after(wrapper.find('li').detach());
+      }
+      before = curEl.prevAll().detach();
+      wrapped = $('<li />').append($('<ul />').append(before));
+      wrapped.addClass('wrapper');
+      curEl.before(wrapped);
+      after = curEl.nextAll().detach();
+      wrapped = $('<li />').append($('<ul />').append(after));
+      wrapped.addClass('wrapper');
+      return curEl.after(wrapped);
     };
 
     return GroupView;
@@ -533,7 +606,8 @@
     ItemView.prototype.clickLink = function(e) {
       e.preventDefault();
       window.app.frameGo(this.model.get('url'));
-      return this.groupView.close();
+      this.groupView.setCurItemView(this);
+      return this.groupView.closed();
     };
 
     return ItemView;

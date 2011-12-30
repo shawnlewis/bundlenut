@@ -53,8 +53,11 @@
 <script id="tpl_groupview" type="text/html">
 <div class="groupview">
     <div class="pane">
+        <div class="title_bar">
+            <input type="submit" value="+" />
+            <div class="group_name">{{ name }}</div>
+        </div>
         <div class="links">
-            <div class="group_name">{{ name }}</div> <br>
             <ul id="items">
             </ul>
         </div>
@@ -62,6 +65,7 @@
     <div class="tab">
         Lasso 'Em
     </div>
+    <div class="clear"></div>
 </div>
 </script>
 

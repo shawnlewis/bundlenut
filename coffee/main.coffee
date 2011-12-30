@@ -103,7 +103,7 @@ class Group extends Backbone.Model
     # create a blank item at the end of the list if we don't have one.
     clean: (success) ->
         lastIndex = @itemSet.models.length - 1
-        if not @itemSet.models[lastIndex].isBlank()
+        if lastIndex == -1 or not @itemSet.models[lastIndex].isBlank()
             @createItem(success)
         else
             success()
@@ -279,8 +279,10 @@ class EditableField extends Backbone.View
 
 class GroupView extends Backbone.View
     initialize: (options) ->
+        @currentItemView = null
         @render()
-        @open()
+        @state = 'closed'
+        @full()
 
     render: ->
         $(@el).html ich.tpl_groupview(@model.toJSON())
@@ -291,26 +293,95 @@ class GroupView extends Backbone.View
             @$('#items').append(itemView.el)
 
     events:
-        'click .tab': 'toggle'
-        'click .group_name': 'toggle'
+        'click .closed .tab': 'full'
+        'mouseover .closed .tab': 'single'
 
-    toggle: ->
-        if @opened
-            @close()
-        else
-            @open()
+        'click .single .tab': 'closed'
+        'mouseleave .single': 'closed'
+        'click .single .title_bar': 'full'
 
-    close: ->
-        $(@el).animate(bottom: '-30px')
-        $(@el).removeClass('open')
-        $(@el).addClass('closed')
-        @opened = false
+        'click .full .title_bar': 'single'
+        'click .full .tab': 'closed'
 
-    open: ->
-        $(@el).animate(bottom: -$(@el).height() + 'px')
-        $(@el).addClass('open')
-        $(@el).removeClass('closed')
-        @opened = true
+    setState: (state) ->
+        @state = state
+        @$('.groupview').removeClass('closed single full')
+        @$('.groupview').addClass(state)
+
+    single: ->
+        if not @curItemView or @state == 'single'
+            return
+
+        @delegateEvents(null)
+        if @state == 'closed'
+            $(@el).animate({top: 0},
+                complete: =>
+                    @setState('single')
+                    @delegateEvents(@events)
+            )
+        else if @state == 'full'
+            @$('.wrapper').slideUp
+                complete: =>
+                    @setState('single')
+                    @delegateEvents(@events)
+
+    closed: ->
+        el = $(@el)
+        @delegateEvents(null)
+        el.animate({top: (-$(@el).height() + 30) + 'px'},
+            complete: =>
+                @setState('closed')
+                #el.css('bottom', '-30px')
+                #el.css('top', null)
+                el.find('.wrapper').hide()
+                #el.css('bottom', null)
+                el.css('top', (-el.height() + 30) + 'px')
+                @delegateEvents(@events)
+        )
+
+    full: ->
+        @delegateEvents(null)
+        if @state == 'closed'
+            $(@el).animate({top: 0},
+                complete: =>
+                    @setState('full')
+                    @delegateEvents(@events)
+            )
+        else if @state == 'single'
+            $('.wrapper').slideDown
+                complete: =>
+                    @setState('full')
+                    @delegateEvents(@events)
+
+    setCurItemView: (itemView) ->
+        @curItemView = itemView
+        curEl = $(itemView.el)
+
+        # remove wrappers
+        wrapper = curEl.prev()
+        if wrapper.hasClass('wrapper')
+            wrapper.detach()
+            curEl.before(wrapper.find('li').detach())
+
+        wrapper = curEl.next()
+        if wrapper.hasClass('wrapper')
+            wrapper.detach()
+            curEl.after(wrapper.find('li').detach())
+
+        # add new ones
+        before = curEl.prevAll().detach()
+        wrapped = $('<li />')
+            .append($('<ul />')
+                .append(before))
+        wrapped.addClass('wrapper')
+        curEl.before(wrapped)
+
+        after = curEl.nextAll().detach()
+        wrapped = $('<li />')
+            .append($('<ul />')
+                .append(after))
+        wrapped.addClass('wrapper')
+        curEl.after(wrapped)
 
 
 class ItemView extends Backbone.View
@@ -330,7 +401,8 @@ class ItemView extends Backbone.View
     clickLink: (e) ->
         e.preventDefault()
         window.app.frameGo(@model.get('url'))
-        @groupView.close()
+        @groupView.setCurItemView(@)
+        @groupView.closed()
         
 
 class Router extends Backbone.Router

@@ -11,6 +11,10 @@ body {
     color:  #0000FF;
 }
 
+.clear {
+    clear: both;
+}
+
 .link:hover {
     cursor: pointer; 
 }
@@ -156,12 +160,16 @@ html.show_other, body.show_other {
 #table_of_contents .tab:hover {
     cursor: pointer;
 }
+
+#table_of_contents .groupview .title_bar {
+    padding: 5px 8px;
+}
+
 #table_of_contents .groupview .group_name {
+    display: inline;
+    color: white;
     font-size: 1.4em;
     cursor: pointer;
-    /*text-transform: uppercase;*/
-    padding-bottom: 5px;
-    border-bottom: 1px solid #888;
 }
 
 #table_of_contents ul {
@@ -206,3 +214,9 @@ html.show_other, body.show_other {
     font-size: .8em;
     color: #555;
 }
+
+/*
+#table_of_contents .single .not_current {
+    display: none;
+}
+*/
