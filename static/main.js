@@ -461,116 +461,131 @@
     };
 
     GroupView.prototype.render = function() {
+      var tab;
       var _this = this;
       $(this.el).html(ich.tpl_groupview(this.model.toJSON()));
-      return this.model.itemSet.each(function(item) {
+      this.model.itemSet.each(function(item) {
         var itemView;
-        itemView = new ItemView({
-          model: item,
-          groupView: _this
-        });
-        return _this.$('#items').append(itemView.el);
+        if (!item.isBlank()) {
+          itemView = new ItemView({
+            model: item,
+            groupView: _this
+          });
+          return _this.$('#items').append(itemView.el);
+        }
       });
+      tab = this.$('.tab');
+      return this.$('.groupview').css('left', tab.offset().left + 55);
     };
 
     GroupView.prototype.events = {
       'click .closed .tab': 'full',
-      'mouseover .closed .tab': 'single',
-      'click .single .tab': 'closed',
-      'mouseleave .single': 'closed',
-      'click .single .title_bar': 'full',
-      'click .full .title_bar': 'single',
+      'click .single .tab': 'full',
+      'mouseenter .closed .tab': 'single',
+      'mouseleave .single .tab': 'closed',
       'click .full .tab': 'closed'
     };
 
     GroupView.prototype.setState = function(state) {
       this.state = state;
-      this.$('.groupview').removeClass('closed single full');
-      return this.$('.groupview').addClass(state);
+      $(this.el).removeClass('closed single full');
+      return $(this.el).addClass(state);
     };
 
     GroupView.prototype.single = function() {
       var _this = this;
+      console.log('single called');
       if (!this.curItemView || this.state === 'single') return;
       this.delegateEvents(null);
       if (this.state === 'closed') {
-        return $(this.el).animate({
+        this.$('.groupview').animate({
           top: 0
         }, {
           complete: function() {
-            _this.setState('single');
             return _this.delegateEvents(_this.events);
           }
         });
       } else if (this.state === 'full') {
-        return this.$('.wrapper').slideUp({
+        this.$('.wrapper').slideUp({
           complete: function() {
-            _this.setState('single');
             return _this.delegateEvents(_this.events);
           }
         });
       }
+      return this.setState('single');
     };
 
     GroupView.prototype.closed = function() {
       var el;
       var _this = this;
-      el = $(this.el);
+      el = this.$('.groupview');
       this.delegateEvents(null);
+      $('.group_name').hide();
       return el.animate({
-        top: (-$(this.el).height() + 30) + 'px'
+        top: -el.height() + 'px'
       }, {
         complete: function() {
           _this.setState('closed');
           el.find('.wrapper').hide();
-          el.css('top', (-el.height() + 30) + 'px');
+          el.css('top', -el.height() + 'px');
           return _this.delegateEvents(_this.events);
         }
       });
     };
 
     GroupView.prototype.full = function() {
+      var width, wrappers;
       var _this = this;
       this.delegateEvents(null);
       if (this.state === 'closed') {
-        return $(this.el).animate({
+        this.$('.groupview').animate({
           top: 0
         }, {
           complete: function() {
-            _this.setState('full');
-            return _this.delegateEvents(_this.events);
-          }
-        });
-      } else if (this.state === 'single') {
-        return $('.wrapper').slideDown({
-          complete: function() {
-            _this.setState('full');
             return _this.delegateEvents(_this.events);
           }
         });
       }
+      this.setState('full');
+      $('.group_name').show();
+      wrappers = $('.wrapper');
+      wrappers.show();
+      width = Math.max($(this.curItemView.el).width(), $(wrappers[0]).width(), $(wrappers[1]).width());
+      wrappers.hide();
+      $('.item_view').css('width', width + 'px');
+      return $('.wrapper').slideDown();
     };
 
     GroupView.prototype.setCurItemView = function(itemView) {
-      var after, before, curEl, wrapped, wrapper;
+      var after, before, curEl, item, wrapped, wrapper, _i, _len, _ref;
+      if (this.curItemView) {
+        curEl = $(this.curItemView.el);
+        wrapper = curEl.prev();
+        if (wrapper.hasClass('wrapper')) {
+          wrapper.detach();
+          curEl.before(wrapper.children('div').detach());
+        }
+        wrapper = curEl.next();
+        if (wrapper.hasClass('wrapper')) {
+          wrapper.detach();
+          curEl.after(wrapper.children('div').detach());
+        }
+      }
+      _ref = $('#items').children();
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        item = _ref[_i];
+        $(item).removeClass('selected');
+      }
+      $(itemView.el).addClass('selected');
       this.curItemView = itemView;
-      curEl = $(itemView.el);
-      wrapper = curEl.prev();
-      if (wrapper.hasClass('wrapper')) {
-        wrapper.detach();
-        curEl.before(wrapper.find('li').detach());
-      }
-      wrapper = curEl.next();
-      if (wrapper.hasClass('wrapper')) {
-        wrapper.detach();
-        curEl.after(wrapper.find('li').detach());
-      }
+      curEl = $(this.curItemView.el);
       before = curEl.prevAll().detach();
-      wrapped = $('<li />').append($('<ul />').append(before));
+      before = $(before.get().reverse());
+      wrapped = $('<div />').append(before);
       wrapped.addClass('wrapper');
       curEl.before(wrapped);
       after = curEl.nextAll().detach();
-      wrapped = $('<li />').append($('<ul />').append(after));
+      wrapped = $('<div />').append(after);
       wrapped.addClass('wrapper');
       return curEl.after(wrapped);
     };
@@ -587,7 +602,9 @@
       ItemView.__super__.constructor.apply(this, arguments);
     }
 
-    ItemView.prototype.tagName = 'li';
+    ItemView.prototype.tagName = 'div';
+
+    ItemView.prototype.className = 'item_view';
 
     ItemView.prototype.initialize = function(options) {
       this.groupView = options.groupView;

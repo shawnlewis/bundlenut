@@ -111,9 +111,13 @@ html.show_other, body.show_other {
     width: 100%;
 }
 
-#table_of_contents {
-    position:absolute;
+#table_of_contents .tab {
+    position: absolute;
     left: 40px;
+}
+
+#table_of_contents .groupview {
+    position:absolute;
     max-width: 40%;
 }
 
@@ -124,21 +128,11 @@ html.show_other, body.show_other {
 */
 
 #table_of_contents .pane {
-    padding: 5px;
-    background: rgb(171, 217, 74);
-    border-width: 0 1px 1px 1px;
-    border-style: solid;
-    border-color: gray;
-    border-radius: 0 0 8px 0;
-    box-shadow: 1px 1px 2px #888;
-}
-
-#table_of_contents .links {
     background: rgb(250, 250, 250);
-    padding: 1em;
-    border-radius: 3px;
-    border: 1px solid #888;
-    box-shadow: inset 1px 1px 2px 0px #888;
+    padding: 10px 30px 15px 30px;
+    border-radius: 0 0 8px 8px;
+    border: 1px solid #888; /*rgb(171, 217, 74);*/
+    box-shadow: 1px 1px 2px 0px #888;
 }
 
 #table_of_contents .tab {
@@ -166,42 +160,41 @@ html.show_other, body.show_other {
 }
 
 #table_of_contents .groupview .group_name {
-    display: inline;
-    color: white;
+    margin-bottom: 10px;
     font-size: 1.4em;
     cursor: pointer;
 }
 
-#table_of_contents ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-}
-
-#table_of_contents li {
-    padding: 8px;
-    padding-left: 0px;
+#table_of_contents .item_view {
+    padding: 8px 0;
     cursor: pointer;
 }
 
-/*
-#table_of_contents li:hover {
-    padding-left: 7px;
-    border-left: 1px solid rgb(70, 121, 179);
-}
-*/
-
 #table_of_contents a {
     /*color: #222;*/
-    display: block;
-    padding-left: 8px;
-    color: rgb(70, 121, 179);
+    color: green;
     text-decoration: none;
 }
 
-#table_of_contents li:hover a {
+#table_of_contents .comment {
+    display: inline;
+}
+
+#table_of_contents.single .item_view {
+    padding: 0;
+}
+
+#table_of_contents.full .item_view.selected {
+    border-top: 2px solid rgb(171, 217, 74);
+    border-bottom: 2px solid rgb(171, 217, 74);
+}
+
+#table_of_contents .item_view:hover a {
+    text-decoration: underline;
+    /*
     padding-left: 6px;
     border-left: 2px solid rgb(70, 121, 179);
+    */
 }
 
 #table_of_contents a:visited {
@@ -212,11 +205,5 @@ html.show_other, body.show_other {
     margin: 3px 0 3px 0;
     padding-left: 8px;
     font-size: .8em;
-    color: #555;
+    color: #777;
 }
-
-/*
-#table_of_contents .single .not_current {
-    display: none;
-}
-*/

@@ -53,26 +53,21 @@
 <script id="tpl_groupview" type="text/html">
 <div class="groupview">
     <div class="pane">
-        <div class="title_bar">
-            <input type="submit" value="+" />
+        <div id="items">
             <div class="group_name">{{ name }}</div>
         </div>
-        <div class="links">
-            <ul id="items">
-            </ul>
-        </div>
-    </div>
-    <div class="tab">
-        Lasso 'Em
     </div>
     <div class="clear"></div>
+</div>
+<div class="tab">
+    LLLL
 </div>
 </script>
 
 <script id="tpl_itemview" type="text/html">
     <div class="title">
         <a href="{{ url }}">{{ title }}</a>
-        <p class="comment">{{ comment }}</p>
+        <div class="comment">{{ comment }}</div>
     </div>
 </script>
 

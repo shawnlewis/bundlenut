@@ -287,105 +287,113 @@ class GroupView extends Backbone.View
     render: ->
         $(@el).html ich.tpl_groupview(@model.toJSON())
         @model.itemSet.each (item) =>
-            itemView = new ItemView
-                model: item
-                groupView: @
-            @$('#items').append(itemView.el)
+            if not item.isBlank()
+                itemView = new ItemView
+                    model: item
+                    groupView: @
+                @$('#items').append(itemView.el)
+        tab = @$('.tab')
+        @$('.groupview').css('left', (tab.offset().left + 55))
 
     events:
         'click .closed .tab': 'full'
-        'mouseover .closed .tab': 'single'
-
-        'click .single .tab': 'closed'
-        'mouseleave .single': 'closed'
-        'click .single .title_bar': 'full'
-
-        'click .full .title_bar': 'single'
+        'click .single .tab': 'full'
+        'mouseenter .closed .tab': 'single'
+        'mouseleave .single .tab': 'closed'
         'click .full .tab': 'closed'
 
     setState: (state) ->
         @state = state
-        @$('.groupview').removeClass('closed single full')
-        @$('.groupview').addClass(state)
+        $(@el).removeClass('closed single full')
+        $(@el).addClass(state)
 
     single: ->
+        console.log('single called')
         if not @curItemView or @state == 'single'
             return
 
         @delegateEvents(null)
         if @state == 'closed'
-            $(@el).animate({top: 0},
+            @$('.groupview').animate({top: 0},
                 complete: =>
-                    @setState('single')
                     @delegateEvents(@events)
             )
         else if @state == 'full'
             @$('.wrapper').slideUp
                 complete: =>
-                    @setState('single')
                     @delegateEvents(@events)
+        @setState('single')
 
     closed: ->
-        el = $(@el)
+        el = @$('.groupview')
         @delegateEvents(null)
-        el.animate({top: (-$(@el).height() + 30) + 'px'},
+        $('.group_name').hide()
+        el.animate({top: -el.height() + 'px'},
             complete: =>
                 @setState('closed')
-                #el.css('bottom', '-30px')
-                #el.css('top', null)
                 el.find('.wrapper').hide()
-                #el.css('bottom', null)
-                el.css('top', (-el.height() + 30) + 'px')
+                el.css('top', -el.height() + 'px')
                 @delegateEvents(@events)
         )
 
     full: ->
         @delegateEvents(null)
+
         if @state == 'closed'
-            $(@el).animate({top: 0},
+            @$('.groupview').animate({top: 0},
                 complete: =>
-                    @setState('full')
                     @delegateEvents(@events)
             )
-        else if @state == 'single'
-            $('.wrapper').slideDown
-                complete: =>
-                    @setState('full')
-                    @delegateEvents(@events)
+
+        @setState('full')
+        
+        $('.group_name').show()
+        wrappers = $('.wrapper')
+        wrappers.show()
+        width = Math.max($(@curItemView.el).width(), $(wrappers[0]).width(), $(wrappers[1]).width())
+        wrappers.hide()
+        $('.item_view').css('width', width + 'px')
+        $('.wrapper').slideDown()
+            
 
     setCurItemView: (itemView) ->
-        @curItemView = itemView
-        curEl = $(itemView.el)
-
         # remove wrappers
-        wrapper = curEl.prev()
-        if wrapper.hasClass('wrapper')
-            wrapper.detach()
-            curEl.before(wrapper.find('li').detach())
+        if @curItemView
+            curEl = $(@curItemView.el)
 
-        wrapper = curEl.next()
-        if wrapper.hasClass('wrapper')
-            wrapper.detach()
-            curEl.after(wrapper.find('li').detach())
+            wrapper = curEl.prev()
+            if wrapper.hasClass('wrapper')
+                wrapper.detach()
+                curEl.before(wrapper.children('div').detach())
 
-        # add new ones
+            wrapper = curEl.next()
+            if wrapper.hasClass('wrapper')
+                wrapper.detach()
+                curEl.after(wrapper.children('div').detach())
+
+        # do stuff without any wrappers
+        for item in $('#items').children()
+            $(item).removeClass('selected')
+        $(itemView.el).addClass('selected')
+        @curItemView = itemView
+        curEl = $(@curItemView.el)
+
+        # add new wrappers
         before = curEl.prevAll().detach()
-        wrapped = $('<li />')
-            .append($('<ul />')
-                .append(before))
+        before = $(before.get().reverse())
+        wrapped = $('<div />').append(before)
         wrapped.addClass('wrapper')
         curEl.before(wrapped)
 
         after = curEl.nextAll().detach()
-        wrapped = $('<li />')
-            .append($('<ul />')
-                .append(after))
+        wrapped = $('<div />').append(after)
         wrapped.addClass('wrapper')
         curEl.after(wrapped)
 
 
 class ItemView extends Backbone.View
-    tagName: 'li'
+    tagName: 'div'
+    className: 'item_view'
 
     initialize: (options) ->
         @groupView = options.groupView
