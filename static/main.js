@@ -460,7 +460,7 @@
     };
 
     GroupView.prototype.render = function() {
-      var context, html, i, tab;
+      var context, html, i, tab, width, wrappers;
       var _this = this;
       context = this.model.toJSON();
       html = ich.tpl_groupview(context);
@@ -494,7 +494,15 @@
         this.$('#right_arrow').addClass('arrow_on');
       }
       tab = this.$('.tab');
-      return this.$('.groupview').css('left', tab.offset().left + 55);
+      this.$('.groupview').css('left', tab.offset().left + 55);
+      wrappers = $('.wrapper');
+      wrappers.show();
+      width = Math.max($(wrappers[0]).width(), $(wrappers[1]).width());
+      if (this.curItemView()) {
+        width = Math.max($(this.curItemView().el).width(), width);
+      }
+      if (this.state === 'closed' || this.state === 'single') wrappers.hide();
+      return $('.item_view').css('width', width + 'px');
     };
 
     GroupView.prototype.events = {
@@ -554,7 +562,6 @@
     };
 
     GroupView.prototype.full = function() {
-      var width, wrappers;
       var _this = this;
       this.delegateEvents(null);
       if (this.state === 'closed') {
@@ -568,14 +575,6 @@
       }
       this.setState('full');
       $('.group_name').show();
-      wrappers = $('.wrapper');
-      wrappers.show();
-      width = Math.max($(wrappers[0]).width(), $(wrappers[1]).width());
-      if (this.curItemView()) {
-        width = Math.max($(this.curItemView().el).width(), width);
-      }
-      wrappers.hide();
-      $('.item_view').css('width', width + 'px');
       return $('.wrapper').slideDown();
     };
 
@@ -627,8 +626,8 @@
     };
 
     ItemView.prototype.events = {
-      'click a': 'clickLink',
-      'click .comment': 'clickLink'
+      'click': 'clickLink',
+      'click': 'clickLink'
     };
 
     ItemView.prototype.clickLink = function(e) {

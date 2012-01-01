@@ -174,7 +174,7 @@ html.show_other, body.show_other {
 }
 
 #table_of_contents .item_view {
-    padding: 8px 0;
+    padding: 5px 0;
     cursor: pointer;
 }
 
@@ -193,7 +193,7 @@ html.show_other, body.show_other {
 }
 
 #table_of_contents.full .item_view.selected {
-    padding: 6px 0;
+    padding: 3px 0;
     border-top: 2px solid rgb(171, 217, 74);
     border-bottom: 2px solid rgb(171, 217, 74);
 }

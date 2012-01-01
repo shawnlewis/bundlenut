@@ -310,8 +310,20 @@ class GroupView extends Backbone.View
             @$('#left_arrow').addClass('arrow_on')
         if @curItemNum != -1 and @curItemNum < @itemViews.length - 1
             @$('#right_arrow').addClass('arrow_on')
+
+        # place pane
         tab = @$('.tab')
         @$('.groupview').css('left', (tab.offset().left + 55))
+
+        # fix sizes so animations work correctly
+        wrappers = $('.wrapper')
+        wrappers.show()
+        width = Math.max($(wrappers[0]).width(), $(wrappers[1]).width())
+        if @curItemView()
+            width = Math.max($(@curItemView().el).width(), width)
+        if @state == 'closed' or @state == 'single'
+            wrappers.hide()
+        $('.item_view').css('width', width + 'px')
 
     events:
         'click .closed .tab #logo': 'full'
@@ -369,13 +381,6 @@ class GroupView extends Backbone.View
         @setState('full')
         
         $('.group_name').show()
-        wrappers = $('.wrapper')
-        wrappers.show()
-        width = Math.max($(wrappers[0]).width(), $(wrappers[1]).width())
-        if @curItemView()
-            width = Math.max($(@curItemView().el).width(), width)
-        wrappers.hide()
-        $('.item_view').css('width', width + 'px')
         $('.wrapper').slideDown()
         # TODO: remove widths when slideDown is over
 
@@ -406,8 +411,8 @@ class ItemView extends Backbone.View
         $(@el).html(ich.tpl_itemview(@model.toJSON()))
 
     events:
-        'click a': 'clickLink'
-        'click .comment': 'clickLink'
+        'click': 'clickLink'
+        'click': 'clickLink'
 
     clickLink: (e) ->
         e.preventDefault()
