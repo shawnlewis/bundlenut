@@ -279,19 +279,31 @@ class EditableField extends Backbone.View
 
 class GroupView extends Backbone.View
     initialize: (options) ->
-        @currentItemView = null
+        @curItemNum = -1
         @render()
         @state = 'closed'
         @full()
 
     render: ->
-        $(@el).html ich.tpl_groupview(@model.toJSON())
+        html = ich.tpl_groupview(@model.toJSON())
+        @itemViews = []
+        i = 0
         @model.itemSet.each (item) =>
             if not item.isBlank()
                 itemView = new ItemView
                     model: item
                     groupView: @
-                @$('#items').append(itemView.el)
+                    num: i
+                @itemViews.push(itemView)
+                if i < @curItemNum
+                    $(html).find('#beforeCurrent').append(itemView.el)
+                else if i == @curItemNum
+                    $(html).find('#current').replaceWith(
+                        $(itemView.el).addClass('selected'))
+                else
+                    $(html).find('#afterCurrent').append(itemView.el)
+                i += 1
+        $(@el).html(html)
         tab = @$('.tab')
         @$('.groupview').css('left', (tab.offset().left + 55))
 
@@ -309,7 +321,7 @@ class GroupView extends Backbone.View
 
     single: ->
         console.log('single called')
-        if not @curItemView or @state == 'single'
+        if not @curItemView() or @state == 'single'
             return
 
         @delegateEvents(null)
@@ -348,47 +360,21 @@ class GroupView extends Backbone.View
         @setState('full')
         
         $('.group_name').show()
-        wrappers = $('.wrapper')
-        wrappers.show()
-        width = Math.max($(@curItemView.el).width(), $(wrappers[0]).width(), $(wrappers[1]).width())
-        wrappers.hide()
+        if @curItemView()
+            wrappers = $('.wrapper')
+            wrappers.show()
+            width = Math.max($(@curItemView().el).width(), $(wrappers[0]).width(), $(wrappers[1]).width())
+            wrappers.hide()
         $('.item_view').css('width', width + 'px')
         $('.wrapper').slideDown()
-            
+        # TODO: remove widths when slideDown is over
 
-    setCurItemView: (itemView) ->
-        # remove wrappers
-        if @curItemView
-            curEl = $(@curItemView.el)
+    selectItem: (num) ->
+        @curItemNum = num
+        @render()
 
-            wrapper = curEl.prev()
-            if wrapper.hasClass('wrapper')
-                wrapper.detach()
-                curEl.before(wrapper.children('div').detach())
-
-            wrapper = curEl.next()
-            if wrapper.hasClass('wrapper')
-                wrapper.detach()
-                curEl.after(wrapper.children('div').detach())
-
-        # do stuff without any wrappers
-        for item in $('#items').children()
-            $(item).removeClass('selected')
-        $(itemView.el).addClass('selected')
-        @curItemView = itemView
-        curEl = $(@curItemView.el)
-
-        # add new wrappers
-        before = curEl.prevAll().detach()
-        before = $(before.get().reverse())
-        wrapped = $('<div />').append(before)
-        wrapped.addClass('wrapper')
-        curEl.before(wrapped)
-
-        after = curEl.nextAll().detach()
-        wrapped = $('<div />').append(after)
-        wrapped.addClass('wrapper')
-        curEl.after(wrapped)
+    curItemView: ->
+        if @curItemNum == -1 then null else @itemViews[@curItemNum]
 
 
 class ItemView extends Backbone.View
@@ -396,6 +382,7 @@ class ItemView extends Backbone.View
     className: 'item_view'
 
     initialize: (options) ->
+        @num = options.num
         @groupView = options.groupView
         @render()
 
@@ -409,7 +396,7 @@ class ItemView extends Backbone.View
     clickLink: (e) ->
         e.preventDefault()
         window.app.frameGo(@model.get('url'))
-        @groupView.setCurItemView(@)
+        @groupView.selectItem(@num)
         @groupView.closed()
         
 

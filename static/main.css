@@ -137,7 +137,7 @@ html.show_other, body.show_other {
 
 #table_of_contents .tab {
     float: left;
-    padding: 5px 17px;
+    padding: 5px 7px;
     top: -1px;
     position: relative;
     z-index: 102;

@@ -454,26 +454,38 @@
     }
 
     GroupView.prototype.initialize = function(options) {
-      this.currentItemView = null;
+      this.curItemNum = -1;
       this.render();
       this.state = 'closed';
       return this.full();
     };
 
     GroupView.prototype.render = function() {
-      var tab;
+      var html, i, tab;
       var _this = this;
-      $(this.el).html(ich.tpl_groupview(this.model.toJSON()));
+      html = ich.tpl_groupview(this.model.toJSON());
+      this.itemViews = [];
+      i = 0;
       this.model.itemSet.each(function(item) {
         var itemView;
         if (!item.isBlank()) {
           itemView = new ItemView({
             model: item,
-            groupView: _this
+            groupView: _this,
+            num: i
           });
-          return _this.$('#items').append(itemView.el);
+          _this.itemViews.push(itemView);
+          if (i < _this.curItemNum) {
+            $(html).find('#beforeCurrent').append(itemView.el);
+          } else if (i === _this.curItemNum) {
+            $(html).find('#current').replaceWith($(itemView.el).addClass('selected'));
+          } else {
+            $(html).find('#afterCurrent').append(itemView.el);
+          }
+          return i += 1;
         }
       });
+      $(this.el).html(html);
       tab = this.$('.tab');
       return this.$('.groupview').css('left', tab.offset().left + 55);
     };
@@ -495,7 +507,7 @@
     GroupView.prototype.single = function() {
       var _this = this;
       console.log('single called');
-      if (!this.curItemView || this.state === 'single') return;
+      if (!this.curItemView() || this.state === 'single') return;
       this.delegateEvents(null);
       if (this.state === 'closed') {
         this.$('.groupview').animate({
@@ -548,46 +560,27 @@
       }
       this.setState('full');
       $('.group_name').show();
-      wrappers = $('.wrapper');
-      wrappers.show();
-      width = Math.max($(this.curItemView.el).width(), $(wrappers[0]).width(), $(wrappers[1]).width());
-      wrappers.hide();
+      if (this.curItemView()) {
+        wrappers = $('.wrapper');
+        wrappers.show();
+        width = Math.max($(this.curItemView().el).width(), $(wrappers[0]).width(), $(wrappers[1]).width());
+        wrappers.hide();
+      }
       $('.item_view').css('width', width + 'px');
       return $('.wrapper').slideDown();
     };
 
-    GroupView.prototype.setCurItemView = function(itemView) {
-      var after, before, curEl, item, wrapped, wrapper, _i, _len, _ref;
-      if (this.curItemView) {
-        curEl = $(this.curItemView.el);
-        wrapper = curEl.prev();
-        if (wrapper.hasClass('wrapper')) {
-          wrapper.detach();
-          curEl.before(wrapper.children('div').detach());
-        }
-        wrapper = curEl.next();
-        if (wrapper.hasClass('wrapper')) {
-          wrapper.detach();
-          curEl.after(wrapper.children('div').detach());
-        }
+    GroupView.prototype.selectItem = function(num) {
+      this.curItemNum = num;
+      return this.render();
+    };
+
+    GroupView.prototype.curItemView = function() {
+      if (this.curItemNum === -1) {
+        return null;
+      } else {
+        return this.itemViews[this.curItemNum];
       }
-      _ref = $('#items').children();
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        item = _ref[_i];
-        $(item).removeClass('selected');
-      }
-      $(itemView.el).addClass('selected');
-      this.curItemView = itemView;
-      curEl = $(this.curItemView.el);
-      before = curEl.prevAll().detach();
-      before = $(before.get().reverse());
-      wrapped = $('<div />').append(before);
-      wrapped.addClass('wrapper');
-      curEl.before(wrapped);
-      after = curEl.nextAll().detach();
-      wrapped = $('<div />').append(after);
-      wrapped.addClass('wrapper');
-      return curEl.after(wrapped);
     };
 
     return GroupView;
@@ -607,6 +600,7 @@
     ItemView.prototype.className = 'item_view';
 
     ItemView.prototype.initialize = function(options) {
+      this.num = options.num;
       this.groupView = options.groupView;
       return this.render();
     };
@@ -623,7 +617,7 @@
     ItemView.prototype.clickLink = function(e) {
       e.preventDefault();
       window.app.frameGo(this.model.get('url'));
-      this.groupView.setCurItemView(this);
+      this.groupView.selectItem(this.num);
       return this.groupView.closed();
     };
 
