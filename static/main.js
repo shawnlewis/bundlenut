@@ -455,15 +455,18 @@
 
     GroupView.prototype.initialize = function(options) {
       this.curItemNum = -1;
-      this.render();
-      this.state = 'closed';
-      return this.full();
+      this.state = 'full';
+      return this.render();
     };
 
     GroupView.prototype.render = function() {
-      var html, i, tab;
+      var context, html, i, tab;
       var _this = this;
-      html = ich.tpl_groupview(this.model.toJSON());
+      context = this.model.toJSON();
+      html = ich.tpl_groupview(context);
+      if (this.state === 'closed' || this.state === 'single') {
+        $(html).find('.wrapper').hide();
+      }
       this.itemViews = [];
       i = 0;
       this.model.itemSet.each(function(item) {
@@ -486,16 +489,22 @@
         }
       });
       $(this.el).html(html);
+      if (this.curItemNum > 0) this.$('#left_arrow').addClass('arrow_on');
+      if (this.curItemNum !== -1 && this.curItemNum < this.itemViews.length - 1) {
+        this.$('#right_arrow').addClass('arrow_on');
+      }
       tab = this.$('.tab');
       return this.$('.groupview').css('left', tab.offset().left + 55);
     };
 
     GroupView.prototype.events = {
-      'click .closed .tab': 'full',
-      'click .single .tab': 'full',
+      'click .closed .tab #logo': 'full',
+      'click .single .tab #logo': 'full',
+      'click .full .tab #logo': 'closed',
       'mouseenter .closed .tab': 'single',
       'mouseleave .single .tab': 'closed',
-      'click .full .tab': 'closed'
+      'click .tab #left_arrow.arrow_on': 'prevItem',
+      'click .tab #right_arrow.arrow_on': 'nextItem'
     };
 
     GroupView.prototype.setState = function(state) {
@@ -506,7 +515,6 @@
 
     GroupView.prototype.single = function() {
       var _this = this;
-      console.log('single called');
       if (!this.curItemView() || this.state === 'single') return;
       this.delegateEvents(null);
       if (this.state === 'closed') {
@@ -560,19 +568,15 @@
       }
       this.setState('full');
       $('.group_name').show();
+      wrappers = $('.wrapper');
+      wrappers.show();
+      width = Math.max($(wrappers[0]).width(), $(wrappers[1]).width());
       if (this.curItemView()) {
-        wrappers = $('.wrapper');
-        wrappers.show();
-        width = Math.max($(this.curItemView().el).width(), $(wrappers[0]).width(), $(wrappers[1]).width());
-        wrappers.hide();
+        width = Math.max($(this.curItemView().el).width(), width);
       }
+      wrappers.hide();
       $('.item_view').css('width', width + 'px');
       return $('.wrapper').slideDown();
-    };
-
-    GroupView.prototype.selectItem = function(num) {
-      this.curItemNum = num;
-      return this.render();
     };
 
     GroupView.prototype.curItemView = function() {
@@ -581,6 +585,19 @@
       } else {
         return this.itemViews[this.curItemNum];
       }
+    };
+
+    GroupView.prototype.selectItem = function(num) {
+      this.curItemNum = num;
+      return this.render();
+    };
+
+    GroupView.prototype.nextItem = function() {
+      return this.itemViews[this.curItemNum + 1].go();
+    };
+
+    GroupView.prototype.prevItem = function() {
+      return this.itemViews[this.curItemNum - 1].go();
     };
 
     return GroupView;
@@ -616,9 +633,13 @@
 
     ItemView.prototype.clickLink = function(e) {
       e.preventDefault();
-      window.app.frameGo(this.model.get('url'));
-      this.groupView.selectItem(this.num);
+      this.go();
       return this.groupView.closed();
+    };
+
+    ItemView.prototype.go = function() {
+      window.app.frameGo(this.model.get('url'));
+      return this.groupView.selectItem(this.num);
     };
 
     return ItemView;

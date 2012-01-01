@@ -54,8 +54,9 @@
 <div class="groupview">
     <div class="pane">
         <div id="items">
-            <div class="group_name">{{ name }}</div>
-            <div id="beforeCurrent" class="wrapper"></div>
+            <div id="beforeCurrent" class="wrapper">
+                <div class="group_name">{{ name }}</div>
+            </div>
             <div id="current"></div>
             <div id="afterCurrent" class="wrapper"></div>
         </div>
@@ -63,9 +64,11 @@
     <div class="clear"></div>
 </div>
 <div class="tab">
-    <img class="left_arrow" src="/static/img/left_arrow.png">
-    LL
-    <img class="right_arrow" src="/static/img/right_arrow.png">
+    <!--<img id="left_arrow" src="/static/img/left_arrow.png">-->
+    <span id="left_arrow" class="arrow">&lt;-</span>
+    <span id="logo">LL</span>
+    <span id="right_arrow" class="arrow">-&gt;</span>
+    <!--<img id="right_arrow" src="/static/img/right_arrow.png">-->
 </div>
 </script>
 

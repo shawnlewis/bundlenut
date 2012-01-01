@@ -155,6 +155,14 @@ html.show_other, body.show_other {
     cursor: pointer;
 }
 
+#table_of_contents .arrow {
+    visibility: hidden;
+}
+
+#table_of_contents .arrow.arrow_on {
+    visibility: visible;
+}
+
 #table_of_contents .groupview .title_bar {
     padding: 5px 8px;
 }
@@ -185,6 +193,7 @@ html.show_other, body.show_other {
 }
 
 #table_of_contents.full .item_view.selected {
+    padding: 6px 0;
     border-top: 2px solid rgb(171, 217, 74);
     border-bottom: 2px solid rgb(171, 217, 74);
 }
