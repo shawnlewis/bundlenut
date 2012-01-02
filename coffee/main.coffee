@@ -306,6 +306,7 @@ class GroupView extends Backbone.View
                     $(html).find('#afterCurrent').append(itemView.el)
                 i += 1
         $(@el).html(html)
+
         if @curItemNum > 0
             @$('#left_arrow').addClass('arrow_on')
         if @curItemNum != -1 and @curItemNum < @itemViews.length - 1
@@ -345,16 +346,20 @@ class GroupView extends Backbone.View
         if not @curItemView() or @state == 'single'
             return
 
+        @$('.pane').data().jsp.destroy()
+
         @delegateEvents(null)
         if @state == 'closed'
             @$('.groupview').animate({top: 0},
                 complete: =>
                     @delegateEvents(@events)
+                    @$('.pane').jScrollPane()
             )
         else if @state == 'full'
             @$('.wrapper').slideUp
                 complete: =>
                     @delegateEvents(@events)
+                    @$('.pane').jScrollPane()
         @setState('single')
 
     closed: ->
@@ -381,8 +386,8 @@ class GroupView extends Backbone.View
         @setState('full')
         
         $('.group_name').show()
-        $('.wrapper').slideDown()
-        # TODO: remove widths when slideDown is over
+        @$('.pane').data().jsp.destroy()
+        $('.wrapper').slideDown(400, => @$('.pane').jScrollPane())
 
     curItemView: ->
         if @curItemNum == -1 then null else @itemViews[@curItemNum]
@@ -452,6 +457,7 @@ class App extends Backbone.Router
         @homeContentEl = $('#content')
         @tocEl = $('#table_of_contents')
         @otherPageEl = $('#other_page')
+        @otherPageEl.load(->$('#loading').addClass('hide'))
 
     index: ->
         console.log('here')
@@ -488,6 +494,7 @@ class App extends Backbone.Router
         @otherPageEl.removeClass('hide')
 
     frameGo: (url) ->
+        $('#loading').removeClass('hide')
         @otherPageEl[0].src = url
 
     

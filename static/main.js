@@ -489,6 +489,7 @@
         }
       });
       $(this.el).html(html);
+      $(html).find('.pane').jScrollPane();
       if (this.curItemNum > 0) this.$('#left_arrow').addClass('arrow_on');
       if (this.curItemNum !== -1 && this.curItemNum < this.itemViews.length - 1) {
         this.$('#right_arrow').addClass('arrow_on');
@@ -524,19 +525,22 @@
     GroupView.prototype.single = function() {
       var _this = this;
       if (!this.curItemView() || this.state === 'single') return;
+      this.$('.pane').data().jsp.destroy();
       this.delegateEvents(null);
       if (this.state === 'closed') {
         this.$('.groupview').animate({
           top: 0
         }, {
           complete: function() {
-            return _this.delegateEvents(_this.events);
+            _this.delegateEvents(_this.events);
+            return _this.$('.pane').jScrollPane();
           }
         });
       } else if (this.state === 'full') {
         this.$('.wrapper').slideUp({
           complete: function() {
-            return _this.delegateEvents(_this.events);
+            _this.delegateEvents(_this.events);
+            return _this.$('.pane').jScrollPane();
           }
         });
       }
@@ -575,7 +579,10 @@
       }
       this.setState('full');
       $('.group_name').show();
-      return $('.wrapper').slideDown();
+      this.$('.pane').data().jsp.destroy();
+      return $('.wrapper').slideDown(400, function() {
+        return _this.$('.pane').jScrollPane();
+      });
     };
 
     GroupView.prototype.curItemView = function() {
@@ -706,7 +713,10 @@
       this.homeEl = $('#home');
       this.homeContentEl = $('#content');
       this.tocEl = $('#table_of_contents');
-      return this.otherPageEl = $('#other_page');
+      this.otherPageEl = $('#other_page');
+      return this.otherPageEl.load(function() {
+        return $('#loading').addClass('hide');
+      });
     };
 
     App.prototype.index = function() {
@@ -753,6 +763,7 @@
     };
 
     App.prototype.frameGo = function(url) {
+      $('#loading').removeClass('hide');
       return this.otherPageEl[0].src = url;
     };
 
