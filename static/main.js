@@ -489,7 +489,6 @@
         }
       });
       $(this.el).html(html);
-      $(html).find('.pane').jScrollPane();
       if (this.curItemNum > 0) this.$('#left_arrow').addClass('arrow_on');
       if (this.curItemNum !== -1 && this.curItemNum < this.itemViews.length - 1) {
         this.$('#right_arrow').addClass('arrow_on');
@@ -503,7 +502,8 @@
         width = Math.max($(this.curItemView().el).width(), width);
       }
       if (this.state === 'closed' || this.state === 'single') wrappers.hide();
-      return $('.item_view').css('width', width + 'px');
+      $('.item_view').css('width', width + 'px');
+      return $(html).find('.pane').jScrollPane();
     };
 
     GroupView.prototype.events = {

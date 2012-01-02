@@ -326,6 +326,8 @@ class GroupView extends Backbone.View
             wrappers.hide()
         $('.item_view').css('width', width + 'px')
 
+        $(html).find('.pane').jScrollPane()
+
     events:
         'click .closed .tab #logo': 'full'
         'click .single .tab #logo': 'full'
