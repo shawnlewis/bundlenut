@@ -19,6 +19,14 @@ DEBUG = False
 def get_file(rel_path):
     return os.path.join(os.path.dirname(__file__), rel_path)
 
+class IndexPage(webapp2.RequestHandler):
+    def get(self):
+        self.response.out.write(template.render(
+            get_file('templates/index.html'),
+            {'debug': DEBUG,
+             'body_class': 'index'
+            }))
+
 class AppPage(webapp2.RequestHandler):
     def get(self):
         self.response.out.write(template.render(
@@ -180,6 +188,7 @@ routes = [
     ('/api/item/(\d+)/(\w+)', APIItem),
     ('/api/rpc/group_edit_check', APIEditCheck),
 
+    ('/', IndexPage),
     ('/.*', AppPage),
     ]
 if DEBUG:

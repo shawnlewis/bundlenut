@@ -1,22 +1,29 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div id="content"></div>
+<div id="content">
+    <div id="index_content">
+        <div id="create_form">
+            <div>
+                Create Bundle
+            </div>
+            <div>
+                <label for="create_group_name">Name:</label>
+                <input id="create_group_name" name="group_name" type="text" />
+                <button name="go"> Go </button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block extrascript %}
 
 {% verbatim %}
 
-<script id="tpl_index" type="text/html"> <div>
-    Create Group:
-    <input id="group_name" type="text" />
-    <input id="create" type="submit" />
-</div> </script>
-
 <script id="tpl_groupedit" type="text/html">
-<div class="groupedit">
-    <span class="group"> Group: {{ name }} </span>
+<div id="groupedit_content">
+    <span class="group_name"> Group: {{ name }} </span>
     <br><br><a href="{{view_link}}">View Link</a><br>
     <table>
         <colgroup class="title">
@@ -51,7 +58,7 @@
 </script>
 
 <script id="tpl_groupview" type="text/html">
-<div class="groupview">
+<div id="groupview_content">
     <div class="pane_top"></div>
     <div class="pane">
         <div id="items">

@@ -127,21 +127,15 @@ class ItemSet extends Backbone.Collection
 
 
 class Index extends Backbone.View
-    initialize: ->
-        @render()
-
-    render: ->
-        $(@el).html ich.tpl_index()
-
     events:
-        'click #create': 'submit'
-        'keydown #group_name': 'submit'
+        'click button[name="go"]': 'submit'
+        'keydown input[name="group_name"]': 'submit'
 
     submit: (e)->
         if e.type == 'keydown' and e.keyCode != 13
             return
         group = new Group
-            name: $('#group_name').val()
+            name: $('input[name="group_name"]').val()
         group.save(
             null,
             success: -> window.app.groupEdit(group)
@@ -314,7 +308,7 @@ class GroupView extends Backbone.View
 
         # place pane
         tab = @$('.tab')
-        @$('.groupview').css('left', (tab.offset().left + 55))
+        @$('#groupview_content').css('left', (tab.offset().left + 55))
 
         # fix sizes so animations work correctly
         wrappers = $('.wrapper')
@@ -352,7 +346,7 @@ class GroupView extends Backbone.View
 
         @delegateEvents(null)
         if @state == 'closed'
-            @$('.groupview').animate({top: 0},
+            @$('#groupview_content').animate({top: 0},
                 complete: =>
                     @delegateEvents(@events)
                     @$('.pane').jScrollPane()
@@ -365,7 +359,7 @@ class GroupView extends Backbone.View
         @setState('single')
 
     closed: ->
-        el = @$('.groupview')
+        el = @$('#groupview_content')
         @delegateEvents(null)
         $('.group_name').hide()
         el.animate({top: -el.height() + 'px'},
@@ -380,7 +374,7 @@ class GroupView extends Backbone.View
         @delegateEvents(null)
 
         if @state == 'closed'
-            @$('.groupview').animate({top: 0},
+            @$('#groupview_content').animate({top: 0},
                 complete: =>
                     @delegateEvents(@events)
             )
@@ -462,12 +456,13 @@ class App extends Backbone.Router
         @otherPageEl.load(->$('#loading').addClass('hide'))
 
     index: ->
-        console.log('here')
+        $('body').removeClass().addClass('index')
         @showHome()
         window.router.navigate('')
         @view = new Index(el: @homeContentEl)
 
     groupEdit: (group) ->
+        $('body').removeClass().addClass('groupedit')
         @showHome()
         window.router.navigate('group_edit/' + group.id + '/' + group.get('edit_hash'))
         @view = new GroupEdit
@@ -475,6 +470,7 @@ class App extends Backbone.Router
             model: group
 
     groupView: (group) ->
+        $('body').removeClass().addClass('groupview')
         @showOther()
         @view = new GroupView
             el: @tocEl
@@ -483,14 +479,12 @@ class App extends Backbone.Router
         
     showHome: ->
         $('html').removeClass('show_other')
-        $('body').removeClass('show_other')
         @homeEl.removeClass('hide')
         @tocEl.addClass('hide')
         @otherPageEl.addClass('hide')
 
     showOther: ->
         $('html').addClass('show_other')
-        $('body').addClass('show_other')
         @homeEl.addClass('hide')
         @tocEl.removeClass('hide')
         @otherPageEl.removeClass('hide')

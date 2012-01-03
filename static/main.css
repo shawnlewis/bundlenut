@@ -43,49 +43,77 @@ html, body {
     height: 85px;
 }
 
+#index_content {
+    display: none;
+}
+
+/* index */
+
+body.index #index_content {
+    display: block;
+}
+
+body.index #create_form {
+    text-align: center;
+    font-size: 2em;    
+    margin: 0 auto;
+}
+
+body.index #create_form div {
+    margin: 20px; 
+}
+
+body.index #create_form input[name="group_name"] {
+    font-size: 1em;
+}
+
+body.index #create_form button[name="go"] {
+    font-size: 1em;
+}
+
 /* tpl_groupedit */
 
-.groupedit {
+body.groupedit {
     position: relative;
 }
 
-.group {
+body.groupedit .group_name {
     font-size: 1.2em;
 }
 
-.groupedit table {
+body.groupedit table {
     table-layout: fixed;
     width: 100%;
     margin-top: 20px;
     border: solid 1px black;
 }
 
-.groupedit table td {
+body.groupedit table td {
     padding: 10px;
 }
 
-.groupedit table .title, table .url {
+body.groupedit table .title, table .url {
     text-overflow: ellipsis;
     overflow: hidden;
 }
 
-.groupedit table .url {
+body.groupedit table .url {
     white-space: nowrap;
 }
 
-.groupedit table colgroup.title {
+body.groupedit table colgroup.title {
     width: 20%;
 }
 
-.groupedit table colgroup.comment {
-    width: 30%;
+body.groupedit table colgroup.comment {
+    width: 40%;
 }
 
-.groupedit table colgroup.delete {
+body.groupedit table colgroup.delete {
     width: 70px;
 }
 
-.groupedit .blank {
+body.groupedit .blank {
     color: #666;
     font-style: italic;
 }
@@ -93,7 +121,7 @@ html, body {
 
 /* tpl_groupview */
 
-html.show_other, body.show_other, iframe#other_page {
+html.show_other, html.show_other body, iframe#other_page {
     width: 100%;
     height: 100%;
     margin: 0;
@@ -102,13 +130,6 @@ html.show_other, body.show_other, iframe#other_page {
 
 html.show_other, body.show_other {
     overflow: hidden;
-}
-
-#loading {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    font-size: 3em;
 }
 
 #table_of_contents {
@@ -120,17 +141,11 @@ html.show_other, body.show_other {
     left: 40px;
 }
 
-#table_of_contents .groupview {
+#table_of_contents #groupview_content {
     position: fixed;
     height: 100%;
     width: 100%;
 }
-
-/* saved colors:
-    orange: #ff9414
-    light-yellow: #FEFFE8
-    cyan: rgb(61, 209, 180)
-*/
 
 #table_of_contents .pane_top {
     width: 35%;
@@ -195,11 +210,11 @@ html.show_other, body.show_other {
     visibility: visible;
 }
 
-#table_of_contents .groupview .title_bar {
+#table_of_contents #groupview_content .title_bar {
     padding: 5px 8px;
 }
 
-#table_of_contents .groupview .group_name {
+#table_of_contents #groupview_content .group_name {
     margin-bottom: 10px;
     font-size: 1.4em;
     cursor: pointer;
@@ -249,11 +264,11 @@ html.show_other, body.show_other {
     color: #777;
 }
 
-.jspVerticalBar {
-    width: 4px;
+#table_of_contents .jspVerticalBar {
+    width: 6px;
     background: transparent;
 }
 
-.jspTrack {
+#table_of_contents .jspTrack {
     background: transparent;
 }

@@ -210,24 +210,16 @@
       Index.__super__.constructor.apply(this, arguments);
     }
 
-    Index.prototype.initialize = function() {
-      return this.render();
-    };
-
-    Index.prototype.render = function() {
-      return $(this.el).html(ich.tpl_index());
-    };
-
     Index.prototype.events = {
-      'click #create': 'submit',
-      'keydown #group_name': 'submit'
+      'click button[name="go"]': 'submit',
+      'keydown input[name="group_name"]': 'submit'
     };
 
     Index.prototype.submit = function(e) {
       var group;
       if (e.type === 'keydown' && e.keyCode !== 13) return;
       group = new Group({
-        name: $('#group_name').val()
+        name: $('input[name="group_name"]').val()
       });
       return group.save(null, {
         success: function() {
@@ -494,7 +486,7 @@
         this.$('#right_arrow').addClass('arrow_on');
       }
       tab = this.$('.tab');
-      this.$('.groupview').css('left', tab.offset().left + 55);
+      this.$('#groupview_content').css('left', tab.offset().left + 55);
       wrappers = $('.wrapper');
       wrappers.show();
       width = Math.max($(wrappers[0]).width(), $(wrappers[1]).width());
@@ -528,7 +520,7 @@
       this.$('.pane').data().jsp.destroy();
       this.delegateEvents(null);
       if (this.state === 'closed') {
-        this.$('.groupview').animate({
+        this.$('#groupview_content').animate({
           top: 0
         }, {
           complete: function() {
@@ -550,7 +542,7 @@
     GroupView.prototype.closed = function() {
       var el;
       var _this = this;
-      el = this.$('.groupview');
+      el = this.$('#groupview_content');
       this.delegateEvents(null);
       $('.group_name').hide();
       return el.animate({
@@ -569,7 +561,7 @@
       var _this = this;
       this.delegateEvents(null);
       if (this.state === 'closed') {
-        this.$('.groupview').animate({
+        this.$('#groupview_content').animate({
           top: 0
         }, {
           complete: function() {
@@ -720,7 +712,7 @@
     };
 
     App.prototype.index = function() {
-      console.log('here');
+      $('body').removeClass().addClass('index');
       this.showHome();
       window.router.navigate('');
       return this.view = new Index({
@@ -729,6 +721,7 @@
     };
 
     App.prototype.groupEdit = function(group) {
+      $('body').removeClass().addClass('groupedit');
       this.showHome();
       window.router.navigate('group_edit/' + group.id + '/' + group.get('edit_hash'));
       return this.view = new GroupEdit({
@@ -738,6 +731,7 @@
     };
 
     App.prototype.groupView = function(group) {
+      $('body').removeClass().addClass('groupview');
       this.showOther();
       this.view = new GroupView({
         el: this.tocEl,
@@ -748,7 +742,6 @@
 
     App.prototype.showHome = function() {
       $('html').removeClass('show_other');
-      $('body').removeClass('show_other');
       this.homeEl.removeClass('hide');
       this.tocEl.addClass('hide');
       return this.otherPageEl.addClass('hide');
@@ -756,7 +749,6 @@
 
     App.prototype.showOther = function() {
       $('html').addClass('show_other');
-      $('body').addClass('show_other');
       this.homeEl.addClass('hide');
       this.tocEl.removeClass('hide');
       return this.otherPageEl.removeClass('hide');
