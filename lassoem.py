@@ -13,7 +13,7 @@ from google.appengine.ext.webapp import template
 
 import models
 
-DEBUG = False
+DEBUG = True
 
 
 def get_file(rel_path):

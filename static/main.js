@@ -452,7 +452,7 @@
     };
 
     GroupView.prototype.render = function() {
-      var context, html, i, tab, width, wrappers;
+      var context, html, i, tab;
       var _this = this;
       context = this.model.toJSON();
       html = ich.tpl_groupview(context);
@@ -486,16 +486,8 @@
         this.$('#right_arrow').addClass('arrow_on');
       }
       tab = this.$('.tab');
-      this.$('#groupview_content').css('left', tab.offset().left + 55);
-      wrappers = $('.wrapper');
-      wrappers.show();
-      width = Math.max($(wrappers[0]).width(), $(wrappers[1]).width());
-      if (this.curItemView()) {
-        width = Math.max($(this.curItemView().el).width(), width);
-      }
-      if (this.state === 'closed' || this.state === 'single') wrappers.hide();
-      $('.item_view').css('width', width + 'px');
-      return $(html).find('.pane').jScrollPane();
+      this.$('.pane').css('left', $(window).width() + tab.offset().left + 55);
+      return $(html).find('.pane_middle').jScrollPane();
     };
 
     GroupView.prototype.events = {
@@ -517,7 +509,7 @@
     GroupView.prototype.single = function() {
       var _this = this;
       if (!this.curItemView() || this.state === 'single') return;
-      this.$('.pane').data().jsp.destroy();
+      this.$('.pane_middle').data().jsp.destroy();
       this.delegateEvents(null);
       if (this.state === 'closed') {
         this.$('#groupview_content').animate({
@@ -525,14 +517,14 @@
         }, {
           complete: function() {
             _this.delegateEvents(_this.events);
-            return _this.$('.pane').jScrollPane();
+            return _this.$('.pane_middle').jScrollPane();
           }
         });
       } else if (this.state === 'full') {
         this.$('.wrapper').slideUp({
           complete: function() {
             _this.delegateEvents(_this.events);
-            return _this.$('.pane').jScrollPane();
+            return _this.$('.pane_middle').jScrollPane();
           }
         });
       }
@@ -571,9 +563,9 @@
       }
       this.setState('full');
       $('.group_name').show();
-      this.$('.pane').data().jsp.destroy();
+      this.$('.pane_middle').data().jsp.destroy();
       return $('.wrapper').slideDown(400, function() {
-        return _this.$('.pane').jScrollPane();
+        return _this.$('.pane_middle').jScrollPane();
       });
     };
 

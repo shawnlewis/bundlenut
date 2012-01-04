@@ -308,19 +308,9 @@ class GroupView extends Backbone.View
 
         # place pane
         tab = @$('.tab')
-        @$('#groupview_content').css('left', (tab.offset().left + 55))
+        @$('.pane').css('left', $(window).width() + tab.offset().left + 55)
 
-        # fix sizes so animations work correctly
-        wrappers = $('.wrapper')
-        wrappers.show()
-        width = Math.max($(wrappers[0]).width(), $(wrappers[1]).width())
-        if @curItemView()
-            width = Math.max($(@curItemView().el).width(), width)
-        if @state == 'closed' or @state == 'single'
-            wrappers.hide()
-        $('.item_view').css('width', width + 'px')
-
-        $(html).find('.pane').jScrollPane()
+        $(html).find('.pane_middle').jScrollPane()
 
     events:
         'click .closed .tab #logo': 'full'
@@ -342,20 +332,17 @@ class GroupView extends Backbone.View
         if not @curItemView() or @state == 'single'
             return
 
-        @$('.pane').data().jsp.destroy()
+        @$('.pane_middle').data().jsp.destroy()
 
-        @delegateEvents(null)
         if @state == 'closed'
             @$('#groupview_content').animate({top: 0},
                 complete: =>
-                    @delegateEvents(@events)
-                    @$('.pane').jScrollPane()
+                    @$('.pane_middle').jScrollPane()
             )
         else if @state == 'full'
             @$('.wrapper').slideUp
                 complete: =>
-                    @delegateEvents(@events)
-                    @$('.pane').jScrollPane()
+                    @$('.pane_middle').jScrollPane()
         @setState('single')
 
     closed: ->
@@ -367,23 +354,17 @@ class GroupView extends Backbone.View
                 @setState('closed')
                 el.find('.wrapper').hide()
                 el.css('top', -el.height() + 'px')
-                @delegateEvents(@events)
         )
 
     full: ->
-        @delegateEvents(null)
-
         if @state == 'closed'
-            @$('#groupview_content').animate({top: 0},
-                complete: =>
-                    @delegateEvents(@events)
-            )
+            @$('#groupview_content').animate(top: 0)
 
         @setState('full')
         
         $('.group_name').show()
-        @$('.pane').data().jsp.destroy()
-        $('.wrapper').slideDown(400, => @$('.pane').jScrollPane())
+        @$('.pane_middle').data().jsp.destroy()
+        $('.wrapper').slideDown(400, => @$('.pane_middle').jScrollPane())
 
     curItemView: ->
         if @curItemNum == -1 then null else @itemViews[@curItemNum]
