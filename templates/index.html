@@ -19,6 +19,11 @@
                 <button name="go"> Go </button>
             </div>
         </div>
+        <div id="popular_bundles">
+            <div id="pop1" class="pop_bundle"></div>
+            <div id="pop2" class="pop_bundle"></div>
+            <div id="pop3" class="pop_bundle"></div>
+        </div>
     </div>
 </div>
 {% endblock %}
@@ -26,6 +31,18 @@
 {% block extrascript %}
 
 {% verbatim %}
+
+<script id="tpl_groupsummary" type="text/html">
+    <div class="group_name">{{ name }}</div>
+    <div class="items">
+        {{#item_set}}
+        <div class="item">
+            <span class="title">{{ title }}</span>
+            <span class="comment">{{ comment }}</span>
+        </div>
+        {{/item_set}}
+    </div>
+</script>
 
 <script id="tpl_groupedit" type="text/html">
 <div id="groupedit_content">

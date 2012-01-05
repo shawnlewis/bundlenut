@@ -1,5 +1,5 @@
 (function() {
-  var App, EditableField, Group, GroupEdit, GroupView, Index, Item, ItemEdit, ItemSet, ItemView, Router, getUrl, jsonRPC, max, methodMap;
+  var App, EditableField, Group, GroupEdit, GroupSet, GroupSummary, GroupView, Index, Item, ItemEdit, ItemSet, ItemView, Router, getUrl, jsonRPC, max, methodMap;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
   jsonRPC = function(funcName, data, success) {
@@ -167,6 +167,20 @@
 
   })();
 
+  GroupSet = (function() {
+
+    __extends(GroupSet, Backbone.Collection);
+
+    function GroupSet() {
+      GroupSet.__super__.constructor.apply(this, arguments);
+    }
+
+    GroupSet.prototype.model = Group;
+
+    return GroupSet;
+
+  })();
+
   Item = (function() {
 
     __extends(Item, Backbone.Model);
@@ -211,8 +225,31 @@
     __extends(Index, Backbone.View);
 
     function Index() {
+      this.render = __bind(this.render, this);
       Index.__super__.constructor.apply(this, arguments);
     }
+
+    Index.prototype.initialize = function() {
+      this.popular = new GroupSet();
+      this.popular.url = '/api/popular_groups';
+      return this.popular.fetch({
+        success: this.render
+      });
+    };
+
+    Index.prototype.render = function() {
+      var div, group, _i, _len, _ref, _ref2, _results;
+      _ref = _.zip($('#popular_bundles > div'), this.popular.models);
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        _ref2 = _ref[_i], div = _ref2[0], group = _ref2[1];
+        _results.push(new GroupSummary({
+          el: div,
+          model: group
+        }));
+      }
+      return _results;
+    };
 
     Index.prototype.events = {
       'click button[name="go"]': 'submit',
@@ -233,6 +270,36 @@
     };
 
     return Index;
+
+  })();
+
+  GroupSummary = (function() {
+
+    __extends(GroupSummary, Backbone.View);
+
+    function GroupSummary() {
+      GroupSummary.__super__.constructor.apply(this, arguments);
+    }
+
+    GroupSummary.prototype.initialize = function() {
+      return this.render();
+    };
+
+    GroupSummary.prototype.render = function() {
+      var context;
+      context = this.model.toJSON();
+      return $(this.el).html(ich.tpl_groupsummary(context));
+    };
+
+    GroupSummary.prototype.events = {
+      'click': 'go'
+    };
+
+    GroupSummary.prototype.go = function() {
+      return window.location = '/group_view/' + this.model.id;
+    };
+
+    return GroupSummary;
 
   })();
 
@@ -773,6 +840,7 @@
     App.prototype.groupView = function(group) {
       $('body').removeClass().addClass('groupview');
       this.showOther();
+      window.router.navigate('group_view/' + group.id);
       this.view = new GroupView({
         el: this.tocEl,
         model: group

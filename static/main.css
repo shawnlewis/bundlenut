@@ -103,6 +103,47 @@ body.index #create_form button[name="go"] {
     font-size: 1em;
 }
 
+body.index #popular_bundles {
+    position: absolute;
+    top: 585px;
+}
+
+body.index .pop_bundle {
+    position: absolute;
+    width: 220px;
+    height: 200px;
+    cursor: pointer;
+}
+
+body.index #pop1 {
+    left: 45px;
+}
+
+body.index #pop2 {
+    left: 400px;
+}
+
+body.index #pop3 {
+    left: 750px;
+}
+
+body.index .group_name {
+    font-weight: bold;
+}
+
+body.index .title {
+    text-decoration: underline;
+    color:  #0000FF;
+}
+
+body.index #popular_bundles .item {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    width: 100%;
+}
+
 /* tpl_groupedit */
 
 body.groupedit {

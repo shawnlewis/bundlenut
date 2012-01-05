@@ -111,6 +111,9 @@ class Group extends Backbone.Model
         else
             success()
 
+class GroupSet extends Backbone.Collection
+    model: Group
+
 
 class Item extends Backbone.Model
     defaults:
@@ -130,6 +133,18 @@ class ItemSet extends Backbone.Collection
 
 
 class Index extends Backbone.View
+    initialize: ->
+        @popular = new GroupSet()
+        @popular.url = '/api/popular_groups'
+        @popular.fetch
+            success: @render
+    
+    render: =>
+        for [div, group] in _.zip($('#popular_bundles > div'), @popular.models)
+            new GroupSummary
+                el: div
+                model: group
+
     events:
         'click button[name="go"]': 'submit'
         'keydown input[name="group_name"]': 'submit'
@@ -143,6 +158,22 @@ class Index extends Backbone.View
             null,
             success: -> window.app.groupEdit(group)
         )
+
+class GroupSummary extends Backbone.View
+    initialize: ->
+        @render()
+
+    render: ->
+        context = @model.toJSON()
+        $(@el).html(ich.tpl_groupsummary(context))
+
+    events:
+        'click': 'go'
+
+    go: ->
+        window.location = '/group_view/' + @model.id
+        #window.app.groupView(@model)
+         
 
 class GroupEdit extends Backbone.View
     initialize: (options) ->
@@ -498,6 +529,7 @@ class App extends Backbone.Router
     groupView: (group) ->
         $('body').removeClass().addClass('groupview')
         @showOther()
+        window.router.navigate('group_view/' + group.id)
         @view = new GroupView
             el: @tocEl
             model: group
