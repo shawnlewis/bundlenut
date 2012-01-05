@@ -62,20 +62,26 @@ Backbone.sync = (method, model, options) ->
 class Group extends Backbone.Model
     urlRoot: '/api/group'
 
-    parse: (data) ->
+    initialize: ->
+        @parseItemSet()
+        @bind('change', @parseItemSet)
+
+    parseItemSet:  =>
+        if not @get('item_set')
+            return
         # Order data.item_set by data.ordering
         items = {}
-        for item in data.item_set
+        for item in @get('item_set')
             items[item.id] = item
         ordered = []
-        for id in data.ordering
+        for id in @get('ordering')
             ordered.push(items[id])
             delete items[id]
         for item in _.values(items)
             ordered.push(item)
 
         @itemSet = new ItemSet ordered
-        delete data.item_set
+        @unset('item_set', silent: true)
         @itemSet.group = @
 
         @itemSet.bind('change', => @change())
@@ -83,7 +89,6 @@ class Group extends Backbone.Model
         @itemSet.bind('add', @fixOrdering)
         @itemSet.bind('remove', => @change())
         @itemSet.bind('remove', @fixOrdering)
-        super data
 
     createItem: (success) ->
         @itemSet.create(
@@ -165,14 +170,14 @@ class GroupSummary extends Backbone.View
 
     render: ->
         context = @model.toJSON()
+        context.item_set = @model.itemSet.toJSON()
         $(@el).html(ich.tpl_groupsummary(context))
 
     events:
         'click': 'go'
 
     go: ->
-        window.location = '/group_view/' + @model.id
-        #window.app.groupView(@model)
+        window.app.groupView(@model)
          
 
 class GroupEdit extends Backbone.View

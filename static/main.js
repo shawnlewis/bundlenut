@@ -65,22 +65,29 @@
 
     function Group() {
       this.fixOrdering = __bind(this.fixOrdering, this);
+      this.parseItemSet = __bind(this.parseItemSet, this);
       Group.__super__.constructor.apply(this, arguments);
     }
 
     Group.prototype.urlRoot = '/api/group';
 
-    Group.prototype.parse = function(data) {
+    Group.prototype.initialize = function() {
+      this.parseItemSet();
+      return this.bind('change', this.parseItemSet);
+    };
+
+    Group.prototype.parseItemSet = function() {
       var id, item, items, ordered, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
       var _this = this;
+      if (!this.get('item_set')) return;
       items = {};
-      _ref = data.item_set;
+      _ref = this.get('item_set');
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         item = _ref[_i];
         items[item.id] = item;
       }
       ordered = [];
-      _ref2 = data.ordering;
+      _ref2 = this.get('ordering');
       for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
         id = _ref2[_j];
         ordered.push(items[id]);
@@ -92,7 +99,9 @@
         ordered.push(item);
       }
       this.itemSet = new ItemSet(ordered);
-      delete data.item_set;
+      this.unset('item_set', {
+        silent: true
+      });
       this.itemSet.group = this;
       this.itemSet.bind('change', function() {
         return _this.change();
@@ -104,8 +113,7 @@
       this.itemSet.bind('remove', function() {
         return _this.change();
       });
-      this.itemSet.bind('remove', this.fixOrdering);
-      return Group.__super__.parse.call(this, data);
+      return this.itemSet.bind('remove', this.fixOrdering);
     };
 
     Group.prototype.createItem = function(success) {
@@ -288,6 +296,7 @@
     GroupSummary.prototype.render = function() {
       var context;
       context = this.model.toJSON();
+      context.item_set = this.model.itemSet.toJSON();
       return $(this.el).html(ich.tpl_groupsummary(context));
     };
 
@@ -296,7 +305,7 @@
     };
 
     GroupSummary.prototype.go = function() {
-      return window.location = '/group_view/' + this.model.id;
+      return window.app.groupView(this.model);
     };
 
     return GroupSummary;
