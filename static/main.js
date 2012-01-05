@@ -1,5 +1,5 @@
 (function() {
-  var App, EditableField, Group, GroupEdit, GroupView, Index, Item, ItemEdit, ItemSet, ItemView, Router, getUrl, jsonRPC, methodMap;
+  var App, EditableField, Group, GroupEdit, GroupView, Index, Item, ItemEdit, ItemSet, ItemView, Router, getUrl, jsonRPC, max, methodMap;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
   jsonRPC = function(funcName, data, success) {
@@ -14,6 +14,10 @@
       data: JSON.stringify(data),
       success: onSuccess
     });
+  };
+
+  max = function(array) {
+    return Math.max.apply(Math, array);
   };
 
   methodMap = {
@@ -442,23 +446,62 @@
     __extends(GroupView, Backbone.View);
 
     function GroupView() {
+      this.sizeFix = __bind(this.sizeFix, this);
       GroupView.__super__.constructor.apply(this, arguments);
     }
 
     GroupView.prototype.initialize = function(options) {
+      var _this = this;
       this.curItemNum = -1;
       this.state = 'full';
-      return this.render();
+      this.render();
+      return $(window).resize(function() {
+        var doingFix;
+        doingFix = false;
+        if (!doingFix) {
+          doingFix = true;
+          return setTimeout(function() {
+            _this.sizeFix();
+            return doingFix = false;
+          }, 200);
+        }
+      });
+    };
+
+    GroupView.prototype.sizeFix = function() {
+      var hadScrollBar, i, items, pane_middle, tab, width, _i, _len;
+      pane_middle = this.$('.pane_middle');
+      if (pane_middle.data().jsp) {
+        pane_middle.data().jsp.destroy();
+        hadScrollBar = true;
+      }
+      items = $('#items > div');
+      items.css('width', '');
+      items.css('height', '');
+      width = max((function() {
+        var _i, _len, _results;
+        _results = [];
+        for (_i = 0, _len = items.length; _i < _len; _i++) {
+          i = items[_i];
+          _results.push($(i).width());
+        }
+        return _results;
+      })());
+      items.css('width', width + 'px');
+      for (_i = 0, _len = items.length; _i < _len; _i++) {
+        i = items[_i];
+        $(i).css('height', $(i).height() + 'px');
+      }
+      tab = this.$('.tab');
+      this.$('.pane').css('left', $(window).width() + tab.offset().left + 55);
+      if (hadScrollBar) return this.$('.pane_middle').jScrollPane();
     };
 
     GroupView.prototype.render = function() {
-      var context, html, i, tab;
+      var context, html, i;
       var _this = this;
       context = this.model.toJSON();
       html = ich.tpl_groupview(context);
-      if (this.state === 'closed' || this.state === 'single') {
-        $(html).find('.wrapper').hide();
-      }
       this.itemViews = [];
       i = 0;
       this.model.itemSet.each(function(item) {
@@ -485,8 +528,8 @@
       if (this.curItemNum !== -1 && this.curItemNum < this.itemViews.length - 1) {
         this.$('#right_arrow').addClass('arrow_on');
       }
-      tab = this.$('.tab');
-      this.$('.pane').css('left', $(window).width() + tab.offset().left + 55);
+      this.sizeFix();
+      if (this.state === 'single') $('.wrapper').hide();
       return $(html).find('.pane_middle').jScrollPane();
     };
 
@@ -510,20 +553,18 @@
       var _this = this;
       if (!this.curItemView() || this.state === 'single') return;
       this.$('.pane_middle').data().jsp.destroy();
-      this.delegateEvents(null);
       if (this.state === 'closed') {
+        this.$('#groupview_content').css('top', '-100%');
+        this.$('.wrapper').hide();
+        this.$('#groupview_content').css('top', -this._paneHeight());
         this.$('#groupview_content').animate({
           top: 0
-        }, {
-          complete: function() {
-            _this.delegateEvents(_this.events);
-            return _this.$('.pane_middle').jScrollPane();
-          }
+        }, function() {
+          return _this.$('.pane_middle').jScrollPane();
         });
       } else if (this.state === 'full') {
         this.$('.wrapper').slideUp({
           complete: function() {
-            _this.delegateEvents(_this.events);
             return _this.$('.pane_middle').jScrollPane();
           }
         });
@@ -535,38 +576,41 @@
       var el;
       var _this = this;
       el = this.$('#groupview_content');
-      this.delegateEvents(null);
-      $('.group_name').hide();
-      return el.animate({
-        top: -el.height() + 'px'
+      el.animate({
+        top: -this._paneHeight() + 'px'
       }, {
         complete: function() {
-          _this.setState('closed');
-          el.find('.wrapper').hide();
-          el.css('top', -el.height() + 'px');
-          return _this.delegateEvents(_this.events);
+          return el.css('top', '-100%');
         }
       });
+      return this.setState('closed');
     };
 
     GroupView.prototype.full = function() {
       var _this = this;
-      this.delegateEvents(null);
+      this.$('.pane_middle').data().jsp.destroy();
       if (this.state === 'closed') {
+        this.$('#groupview_content').css('top', '-100%');
+        this.$('.wrapper').show();
+        this.$('#groupview_content').css('top', -this._paneHeight());
         this.$('#groupview_content').animate({
           top: 0
-        }, {
-          complete: function() {
-            return _this.delegateEvents(_this.events);
-          }
+        }, function() {
+          return _this.$('.pane_middle').jScrollPane();
+        });
+      } else {
+        $('.group_name').show();
+        $('.wrapper').slideDown(400, function() {
+          return _this.$('.pane_middle').jScrollPane();
         });
       }
-      this.setState('full');
-      $('.group_name').show();
-      this.$('.pane_middle').data().jsp.destroy();
-      return $('.wrapper').slideDown(400, function() {
-        return _this.$('.pane_middle').jScrollPane();
-      });
+      return this.setState('full');
+    };
+
+    GroupView.prototype._paneHeight = function() {
+      return _.reduce(this.$('.pane'), function(x, y) {
+        return x + $(y).height();
+      }, 0);
     };
 
     GroupView.prototype.curItemView = function() {

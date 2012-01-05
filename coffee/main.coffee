@@ -8,6 +8,9 @@ jsonRPC = (funcName, data, success) ->
         data: JSON.stringify(data)
         success: onSuccess
 
+max = (array) ->
+    Math.max.apply(Math, array)
+
 # Make Backbone.sync pass edit_hash in url for PUT and DELETE operations.
 # Stripped out emulateJSON and emulateHTTP and added code at
 # "Custom code here."
@@ -276,12 +279,41 @@ class GroupView extends Backbone.View
         @curItemNum = -1
         @state = 'full'
         @render()
+        $(window).resize =>
+            doingFix = false
+            if not doingFix
+                doingFix = true
+                setTimeout(
+                    =>
+                        @sizeFix()
+                        doingFix = false
+                    ,200)
+
+    sizeFix: =>
+        pane_middle = @$('.pane_middle')
+        if pane_middle.data().jsp
+            pane_middle.data().jsp.destroy()
+            hadScrollBar = true
+
+        # fix heights and widths so animations aren't jumpy
+        items = $('#items > div')
+        items.css('width', '')
+        items.css('height', '')
+        width = max($(i).width() for i in items)
+        items.css('width', width + 'px')
+        for i in items
+            $(i).css('height', $(i).height() + 'px')
+
+        # place pane
+        tab = @$('.tab')
+        @$('.pane').css('left', $(window).width() + tab.offset().left + 55)
+
+        if hadScrollBar
+            @$('.pane_middle').jScrollPane()
 
     render: ->
         context = @model.toJSON()
         html = ich.tpl_groupview(context)
-        if @state == 'closed' or @state == 'single'
-            $(html).find('.wrapper').hide()
         @itemViews = []
         i = 0
         @model.itemSet.each (item) =>
@@ -306,9 +338,10 @@ class GroupView extends Backbone.View
         if @curItemNum != -1 and @curItemNum < @itemViews.length - 1
             @$('#right_arrow').addClass('arrow_on')
 
-        # place pane
-        tab = @$('.tab')
-        @$('.pane').css('left', $(window).width() + tab.offset().left + 55)
+        @sizeFix()
+
+        if @state == 'single'
+            $('.wrapper').hide()
 
         $(html).find('.pane_middle').jScrollPane()
 
@@ -335,10 +368,11 @@ class GroupView extends Backbone.View
         @$('.pane_middle').data().jsp.destroy()
 
         if @state == 'closed'
-            @$('#groupview_content').animate({top: 0},
-                complete: =>
-                    @$('.pane_middle').jScrollPane()
-            )
+            @$('#groupview_content').css('top', '-100%')
+            @$('.wrapper').hide()
+            @$('#groupview_content').css('top', -@_paneHeight())
+            @$('#groupview_content').animate({top: 0}, =>
+                @$('.pane_middle').jScrollPane())
         else if @state == 'full'
             @$('.wrapper').slideUp
                 complete: =>
@@ -347,25 +381,32 @@ class GroupView extends Backbone.View
 
     closed: ->
         el = @$('#groupview_content')
-        @delegateEvents(null)
-        $('.group_name').hide()
-        el.animate({top: -el.height() + 'px'},
+        el.animate({top: -@_paneHeight() + 'px'},
             complete: =>
-                @setState('closed')
-                el.find('.wrapper').hide()
-                el.css('top', -el.height() + 'px')
+                # move to -100% so it stays of screen if the user resizes
+                el.css('top', '-100%')
         )
+        @setState('closed')
 
     full: ->
-        if @state == 'closed'
-            @$('#groupview_content').animate(top: 0)
-
-        @setState('full')
-        
-        $('.group_name').show()
         @$('.pane_middle').data().jsp.destroy()
-        $('.wrapper').slideDown(400, => @$('.pane_middle').jScrollPane())
+        if @state == 'closed'
+            @$('#groupview_content').css('top', '-100%')
+            @$('.wrapper').show()
+            @$('#groupview_content').css('top', -@_paneHeight())
+            @$('#groupview_content').animate({top: 0}, =>
+                @$('.pane_middle').jScrollPane())
+        else
+            $('.group_name').show()
+            $('.wrapper').slideDown(400, => @$('.pane_middle').jScrollPane())
+        @setState('full')
 
+    _paneHeight: ->
+        _.reduce(
+            @$('.pane'),
+            (x, y) -> x + $(y).height(),
+            0)
+        
     curItemView: ->
         if @curItemNum == -1 then null else @itemViews[@curItemNum]
 
