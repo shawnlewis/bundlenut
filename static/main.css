@@ -21,6 +21,8 @@ body {
 
 html, body {
     height: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 #home {
@@ -49,14 +51,44 @@ html, body {
 
 /* index */
 
+body.index #home {
+    margin: 0;
+}
+
+body.index #header {
+    position: fixed;
+}
+
 body.index #index_content {
     display: block;
+    position: relative;
+    width: 1024px;
+    height: 1142px;
+    background-image: url('/static/img/index-background.png');
+}
+
+body.index #marketing_text {
+    position: absolute;
+    top: 120px;
+    left: 35px;
+    font-size: 1.3em;
+}
+
+body.index #marketing_text ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+body.index #marketing_text li {
+    margin: 10px 0;
 }
 
 body.index #create_form {
-    text-align: center;
-    font-size: 2em;    
-    margin: 0 auto;
+    position: absolute;
+    left: 600px;
+    top: 105px;
+    font-size: 1.6em;    
 }
 
 body.index #create_form div {
