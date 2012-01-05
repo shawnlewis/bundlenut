@@ -389,16 +389,20 @@ class GroupView extends Backbone.View
         @setState('closed')
 
     full: ->
+        onComplete = =>
+            @$('.pane_middle').jScrollPane()
+            jsp = @$('.pane_middle').data('jsp')
+            if @curItemView
+                jsp.scrollTo(0, $(@curItemView().el).position().top)
+                
         @$('.pane_middle').data().jsp.destroy()
         if @state == 'closed'
             @$('#groupview_content').css('top', '-100%')
             @$('.wrapper').show()
             @$('#groupview_content').css('top', -@_paneHeight())
-            @$('#groupview_content').animate({top: 0}, =>
-                @$('.pane_middle').jScrollPane())
+            @$('#groupview_content').animate({top: 0}, onComplete)
         else
-            $('.group_name').show()
-            $('.wrapper').slideDown(400, => @$('.pane_middle').jScrollPane())
+            $('.wrapper').slideDown(400, onComplete)
         @setState('full')
 
     _paneHeight: ->

@@ -587,7 +587,16 @@
     };
 
     GroupView.prototype.full = function() {
+      var onComplete;
       var _this = this;
+      onComplete = function() {
+        var jsp;
+        _this.$('.pane_middle').jScrollPane();
+        jsp = _this.$('.pane_middle').data('jsp');
+        if (_this.curItemView) {
+          return jsp.scrollTo(0, $(_this.curItemView().el).position().top);
+        }
+      };
       this.$('.pane_middle').data().jsp.destroy();
       if (this.state === 'closed') {
         this.$('#groupview_content').css('top', '-100%');
@@ -595,14 +604,9 @@
         this.$('#groupview_content').css('top', -this._paneHeight());
         this.$('#groupview_content').animate({
           top: 0
-        }, function() {
-          return _this.$('.pane_middle').jScrollPane();
-        });
+        }, onComplete);
       } else {
-        $('.group_name').show();
-        $('.wrapper').slideDown(400, function() {
-          return _this.$('.pane_middle').jScrollPane();
-        });
+        $('.wrapper').slideDown(400, onComplete);
       }
       return this.setState('full');
     };
