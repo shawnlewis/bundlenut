@@ -19,7 +19,7 @@
     <div id="index_background">
     <div id="index_content">
         <div id="index_wrapper">
-            <div id="index_header">
+            <div class="header">
                 Bundlenut<img src="/static/img/nut-for-logo.png" />
             </div>
             <div id="index_actions">
@@ -77,23 +77,41 @@
 
 <script id="tpl_groupedit" type="text/html">
 <div id="groupedit_content">
-    <span class="group_name"> Group: {{ name }} </span>
+    <div class="header">
+        Bundlenut<img src="/static/img/nut-for-logo.png" />
+    </div>
+    <img src="/static/img/large-arrow.png" />
+    <div class="group_name"> Bundle Title : {{ name }} </div>
+    <button>share</button>
     <br><br><a href="{{view_link}}">View Link</a><br>
-    <table>
+    <table class="step_dir">
+        <tr>
+            <td class="number"><div>#1</div></td>
+            <td class="step_title">Save this Page</td>
+            <td class="step_details">In order to modify your bundle in the future you'll need to return to this page. Bookmark it!</td>
+        </tr>
+    </table>
+    <table class="step_dir">
+        <tr>
+            <td class="number"><div>#2</div></td>
+            <td class="step_title">Add links to your Bundle</td>
+            <td class="step_details">You can click and drag each line to rearrange the order.</td>
+        </tr>
+    </table>
+    <table class="items">
         <colgroup class="title">
         <colgroup class="url">
         <colgroup class="comment">
         <colgroup class="delete">
-        <thead>
-            <tr>
-                <th> Title </th>
-                <th> URL </th>
-                <th> Comment </th>
-                <th></th>
-            </tr>
-        </thead>
         <tbody id="items">
         </tbody>
+    </table>
+    <table class="step_dir">
+        <tr>
+            <td class="number"><div>#3</div></td>
+            <td class="step_title">Save this Page</td>
+            <td class="step_details">In order to modify your bundle in the future you'll need to return to this page. Bookmark it!</td>
+        </tr>
     </table>
 </div>
 </script>
@@ -108,7 +126,7 @@
     <td class="title"></td>
     <td class="url"></td>
     <td class="comment"></td>
-    <td> <input class="delete" type="submit" value="Delete"></td>
+    <td class="delete_td"> <input class="delete" type="submit" value="Delete"></td>
 </script>
 
 <script id="tpl_groupview" type="text/html">

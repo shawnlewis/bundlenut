@@ -32,10 +32,6 @@ html, body {
     margin: 0 auto -80px;
 }
 
-#header {
-    font-size: 3em;
-}
-
 #footer, #push {
     height: 85px;
 }
@@ -44,14 +40,22 @@ html, body {
     display: none;
 }
 
+.header {
+    font-size: 46px;
+    font-family: 'Alfa Slab One';
+    color: rgb(171, 217, 74);
+    letter-spacing: 1px;
+}
+
+.header > img {
+    margin-left: 8px;
+}
+
+
 /* index */
 
 body.index #home {
     margin: 0;
-}
-
-body.index #header {
-    display: none;
 }
 
 /* 
@@ -122,17 +126,6 @@ body.index #index_content {
 
 body.index #index_wrapper {
     padding: 15px 29px;
-}
-
-body.index #index_header {
-    font-size: 46px;
-    font-family: 'Alfa Slab One';
-    color: rgb(171, 217, 74);
-    letter-spacing: 1px;
-}
-
-body.index #index_header > img {
-    margin-left: 8px;
 }
 
 body.index #index_actions > img {
@@ -225,6 +218,10 @@ body.index #popular_bundles .item {
     width: 100%;
 }
 
+body.index #popular_bundles .pop_bundle:hover .item {
+    color: rgb(171, 217, 74);
+}
+
 body.index .items {
     margin-top: 5px;
 }
@@ -240,43 +237,95 @@ body.index .comment {
 
 /* tpl_groupedit */
 
-body.groupedit {
-    position: relative;
+body.groupedit #groupedit_content {
+    padding: 0 20px;
 }
 
-body.groupedit .group_name {
-    font-size: 1.2em;
-}
-
-body.groupedit table {
-    table-layout: fixed;
-    width: 100%;
-    margin-top: 20px;
-    border: solid 1px black;
-}
-
-body.groupedit table td {
+body.groupedit #groupedit_content > img {
     padding: 10px;
 }
 
-body.groupedit table .title, table .url {
+body.groupedit .group_name {
+    font-family: 'Raleway';
+    font-size: 24px;
+}
+
+body.groupedit .step_dir {
+    background: #7f992e;
+    font-size: 24px;
+    width: 100%;
+    padding: 12px 24px;
+    margin-top: 60px;
+}
+
+body.groupedit .step_dir td {
+    padding: 0 12px;
+}
+
+body.groupedit .step_dir .number div {
+    font-family: 'Raleway';
+    font-size: 28px;
+    background: #3e4911;
+    border-radius: 3px;
+    padding: 12px 24px;
+    color: white;
+}
+
+body.groupedit .step_dir .step_title {
+    font-family: 'Raleway';
+    color: white;
+    white-space: nowrap;
+}
+
+body.groupedit .step_dir .step_details {
+    font-size: 18px;
+    width: 100%;
+    text-align: left;
+}
+
+body.groupedit table.items {
+    table-layout: fixed;
+    width: 95%;
+    margin: 30px auto 30px auto;
+    border-collapse: collapse;
+}
+
+body.groupedit table.items tr:nth-child(odd) {
+    background: #efefef;
+}
+
+body.groupedit table.items td {
+    padding: 10px;
+    vertical-align: top;
+}
+
+body.groupedit table.items .url {
     text-overflow: ellipsis;
     overflow: hidden;
 }
 
-body.groupedit table .url {
+body.groupedit table.items .title {
+    font-family: Palatino;
+    color: #7f992e;
+}
+
+body.groupedit table.items .url {
     white-space: nowrap;
 }
 
-body.groupedit table colgroup.title {
+body.groupedit table.items .delete_td {
+    background: white;
+}
+
+body.groupedit table.items colgroup.title {
     width: 20%;
 }
 
-body.groupedit table colgroup.comment {
-    width: 40%;
+body.groupedit table.items colgroup.comment {
+    width: 50%;
 }
 
-body.groupedit table colgroup.delete {
+body.groupedit table.items colgroup.delete {
     width: 70px;
 }
 
