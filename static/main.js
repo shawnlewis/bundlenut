@@ -355,7 +355,16 @@
         });
         tbody.find('td:last').find('.delete').hide();
         return tbody.sortable({
-          update: _this.sortUpdate
+          update: _this.sortUpdate,
+          helper: function(e, ui) {
+            var child, _i, _len, _ref;
+            _ref = ui.children();
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              child = _ref[_i];
+              $(child).width($(child).width());
+            }
+            return ui;
+          }
         });
       });
     };

@@ -210,6 +210,10 @@ class GroupEdit extends Backbone.View
 
             tbody.sortable
                 update: @sortUpdate
+                helper: (e, ui) ->
+                    for child in ui.children()
+                        $(child).width($(child).width())
+                    return ui
 
     renderDenied: ->
         $(@el).html ich.tpl_groupeditDenied()
