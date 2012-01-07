@@ -635,8 +635,11 @@
         this.$('#groupview_content').css('top', -this._paneHeight());
         this.$('#groupview_content').animate({
           top: 0
-        }, function() {
-          return _this.$('.pane_middle').jScrollPane();
+        }, {
+          duration: 200,
+          complete: function() {
+            return _this.$('.pane_middle').jScrollPane();
+          }
         });
       } else if (this.state === 'full') {
         this.$('.wrapper').slideUp({
@@ -652,14 +655,14 @@
       var el;
       var _this = this;
       el = this.$('#groupview_content');
-      el.animate({
+      return el.animate({
         top: -this._paneHeight() + 'px'
       }, {
         complete: function() {
-          return el.css('top', '-100%');
+          el.css('top', '-100%');
+          return _this.setState('closed');
         }
       });
-      return this.setState('closed');
     };
 
     GroupView.prototype.full = function() {
@@ -682,7 +685,8 @@
           top: 0
         }, onComplete);
       } else {
-        $('.wrapper').slideDown(400, onComplete);
+        $('.wrapper').slideDown();
+        $('.wrapper').promise().done(onComplete);
       }
       return this.setState('full');
     };

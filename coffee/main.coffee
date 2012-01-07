@@ -407,8 +407,11 @@ class GroupView extends Backbone.View
             @$('#groupview_content').css('top', '-100%')
             @$('.wrapper').hide()
             @$('#groupview_content').css('top', -@_paneHeight())
-            @$('#groupview_content').animate({top: 0}, =>
-                @$('.pane_middle').jScrollPane())
+            @$('#groupview_content').animate({top: 0},
+                duration: 200
+                complete: =>
+                    @$('.pane_middle').jScrollPane()
+            )
         else if @state == 'full'
             @$('.wrapper').slideUp
                 complete: =>
@@ -421,8 +424,8 @@ class GroupView extends Backbone.View
             complete: =>
                 # move to -100% so it stays of screen if the user resizes
                 el.css('top', '-100%')
+                @setState('closed')
         )
-        @setState('closed')
 
     full: ->
         onComplete = =>
@@ -438,7 +441,8 @@ class GroupView extends Backbone.View
             @$('#groupview_content').css('top', -@_paneHeight())
             @$('#groupview_content').animate({top: 0}, onComplete)
         else
-            $('.wrapper').slideDown(400, onComplete)
+            $('.wrapper').slideDown()
+            $('.wrapper').promise().done(onComplete)
         @setState('full')
 
     _paneHeight: ->

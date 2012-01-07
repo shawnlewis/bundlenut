@@ -25,11 +25,6 @@ html, body {
     padding: 0;
 }
 
-#home {
-    height: 100%;
-    margin: 0 50px 0 50px;
-}
-
 #wrapper {
     min-height: 100%;
     height: auto !important;
@@ -56,7 +51,65 @@ body.index #home {
 }
 
 body.index #header {
-    position: fixed;
+    display: none;
+}
+
+/* 
+ darker: rgb(166, 178, 177)
+ */
+
+body.index #home {
+    /*background: -webkit-gradient(linear, left bottom, left top, color-stop(0, rgb(166, 178, 177)), color-stop(1, rgb(220, 239, 238)));
+*/
+}
+
+body.index #page_background {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    z-index: -1;
+}
+
+body.index #page_background table {
+    border-spacing: 0;
+    width: 100%;
+    height: 100%;
+}
+
+body.index #page_background td {
+    width: 50%;
+    margin: 0;
+    padding: 0;
+}
+
+body.index #page_background .left_top {
+    background: rgb(220, 238, 238);
+    height: 423px;
+}
+
+body.index #page_background .left_bottom {
+    background: #3e4911;
+    height: 734px;
+}
+
+body.index #page_background .right_top {
+    background: rgb(220, 238, 238);
+    height: 348px;
+}
+
+body.index #page_background .right_bottom {
+    background: #3e4911;
+    height: 810px;
+}
+
+body.index #index_background {
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    width: 1024px;
+    background: rgb(220, 238, 238);
 }
 
 body.index #index_content {
@@ -67,11 +120,34 @@ body.index #index_content {
     background-image: url('/static/img/index-background.png');
 }
 
+body.index #index_wrapper {
+    padding: 15px 29px;
+}
+
+body.index #index_header {
+    font-size: 46px;
+    font-family: 'Alfa Slab One';
+    color: rgb(171, 217, 74);
+    letter-spacing: 1px;
+}
+
+body.index #index_header > img {
+    margin-left: 8px;
+}
+
+body.index #index_actions > img {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+body.index #index_actions {
+    font-family: 'Raleway';
+    font-weight: lighter;
+    font-size: 24px;
+}
+
 body.index #marketing_text {
-    position: absolute;
-    top: 120px;
-    left: 35px;
-    font-size: 1.3em;
+    float: left;
 }
 
 body.index #marketing_text ul {
@@ -85,22 +161,25 @@ body.index #marketing_text li {
 }
 
 body.index #create_form {
-    position: absolute;
-    left: 600px;
-    top: 105px;
-    font-size: 1.6em;    
-}
-
-body.index #create_form div {
-    margin: 20px; 
+    float: right;
 }
 
 body.index #create_form input[name="group_name"] {
     font-size: 1em;
+    width: 300px;
 }
 
 body.index #create_form button[name="go"] {
     font-size: 1em;
+}
+
+body.index #popular_bundles_label {
+    position: absolute;
+    top: 500px;
+    left: 29px;
+    font-family: "Raleway";
+    font-size: 24px;
+    color: rgb(220, 238, 238);
 }
 
 body.index #popular_bundles {
@@ -111,8 +190,9 @@ body.index #popular_bundles {
 body.index .pop_bundle {
     position: absolute;
     width: 220px;
-    height: 200px;
+    height: 190px;
     cursor: pointer;
+    overflow: hidden;
 }
 
 body.index #pop1 {
@@ -128,20 +208,34 @@ body.index #pop3 {
 }
 
 body.index .group_name {
-    font-weight: bold;
-}
-
-body.index .title {
-    text-decoration: underline;
-    color:  #0000FF;
+    color: rgb(171, 217, 74);
+    font-family: Palatino;
+    font-size: 16px;
+    border-bottom: 1px solid #444;
+    padding-bottom: 3px;
 }
 
 body.index #popular_bundles .item {
+    color: #444;
+    padding: 3px 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     display: block;
     width: 100%;
+}
+
+body.index .items {
+    margin-top: 5px;
+}
+
+body.index .title {
+    font-weight: bold;
+    font-size: 15px;
+}
+
+body.index .comment {
+    font-size: 13px;
 }
 
 /* tpl_groupedit */
