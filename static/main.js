@@ -267,6 +267,7 @@
     Index.prototype.submit = function(e) {
       var group;
       if (e.type === 'keydown' && e.keyCode !== 13) return;
+      e.preventDefault();
       group = new Group({
         name: $('input[name="group_name"]').val()
       });

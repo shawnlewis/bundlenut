@@ -157,6 +157,7 @@ class Index extends Backbone.View
     submit: (e)->
         if e.type == 'keydown' and e.keyCode != 13
             return
+        e.preventDefault()
         group = new Group
             name: $('input[name="group_name"]').val()
         group.save(

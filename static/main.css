@@ -25,14 +25,20 @@ html, body {
     padding: 0;
 }
 
+#home {
+    height: 100%;
+}
+
 #wrapper {
     min-height: 100%;
     height: auto !important;
     height: 100%;
+    font-size: 15px;
     margin: 0 auto -2em;
 }
 
 #footer, #push {
+    font-size: 15px;
     height: 2em;
 }
 
@@ -40,7 +46,6 @@ html, body {
     line-height: 2em;
     background: #3e4911;
     color: white;
-    font-size: 15px;
     font-family: 'Raleway';
 }
 
@@ -306,8 +311,8 @@ body.index .comment {
 
 /* tpl_groupedit */
 
-body.groupedit #footer > div {
-    padding: 40px;
+body.groupedit #footer {
+    padding: 0 40px; 
 }
 
 body.groupedit #groupedit_content {
@@ -342,7 +347,7 @@ body.groupedit .step_dir {
     background: #7f992e;
     font-size: 24px;
     padding: 12px 12px;
-    margin: 60px -12px 0 -12px;
+    margin: 60px -12px 30px -12px;
 }
 
 body.groupedit .step_dir td {
