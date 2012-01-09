@@ -232,14 +232,20 @@ body.index #marketing_text li {
 
 body.index #create_form {
     float: right;
+    margin-top: 10px;
 }
 
 body.index #create_form input[name="group_name"] {
+    color: rgb(143, 173, 49);
     font-family: Palatino;
     font-size: 1em;
     height: 1.5em;
     width: 280px;
     padding-left: 5px;
+}
+
+body.index #create_form input[name="group_name"].blur {
+    color: #bbb;
 }
 
 body.index #create_form button[name="go"] {
@@ -389,6 +395,25 @@ body.groupedit .step_dir .step_details {
 
 body.groupedit input {
     font-size: 1em;
+}
+
+body.groupedit input.delete {
+    width: 2em;
+    height: 2em;
+    border-radius: 1em;
+    font-weight: 900;
+    text-shadow: 0px 1px white;
+    color: white;
+    background: rgb(62, 73, 17);
+    box-shadow: 1px 1px 1px 0px #888;
+    cursor: pointer;
+}
+
+body.groupedit input.delete:active {
+    position: relative;
+    top: 1px;
+    left: 1px;
+    box-shadow: none;
 }
 
 body.groupedit table.items {
