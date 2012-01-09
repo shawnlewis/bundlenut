@@ -532,16 +532,18 @@
     __extends(GroupView, Backbone.View);
 
     function GroupView() {
+      this.closed = __bind(this.closed, this);
       this.sizeFix = __bind(this.sizeFix, this);
       GroupView.__super__.constructor.apply(this, arguments);
     }
 
     GroupView.prototype.initialize = function(options) {
+      var overOther;
       var _this = this;
       this.curItemNum = -1;
       this.state = 'full';
       this.render();
-      return $(window).resize(function() {
+      $(window).resize(function() {
         var doingFix;
         doingFix = false;
         if (!doingFix) {
@@ -551,6 +553,15 @@
             return doingFix = false;
           }, 200);
         }
+      });
+      overOther = false;
+      $('iframe').hover(function() {
+        return overOther = true;
+      }, function() {
+        return overOther = false;
+      });
+      return $(window).blur(function() {
+        if (overOther) return _this.closed();
       });
     };
 
@@ -664,6 +675,7 @@
     GroupView.prototype.closed = function() {
       var el;
       var _this = this;
+      if (this.state === 'closed') return;
       el = this.$('#groupview_content');
       return el.animate({
         top: -this._paneHeight() + 'px'

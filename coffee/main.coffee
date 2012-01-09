@@ -330,6 +330,13 @@ class GroupView extends Backbone.View
                         doingFix = false
                     ,200)
 
+        # detect iframe clicks. Thanks stackoverflow.
+        overOther = false
+        $('iframe').hover(
+            => overOther = true,
+            => overOther = false)
+        $(window).blur(=> if overOther then @closed())
+
     sizeFix: =>
         pane_middle = @$('.pane_middle')
         if pane_middle.data().jsp
@@ -423,7 +430,9 @@ class GroupView extends Backbone.View
                     @$('.pane_middle').jScrollPane()
         @setState('single')
 
-    closed: ->
+    closed: =>
+        if @state == 'closed'
+            return
         el = @$('#groupview_content')
         el.animate({top: -@_paneHeight() + 'px'},
             complete: =>
