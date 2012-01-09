@@ -85,6 +85,11 @@ html, body {
     margin-left: 8px;
 }
 
+.header_sep {
+    width: 72px;
+    height: 36px;
+}
+
 a.button {
     text-decoration: none;
 }
@@ -336,6 +341,7 @@ body.groupedit #footer {
 body.groupedit #groupedit_content {
     /*padding: 0 20px;*/
     padding: 15px 40px 0 40px;
+    font-size: 16px;
 }
 
 body.groupedit #groupedit_content > img {
@@ -470,9 +476,27 @@ body.groupedit table textarea {
     height: 8em;
 }
 
+body.groupedit table tr.last .delete {
+    display: none; 
+}
+
 body.groupedit .blank {
-    color: #666;
+    color: #bbb;
     font-style: italic;
+}
+
+body.groupedit table .view {
+    padding-left: 4px;
+}
+
+body.groupedit table tr.last .blank .view {
+    border: 1px solid #333;
+    display: block;
+    height: 1.5em;
+    line-height: 1.5em;
+    border-radius: 5px;
+    background: white;
+    color: #666;
 }
 
 

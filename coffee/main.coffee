@@ -204,6 +204,7 @@ class GroupEdit extends Backbone.View
             @nameField = new EditableField
                 el: @$('.group_name')
                 val: @model.get('name')
+                blankText: 'Group Name'
             @nameField.bind('change', @changeName)
 
             tbody = @$('#items')
@@ -212,8 +213,8 @@ class GroupEdit extends Backbone.View
                 el.attr('data-id', item.id)
                 tbody.append(el)
 
-            # last item is always a new blank item, don't allow delete
-            tbody.find('td:last').find('.delete').hide()
+            # last row is styled differently
+            tbody.find('tr:last').addClass('last')
 
             tbody.sortable
                 update: @sortUpdate
@@ -250,15 +251,18 @@ class ItemEdit extends Backbone.View
         @titleField = new EditableField
             el: @$('.title')
             val: @model.get('title')
+            blankText: 'Title'
         @titleField.bind('change', @changeTitle)
         @urlField = new EditableField
             el: @$('.url')
             val: @model.get('url')
+            blankText: 'Link'
         @urlField.bind('change', @changeURL)
         @commentField = new EditableField
             el: @$('.comment')
             editType: 'textarea'
             val: @model.get('comment')
+            blankText: 'Comment'
         @commentField.bind('change', @changeComment)
 
     events:
@@ -284,6 +288,7 @@ class EditableField extends Backbone.View
     initialize: (options) ->
         @editType = options.editType
         @val = options.val
+        @blankText = options.blankText
         @inViewMode = false
         @viewMode()
 
@@ -296,10 +301,10 @@ class EditableField extends Backbone.View
         $(@el).removeClass('blank')
         val = @val
         if not @val
-            val = 'blank'
+            val = @options.blankText
             $(@el).addClass('blank')
 
-        $(@el).append('<span class="view">' + val + '</span>')
+        $(@el).append('<div class="view">' + val + '</div>')
         @delegateEvents
             'click .view': 'editMode'
 

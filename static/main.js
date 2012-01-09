@@ -350,7 +350,8 @@
         $(_this.el).html(ich.tpl_groupedit(context));
         _this.nameField = new EditableField({
           el: _this.$('.group_name'),
-          val: _this.model.get('name')
+          val: _this.model.get('name'),
+          blankText: 'Group Name'
         });
         _this.nameField.bind('change', _this.changeName);
         tbody = _this.$('#items');
@@ -362,7 +363,7 @@
           el.attr('data-id', item.id);
           return tbody.append(el);
         });
-        tbody.find('td:last').find('.delete').hide();
+        tbody.find('tr:last').addClass('last');
         return tbody.sortable({
           update: _this.sortUpdate,
           helper: function(e, ui) {
@@ -436,18 +437,21 @@
       $(this.el).html(ich.tpl_itemedit(this.model.toJSON()));
       this.titleField = new EditableField({
         el: this.$('.title'),
-        val: this.model.get('title')
+        val: this.model.get('title'),
+        blankText: 'Title'
       });
       this.titleField.bind('change', this.changeTitle);
       this.urlField = new EditableField({
         el: this.$('.url'),
-        val: this.model.get('url')
+        val: this.model.get('url'),
+        blankText: 'Link'
       });
       this.urlField.bind('change', this.changeURL);
       this.commentField = new EditableField({
         el: this.$('.comment'),
         editType: 'textarea',
-        val: this.model.get('comment')
+        val: this.model.get('comment'),
+        blankText: 'Comment'
       });
       return this.commentField.bind('change', this.changeComment);
     };
@@ -496,6 +500,7 @@
     EditableField.prototype.initialize = function(options) {
       this.editType = options.editType;
       this.val = options.val;
+      this.blankText = options.blankText;
       this.inViewMode = false;
       return this.viewMode();
     };
@@ -508,10 +513,10 @@
       $(this.el).removeClass('blank');
       val = this.val;
       if (!this.val) {
-        val = 'blank';
+        val = this.options.blankText;
         $(this.el).addClass('blank');
       }
-      $(this.el).append('<span class="view">' + val + '</span>');
+      $(this.el).append('<div class="view">' + val + '</div>');
       return this.delegateEvents({
         'click .view': 'editMode'
       });
