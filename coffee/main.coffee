@@ -568,12 +568,14 @@ class App extends Backbone.Router
         $('body').removeClass().addClass('index')
         @showHome()
         window.router.navigate('')
+        document.title = 'Bundlenut'
         @view = new Index(el: @homeContentEl)
 
     groupEdit: (group) ->
         $('body').removeClass().addClass('groupedit')
         @showHome()
         window.router.navigate('e/' + group.id + '/' + group.get('edit_hash'))
+        document.title = 'Bundlenut - Edit: ' + group.get('name')
         @view = new GroupEdit
             el: @homeContentEl
             model: group
@@ -582,6 +584,7 @@ class App extends Backbone.Router
         $('body').removeClass().addClass('groupview')
         @showOther()
         window.router.navigate('b/' + group.id)
+        document.title = 'Bundlenut - Browse: ' + group.get('name')
         @view = new GroupView
             el: @tocEl
             model: group

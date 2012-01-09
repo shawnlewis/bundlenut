@@ -894,6 +894,7 @@
       $('body').removeClass().addClass('index');
       this.showHome();
       window.router.navigate('');
+      document.title = 'Bundlenut';
       return this.view = new Index({
         el: this.homeContentEl
       });
@@ -903,6 +904,7 @@
       $('body').removeClass().addClass('groupedit');
       this.showHome();
       window.router.navigate('e/' + group.id + '/' + group.get('edit_hash'));
+      document.title = 'Bundlenut - Edit: ' + group.get('name');
       return this.view = new GroupEdit({
         el: this.homeContentEl,
         model: group
@@ -913,6 +915,7 @@
       $('body').removeClass().addClass('groupview');
       this.showOther();
       window.router.navigate('b/' + group.id);
+      document.title = 'Bundlenut - Browse: ' + group.get('name');
       this.view = new GroupView({
         el: this.tocEl,
         model: group
