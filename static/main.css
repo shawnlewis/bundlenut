@@ -564,29 +564,67 @@ html.show_other, body.show_other {
 
 #table_of_contents .tab {
     float: left;
-    padding: 5px 7px;
     top: -1px;
     position: relative;
-    z-index: 102;
-    background: rgb(143, 173, 49);
-    border-width: 0 1px 1px 1px;
-    border-style: solid;
-    border-color: #888;
-    border-radius: 0 0 8px 8px;
-    box-shadow: 1px 1px 2px #888;
     color: rgb(250, 250, 250);
-    /*text-shadow: -1px -1px 1px #888;*/
 }
 
 #table_of_contents .tab:hover {
     cursor: pointer;
 }
 
-#table_of_contents .arrow {
-    visibility: hidden;
+#table_of_contents .tab > div {
+    float:left;
+    background: rgb(143, 173, 49);
+    border-width: 0 1px 1px 1px;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, .4);
+    z-index: 102;
 }
 
-#table_of_contents .arrow.arrow_on {
+#table_of_contents .tab > div:hover {
+    background: #80963d;
+}
+
+#table_of_contents .tab .arrow {
+    height: 26px;
+    width: 20px;
+}
+
+#table_of_contents .tab #left_arrow {
+    border-radius: 0 0 0 8px;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, .2);
+}
+
+#table_of_contents .tab #logo {
+    height: 26px;
+    width: 24px;
+    border-width: 0 0 1px 0;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, .2);
+}
+
+#table_of_contents .tab #right_arrow {
+    border-radius: 0 0 8px 0;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, .2);
+}
+
+#table_of_contents .tab > div > img {
+}
+
+#table_of_contents .arrow > img {
+    visibility: none;
+    margin: 5px 5px;
+}
+
+#table_of_contents #arrow_left > img {
+    margin-left: 3px;
+}
+
+#table_of_contents .tab #logo > img {
+    margin: 1px 3px; 
+}
+
+#table_of_contents .arrow.arrow_on > img {
     visibility: visible;
 }
 
