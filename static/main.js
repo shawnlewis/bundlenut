@@ -318,6 +318,7 @@
     __extends(GroupEdit, Backbone.View);
 
     function GroupEdit() {
+      this.changeName = __bind(this.changeName, this);
       this.sortUpdate = __bind(this.sortUpdate, this);
       this.render = __bind(this.render, this);
       GroupEdit.__super__.constructor.apply(this, arguments);
@@ -345,6 +346,11 @@
         context = _this.model.toJSON();
         context.view_link = '/group_view/' + _this.model.id;
         $(_this.el).html(ich.tpl_groupedit(context));
+        _this.nameField = new EditableField({
+          el: _this.$('.group_name'),
+          val: _this.model.get('name')
+        });
+        _this.nameField.bind('change', _this.changeName);
         tbody = _this.$('#items');
         _this.model.itemSet.each(function(item) {
           var el;
@@ -394,6 +400,13 @@
         }
         return _results;
       }).call(this));
+    };
+
+    GroupEdit.prototype.changeName = function(newName) {
+      this.model.set({
+        'name': newName
+      });
+      return this.model.save();
     };
 
     return GroupEdit;

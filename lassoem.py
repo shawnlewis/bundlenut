@@ -155,7 +155,7 @@ class APIItem(JSONRequestHandler):
 
 class APIPopularGroups(JSONRequestHandler):
     def get(self):
-        ids = [10, 20, 24]
+        ids = [19007, 17005, 17010]
         group_data = [json_group(models.Group.get_by_id(i)) for i in ids]
         self.json_response(group_data)
 

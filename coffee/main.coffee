@@ -200,6 +200,12 @@ class GroupEdit extends Backbone.View
             context = this.model.toJSON()
             context.view_link = '/group_view/' + this.model.id
             $(@el).html ich.tpl_groupedit(context)
+
+            @nameField = new EditableField
+                el: @$('.group_name')
+                val: @model.get('name')
+            @nameField.bind('change', @changeName)
+
             tbody = @$('#items')
             @model.itemSet.each (item) ->
                 el = $(new ItemEdit(model: item).el)
@@ -227,6 +233,10 @@ class GroupEdit extends Backbone.View
 
     sortUpdate: =>
         @model.setOrdering($(i).attr('data-id') for i in @$('#items tr'))
+
+    changeName: (newName) =>
+        @model.set('name': newName)
+        @model.save()
 
 
 class ItemEdit extends Backbone.View
