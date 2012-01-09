@@ -790,7 +790,10 @@
     };
 
     ItemView.prototype.render = function() {
-      return $(this.el).html(ich.tpl_itemview(this.model.toJSON()));
+      var context;
+      context = this.model.toJSON();
+      context.url = this.getURL();
+      return $(this.el).html(ich.tpl_itemview(context));
     };
 
     ItemView.prototype.events = {
@@ -805,8 +808,15 @@
     };
 
     ItemView.prototype.go = function() {
-      window.app.frameGo(this.model.get('url'));
+      window.app.frameGo(this.getURL());
       return this.groupView.selectItem(this.num);
+    };
+
+    ItemView.prototype.getURL = function() {
+      var url;
+      url = this.model.get('url');
+      if (url && url.search('//') === -1) url = 'http://' + url;
+      return url;
     };
 
     return ItemView;

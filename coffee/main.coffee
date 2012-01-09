@@ -510,7 +510,9 @@ class ItemView extends Backbone.View
         @render()
 
     render: ->
-        $(@el).html(ich.tpl_itemview(@model.toJSON()))
+        context = @model.toJSON()
+        context.url = @getURL()
+        $(@el).html(ich.tpl_itemview(context))
 
     events:
         'click': 'clickLink'
@@ -522,9 +524,15 @@ class ItemView extends Backbone.View
         @groupView.closed()
 
     go: ->
-        window.app.frameGo(@model.get('url'))
+        window.app.frameGo(@getURL())
         @groupView.selectItem(@num)
-        
+
+    getURL: ->
+        url = @model.get('url')
+        if url and url.search('//') == -1
+            url = 'http://' + url
+        return url
+
 
 class Router extends Backbone.Router
     routes:

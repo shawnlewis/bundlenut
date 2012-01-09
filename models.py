@@ -10,6 +10,6 @@ class Group(db.Model):
     
 class Item(db.Model):
     title = db.StringProperty()
-    url = db.LinkProperty()
+    url = db.StringProperty()
     comment = db.StringProperty()
     group = db.ReferenceProperty(Group)
