@@ -894,6 +894,7 @@
   })();
 
   $(function() {
+    $('#create_group_name').hint();
     window.app = new App();
     window.router = new Router();
     return Backbone.history.start({

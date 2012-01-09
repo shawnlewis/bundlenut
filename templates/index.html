@@ -28,8 +28,8 @@
                     <div id="marketing_text">
                         <ul>
                             <li>Create bundles of links.</li>
-                            <li>Share.</li>
-                            <li>That's it!</li>
+                            <li>Browse them with our handy bundle browser.</li>
+                            <li>Share!</li>
                         </ul>
                     </div> 
                     <div id="create_form">
@@ -38,8 +38,10 @@
                             <img src="/static/img/small-arrow-gray.png" />
                         </div>
                         <div>
-                            <input id="create_group_name" name="group_name" type="text" />
+                        <form>
+                            <input id="create_group_name" name="group_name" type="text" title="Title"/>
                             <button name="go"> Go </button>
+                        </form>
                         </div>
                     </div>
                 </div>
@@ -81,10 +83,10 @@
         Bundlenut<img src="/static/img/nut-for-logo.png" />
     </div>
     <img src="/static/img/large-arrow.png" />
-    <div class="group_name"> Bundle Title : {{ name }}
-        <button>share</button>
+    <div class="group_name_section"> Bundle Title :
+        <span class="group_name">{{ name }}</span>
+        <a class="button" href="{{view_link}}"><button>Browse Bundle</button></a>
     </div>
-    <br><br><a href="{{view_link}}">View Link</a><br>
     <table class="step_dir">
         <tr>
             <td class="number"><div>#1</div></td>
@@ -96,7 +98,7 @@
         <tr>
             <td class="number"><div>#2</div></td>
             <td class="step_title">Add links to your Bundle</td>
-            <td class="step_details">You can click and drag each line to rearrange the order.</td>
+            <td class="step_details">Click on anything to change it. Drag and drop to reorder.</td>
         </tr>
     </table>
     <table class="items">
@@ -110,8 +112,13 @@
     <table class="step_dir">
         <tr>
             <td class="number"><div>#3</div></td>
-            <td class="step_title">Save this Page</td>
-            <td class="step_details">In order to modify your bundle in the future you'll need to return to this page. Bookmark it!</td>
+            <td class="step_title">Browse and Share</td>
+            <td class="step_details">
+                To share, send this link to your friends: {{ view_link }}
+            </td>
+            <td class="extra">
+                <button>Browse Bundle</button>
+            </div>
         </tr>
     </table>
 </div>

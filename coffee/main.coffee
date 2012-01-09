@@ -566,6 +566,8 @@ class App extends Backbone.Router
 
     
 $( ->
+    $('#create_group_name').hint()
+    
     window.app = new App()
     window.router = new Router()
     Backbone.history.start({pushState: true})
