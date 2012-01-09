@@ -346,7 +346,7 @@
       return this.model.clean(function() {
         var context, tbody;
         context = _this.model.toJSON();
-        context.view_link = '/group_view/' + _this.model.id;
+        context.view_link = '/b/' + _this.model.id;
         $(_this.el).html(ich.tpl_groupedit(context));
         _this.nameField = new EditableField({
           el: _this.$('.group_name'),
@@ -833,8 +833,8 @@
 
     Router.prototype.routes = {
       '': 'index',
-      'group_edit/:group_id/:edit_hash': 'groupEdit',
-      'group_view/:group_id': 'groupView'
+      'e/:group_id/:edit_hash': 'groupEdit',
+      'b/:group_id': 'groupView'
     };
 
     Router.prototype.index = function() {
@@ -902,7 +902,7 @@
     App.prototype.groupEdit = function(group) {
       $('body').removeClass().addClass('groupedit');
       this.showHome();
-      window.router.navigate('group_edit/' + group.id + '/' + group.get('edit_hash'));
+      window.router.navigate('e/' + group.id + '/' + group.get('edit_hash'));
       return this.view = new GroupEdit({
         el: this.homeContentEl,
         model: group
@@ -912,7 +912,7 @@
     App.prototype.groupView = function(group) {
       $('body').removeClass().addClass('groupview');
       this.showOther();
-      window.router.navigate('group_view/' + group.id);
+      window.router.navigate('b/' + group.id);
       this.view = new GroupView({
         el: this.tocEl,
         model: group

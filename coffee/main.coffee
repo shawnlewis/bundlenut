@@ -198,7 +198,7 @@ class GroupEdit extends Backbone.View
     render: =>
         @model.clean =>
             context = this.model.toJSON()
-            context.view_link = '/group_view/' + this.model.id
+            context.view_link = '/b/' + this.model.id
             $(@el).html ich.tpl_groupedit(context)
 
             @nameField = new EditableField
@@ -537,8 +537,8 @@ class ItemView extends Backbone.View
 class Router extends Backbone.Router
     routes:
         '': 'index'
-        'group_edit/:group_id/:edit_hash': 'groupEdit'
-        'group_view/:group_id': 'groupView'
+        'e/:group_id/:edit_hash': 'groupEdit'
+        'b/:group_id': 'groupView'
 
     index: ->
         window.app.index()
@@ -573,7 +573,7 @@ class App extends Backbone.Router
     groupEdit: (group) ->
         $('body').removeClass().addClass('groupedit')
         @showHome()
-        window.router.navigate('group_edit/' + group.id + '/' + group.get('edit_hash'))
+        window.router.navigate('e/' + group.id + '/' + group.get('edit_hash'))
         @view = new GroupEdit
             el: @homeContentEl
             model: group
@@ -581,7 +581,7 @@ class App extends Backbone.Router
     groupView: (group) ->
         $('body').removeClass().addClass('groupview')
         @showOther()
-        window.router.navigate('group_view/' + group.id)
+        window.router.navigate('b/' + group.id)
         @view = new GroupView
             el: @tocEl
             model: group

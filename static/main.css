@@ -255,6 +255,8 @@ body.index #create_form input[name="group_name"].blur {
 
 body.index #create_form button[name="go"] {
     font-size: 1em;
+    position: relative;
+    top: 1px;
 }
 
 body.index #popular_bundles_label {
