@@ -127,7 +127,7 @@ class Item extends Backbone.Model
         comment: ''
 
     isBlank: ->
-        if not @get('title') and not @get('url')
+        if not @get('title') and not @get('url') and not @get('comment')
             return true
         return false
 

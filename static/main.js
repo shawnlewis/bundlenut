@@ -204,7 +204,9 @@
     };
 
     Item.prototype.isBlank = function() {
-      if (!this.get('title') && !this.get('url')) return true;
+      if (!this.get('title') && !this.get('url') && !this.get('comment')) {
+        return true;
+      }
       return false;
     };
 
