@@ -257,6 +257,7 @@ class ItemEdit extends Backbone.View
         @urlField.bind('change', @changeURL)
         @commentField = new EditableField
             el: @$('.comment')
+            editType: 'textarea'
             val: @model.get('comment')
         @commentField.bind('change', @changeComment)
 
@@ -281,6 +282,7 @@ class ItemEdit extends Backbone.View
 
 class EditableField extends Backbone.View
     initialize: (options) ->
+        @editType = options.editType
         @val = options.val
         @inViewMode = false
         @viewMode()
@@ -313,13 +315,17 @@ class EditableField extends Backbone.View
             return
         @inViewMode = false
         $(@el).empty()
-        if @val
-            $(@el).append('<input class="edit" value="' + @val + '" />')
+        if @editType and @editType == 'textarea'
+            el = $('<textarea />')
+            if @val
+                el.html(@val)
         else
-            $(@el).append('<input class="edit" />')
-        @$('input')
-            .focus()
-            .select()
+            el = $('<input />')
+            if @val
+                el.val(@val)
+        el.addClass('edit')
+        $(@el).append(el)
+        el.focus().select()
         @delegateEvents
             'blur .edit': 'toViewMode'
             'keydown .edit': 'toViewMode'

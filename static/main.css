@@ -462,6 +462,14 @@ body.groupedit table.items colgroup.delete {
     width: 70px;
 }
 
+body.groupedit table .edit {
+    width: 100%;
+}
+
+body.groupedit table textarea {
+    height: 8em;
+}
+
 body.groupedit .blank {
     color: #666;
     font-style: italic;

@@ -444,6 +444,7 @@
       this.urlField.bind('change', this.changeURL);
       this.commentField = new EditableField({
         el: this.$('.comment'),
+        editType: 'textarea',
         val: this.model.get('comment')
       });
       return this.commentField.bind('change', this.changeComment);
@@ -491,6 +492,7 @@
     }
 
     EditableField.prototype.initialize = function(options) {
+      this.editType = options.editType;
       this.val = options.val;
       this.inViewMode = false;
       return this.viewMode();
@@ -521,15 +523,20 @@
     };
 
     EditableField.prototype.editMode = function() {
+      var el;
       if (!this.inViewMode) return;
       this.inViewMode = false;
       $(this.el).empty();
-      if (this.val) {
-        $(this.el).append('<input class="edit" value="' + this.val + '" />');
+      if (this.editType && this.editType === 'textarea') {
+        el = $('<textarea />');
+        if (this.val) el.html(this.val);
       } else {
-        $(this.el).append('<input class="edit" />');
+        el = $('<input />');
+        if (this.val) el.val(this.val);
       }
-      this.$('input').focus().select();
+      el.addClass('edit');
+      $(this.el).append(el);
+      el.focus().select();
       return this.delegateEvents({
         'blur .edit': 'toViewMode',
         'keydown .edit': 'toViewMode'
