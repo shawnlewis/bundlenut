@@ -198,6 +198,9 @@ body.index #index_background {
 
 body.index #index_content {
     display: block;
+}
+
+body.index #index_outer_wrapper {
     position: relative;
     width: 1024px;
     height: 1142px;

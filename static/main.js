@@ -892,16 +892,18 @@
 
     App.prototype.index = function() {
       $('body').removeClass().addClass('index');
+      $('#content').hide();
       this.showHome();
       window.router.navigate('');
       document.title = 'Bundlenut';
       return this.view = new Index({
-        el: this.homeContentEl
+        el: $('#index_content')
       });
     };
 
     App.prototype.groupEdit = function(group) {
       $('body').removeClass().addClass('groupedit');
+      $('#content').show();
       this.showHome();
       window.router.navigate('e/' + group.id + '/' + group.get('edit_hash'));
       document.title = 'Bundlenut - Edit: ' + group.get('name');

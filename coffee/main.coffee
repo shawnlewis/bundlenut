@@ -566,13 +566,15 @@ class App extends Backbone.Router
 
     index: ->
         $('body').removeClass().addClass('index')
+        $('#content').hide()
         @showHome()
         window.router.navigate('')
         document.title = 'Bundlenut'
-        @view = new Index(el: @homeContentEl)
+        @view = new Index(el: $('#index_content'))
 
     groupEdit: (group) ->
         $('body').removeClass().addClass('groupedit')
+        $('#content').show()
         @showHome()
         window.router.navigate('e/' + group.id + '/' + group.get('edit_hash'))
         document.title = 'Bundlenut - Edit: ' + group.get('name')

@@ -2,6 +2,8 @@
 
 {% block content %}
 <div id="content">
+</div>
+<div id="index_content">
     <div id="page_background">
         <table>
             <tr>
@@ -17,46 +19,46 @@
         </table>
     </div>
     <div id="index_background">
-    <div id="index_content">
-        <div id="index_wrapper">
-            <div class="header">
-                Bundlenut<img src="/static/img/nut-for-logo.png" />
-            </div>
-            <div id="index_actions">
-                <img class="header_sep" src="/static/img/large-arrow.png" />
-                <div>
-                    <div id="marketing_text">
-                        <ul>
-                            <li>Create bundles of links.</li>
-                            <li>Browse them with our handy bundle browser.</li>
-                            <li>Share!</li>
-                        </ul>
-                    </div> 
-                    <div id="create_form">
-                        <div id="index_create_label">
-                            Create a Bundle
-                            <img src="/static/img/small-arrow-gray.png" />
-                        </div>
-                        <div>
-                        <form>
-                            <input id="create_group_name" name="group_name" type="text" title="Title"/>
-                            <button name="go"> Go </button>
-                        </form>
+        <div id="index_outer_wrapper">
+            <div id="index_wrapper">
+                <div class="header">
+                    Bundlenut<img src="/static/img/nut-for-logo.png" />
+                </div>
+                <div id="index_actions">
+                    <img class="header_sep" src="/static/img/large-arrow.png" />
+                    <div>
+                        <div id="marketing_text">
+                            <ul>
+                                <li>Create bundles of links.</li>
+                                <li>Browse them with our handy bundle browser.</li>
+                                <li>Share!</li>
+                            </ul>
+                        </div> 
+                        <div id="create_form">
+                            <div id="index_create_label">
+                                Create a Bundle
+                                <img src="/static/img/small-arrow-gray.png" />
+                            </div>
+                            <div>
+                            <form>
+                                <input id="create_group_name" name="group_name" type="text" title="Title"/>
+                                <button name="go"> Go </button>
+                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <div id="popular_bundles_label">
+                Sample Bundles
+                <img src="/static/img/small-arrow-green.png" />
+            </div>
+            <div id="popular_bundles">
+                <div id="pop1" class="pop_bundle"></div>
+                <div id="pop2" class="pop_bundle"></div>
+                <div id="pop3" class="pop_bundle"></div>
+            </div>
         </div>
-        <div id="popular_bundles_label">
-            Sample Bundles
-            <img src="/static/img/small-arrow-green.png" />
-        </div>
-        <div id="popular_bundles">
-            <div id="pop1" class="pop_bundle"></div>
-            <div id="pop2" class="pop_bundle"></div>
-            <div id="pop3" class="pop_bundle"></div>
-        </div>
-    </div>
     </div>
 </div>
 {% endblock %}
