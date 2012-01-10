@@ -81,6 +81,11 @@ html, body {
     letter-spacing: 1px;
 }
 
+.header a {
+    color: rgb(143, 173, 49);
+    text-decoration: none;
+}
+
 .header > img {
     margin-left: 8px;
 }
