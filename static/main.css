@@ -372,6 +372,10 @@ body.groupedit .group_name {
     font-size: 24px;
 }
 
+body.groupedit .group_name div {
+    display: inline;
+}
+
 body.groupedit .step_dir {
     background: #7f992e;
     font-size: 24px;
