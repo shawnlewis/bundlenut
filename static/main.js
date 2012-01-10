@@ -793,23 +793,43 @@
       var context;
       context = this.model.toJSON();
       context.url = this.getURL();
+      context.newWindow = this.usesNewWindow();
       return $(this.el).html(ich.tpl_itemview(context));
     };
 
     ItemView.prototype.events = {
-      'click': 'clickLink',
-      'click': 'clickLink'
+      'click .full_url': 'clickURL',
+      'click .title': 'clickLink'
+    };
+
+    ItemView.prototype.clickURL = function(e) {
+      return this.$('.full_url input').focus().select();
     };
 
     ItemView.prototype.clickLink = function(e) {
       e.preventDefault();
-      this.go();
-      return this.groupView.closed();
+      return this.go();
     };
 
     ItemView.prototype.go = function() {
-      window.app.frameGo(this.getURL());
-      return this.groupView.selectItem(this.num);
+      var url;
+      url = this.getURL();
+      this.groupView.selectItem(this.num);
+      if (this.usesNewWindow()) {
+        return window.open(url, '');
+      } else {
+        window.app.frameGo(url);
+        return this.groupView.closed();
+      }
+    };
+
+    ItemView.prototype.usesNewWindow = function() {
+      var url;
+      url = this.model.get('url');
+      if (url.search('youtube.com') !== -1 || url.search('maps.google.com') !== -1) {
+        return true;
+      }
+      return false;
     };
 
     ItemView.prototype.getURL = function() {

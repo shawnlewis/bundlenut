@@ -645,9 +645,13 @@ html.show_other, body.show_other {
 }
 
 #table_of_contents #groupview_content .group_name {
-    padding-bottom: 10px;
     font-size: 1.4em;
     cursor: pointer;
+}
+
+#table_of_contents #groupview_content .bundlenut {
+    font-size: 12px;
+    padding-bottom: 10px;
 }
 
 #table_of_contents .item_view {
@@ -659,6 +663,24 @@ html.show_other, body.show_other {
     /*color: #222;*/
     color: green;
     text-decoration: none;
+}
+
+#table_of_contents .new_window {
+    font-size: 12px; 
+    color: #444;
+}
+
+#table_of_contents .full_url {
+    display: none;
+}
+
+#table_of_contents .item_view.selected .full_url {
+    display: block;
+    width: 100%;
+}
+
+#table_of_contents .item_view.selected .full_url > input {
+    width: 100%;
 }
 
 #table_of_contents .comment {

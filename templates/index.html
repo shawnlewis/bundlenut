@@ -153,6 +153,9 @@
         <div id="items">
             <div id="beforeCurrent" class="wrapper">
                 <div class="group_name">{{ name }}</div>
+                <div class="bundlenut">
+                    Brought to you by <a href="http://www.bundlenut.com">www.bundenut.com</a>
+                </div>
             </div>
             <div id="current"></div>
             <div id="afterCurrent" class="wrapper"></div>
@@ -174,8 +177,12 @@
 </script>
 
 <script id="tpl_itemview" type="text/html">
+    <div class="full_url">
+        <input type="text" value="{{ url }}" />
+    </div>
     <div class="title">
         <a href="{{ url }}">{{ title }}</a>
+        {{#newWindow}}<span class="new_window">(opens in a new window)</span>{{/newWindow}}
         <div class="comment">{{ comment }}</div>
     </div>
 </script>

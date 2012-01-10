@@ -512,25 +512,41 @@ class ItemView extends Backbone.View
     render: ->
         context = @model.toJSON()
         context.url = @getURL()
+        context.newWindow = @usesNewWindow()
         $(@el).html(ich.tpl_itemview(context))
 
     events:
-        'click': 'clickLink'
-        'click': 'clickLink'
+        'click .full_url': 'clickURL'
+        'click .title': 'clickLink'
+            
+    clickURL: (e) ->
+        @$('.full_url input').focus().select()
 
     clickLink: (e) ->
         e.preventDefault()
         @go()
-        @groupView.closed()
 
     go: ->
-        window.app.frameGo(@getURL())
+        url = @getURL()
         @groupView.selectItem(@num)
+        if @usesNewWindow()
+            window.open(url, '')
+        else
+            window.app.frameGo(url)
+            @groupView.closed()
+
+    usesNewWindow: ->
+        url = @model.get('url')
+        if url.search('youtube.com') != -1 or url.search('maps.google.com') != -1
+            return true
+        return false
+        
 
     getURL: ->
         url = @model.get('url')
         if url and url.search('//') == -1
             url = 'http://' + url
+        #url = toEmbedURL(url)
         return url
 
 
