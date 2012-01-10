@@ -276,11 +276,6 @@ body.index #popular_bundles_label {
     color: rgb(220, 238, 238);
 }
 
-body.index #popular_bundles {
-    position: absolute;
-    top: 585px;
-}
-
 body.index .pop_bundle {
     position: absolute;
     width: 220px;
@@ -290,14 +285,17 @@ body.index .pop_bundle {
 }
 
 body.index #pop1 {
+    top: 585px;
     left: 45px;
 }
 
 body.index #pop2 {
+    top: 585px;
     left: 400px;
 }
 
 body.index #pop3 {
+    top: 585px;
     left: 750px;
 }
 
@@ -334,7 +332,6 @@ body.index .items {
 }
 
 body.index .title {
-    font-weight: bold;
     font-size: 15px;
 }
 
