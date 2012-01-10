@@ -619,7 +619,7 @@ html.show_other, body.show_other {
 }
 
 #table_of_contents .arrow > img {
-    visibility: none;
+    visibility: hidden;
     margin: 5px 5px;
 }
 
