@@ -8,6 +8,7 @@ import webob
 import webob.exc
 import webapp2
 
+from google.appengine.api import memcache
 from google.appengine.ext import db
 from google.appengine.ext.webapp import template
 
@@ -155,8 +156,13 @@ class APIItem(JSONRequestHandler):
 
 class APIPopularGroups(JSONRequestHandler):
     def get(self):
-        ids = [19007, 17005, 17010]
-        group_data = [json_group(models.Group.get_by_id(i)) for i in ids]
+        group_data = memcache.get('popular') 
+        if group_data is None:
+            ids = [19007, 17005, 17010]
+            if DEBUG:
+                ids = [10, 111, 113]
+            group_data = [json_group(models.Group.get_by_id(i)) for i in ids]
+            memcache.add('popular', group_data, 60)
         self.json_response(group_data)
 
 class APIEditCheck(JSONRequestHandler):
