@@ -73,10 +73,14 @@
     <div class="group_name">{{ name }}</div>
     <div class="items">
         {{#item_set}}
-        <div class="item">
-            <span class="title">{{ title }}</span> - 
-            <span class="comment">{{ comment }}</span>
-        </div>
+            {{#title}}
+            <div class="item">
+                <span class="title">{{ title }}</span>
+                {{#comment}}
+                    - <span class="comment">{{ comment }}</span>
+                {{/comment}} 
+            </div>
+            {{/title}}
         {{/item_set}}
     </div>
 </script>
