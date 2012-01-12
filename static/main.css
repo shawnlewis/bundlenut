@@ -95,6 +95,15 @@ html, body {
     height: 36px;
 }
 
+.header .tag_line {
+    position: relative;
+    top: -13px;
+    font-family: 'Raleway';
+    font-size: 16px;
+    color: #444;
+}
+
+
 a.button {
     text-decoration: none;
 }
@@ -649,6 +658,11 @@ html.show_other, body.show_other {
 #table_of_contents #groupview_content .bundlenut {
     font-size: 12px;
     padding-bottom: 10px;
+    font-style: italic;
+}
+
+#table_of_contents #groupview_content .bundlenut a {
+    font-style: normal;
 }
 
 #table_of_contents .item_view {
@@ -672,11 +686,18 @@ html.show_other, body.show_other {
 }
 
 #table_of_contents .item_view.selected .full_url {
-    display: block;
+    display: table;
+    width: 100%;
+    font-size: 12px;
+    color: #777;
+}
+
+#table_of_contents .item_view.selected .full_url .input {
     width: 100%;
 }
 
-#table_of_contents .item_view.selected .full_url > input {
+#table_of_contents .item_view.selected .full_url input {
+    color: #777;
     width: 100%;
 }
 

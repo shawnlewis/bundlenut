@@ -5,6 +5,7 @@
 <html>
     <head>
         <meta http-equiv="content-type" content="text/php; charset=utf-8" />
+        <link href='http://fonts.googleapis.com/css?family=Alfa+Slab+One|Raleway:100' rel='stylesheet' type='text/css'>
         <title>Lasso 'em</title>
 
         <style type="text/css">
@@ -14,32 +15,70 @@
                 overflow: hidden;
             }
 
-            table {
+            #content {
                 position: absolute;
-                left: 50%;
+                left: 55%;
                 height: 100%;
-                width: 50%;
+                width: 45%;
             }
 
-            td {
-                text-align: center;
-                vertical-align: middle;
+            .header {
+                font-size: 52px;
+                font-family: 'Alfa Slab One';
+                color: rgb(143, 173, 49);
+                letter-spacing: 1px;
+                margin: 0;
+                padding: 0;
+                line-height: 52px;
             }
 
-            #directions {
-                font-size: 3em;
-                font-family: Arial, Arial, Helvetica, sans-serif;
+            .header a {
+                color: rgb(143, 173, 49);
+                text-decoration: none;
+                margin: 0;
+                padding: 0;
             }
+
+            .header > img {
+                margin-left: 8px;
+            }
+
+            .tag_line {
+                position: relative;
+                top: -5px;
+                font-family: 'Raleway';
+                font-size: 16px;
+                color: #444;
+            }
+
+            .directions {
+                font-size: 1.6em;
+                font-family: 'Raleway';
+                margin-bottom: 20px;
+                margin-top: 20px;
+                width: 350px;
+            }
+
         </style>
     </head>
 
     <body>
-        <table>
-            <tr>
-                <td>
-                    <div id="directions"> Click a link! </div>
-                </td>
-            </tr>
-        </table>
+        <div id="content">
+            <div class="header">
+                <a href="/">
+                    Bundlenut<img src="/static/img/nut-for-logo.png" />
+                </a>
+            </div>
+            <div class="tag_line">
+                Bundle the web. Share it.
+            </div>
+            <div class="directions"> 
+                Click one of the links to the left to start browsing this bundle.
+            </div>
+            <div class="directions">
+                <a href="/">Make your own</a>
+            </div>
+            </td>
+        </div>
     </body>
 </html>

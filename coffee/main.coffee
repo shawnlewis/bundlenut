@@ -157,6 +157,7 @@ class Index extends Backbone.View
     submit: (e)->
         if e.type == 'keydown' and e.keyCode != 13
             return
+        mpq.track('index-bundle-created')
         e.preventDefault()
         group = new Group
             name: $('input[name="group_name"]').val()
@@ -178,6 +179,7 @@ class GroupSummary extends Backbone.View
         'click': 'go'
 
     go: ->
+        mpq.track('index-popular-bundle-clicked')
         window.app.groupView(@model)
          
 
@@ -412,6 +414,9 @@ class GroupView extends Backbone.View
         if @state == 'single'
             $('.wrapper').hide()
 
+        @$('.tab #logo').click ->
+            mpq.track('view-logo-click')
+
         $(html).find('.pane_middle').jScrollPane()
 
     events:
@@ -494,9 +499,11 @@ class GroupView extends Backbone.View
         @render()
 
     nextItem: ->
+        mpq.track('view-next-item')
         @itemViews[@curItemNum+1].go()
 
     prevItem: ->
+        mpq.track('view-prev-item')
         @itemViews[@curItemNum-1].go()
 
 
@@ -523,6 +530,7 @@ class ItemView extends Backbone.View
         @$('.full_url input').focus().select()
 
     clickLink: (e) ->
+        mpq.track('view-click-link')
         e.preventDefault()
         @go()
 

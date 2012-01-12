@@ -269,6 +269,7 @@
     Index.prototype.submit = function(e) {
       var group;
       if (e.type === 'keydown' && e.keyCode !== 13) return;
+      mpq.track('index-bundle-created');
       e.preventDefault();
       group = new Group({
         name: $('input[name="group_name"]').val()
@@ -308,6 +309,7 @@
     };
 
     GroupSummary.prototype.go = function() {
+      mpq.track('index-popular-bundle-clicked');
       return window.app.groupView(this.model);
     };
 
@@ -654,6 +656,9 @@
       }
       this.sizeFix();
       if (this.state === 'single') $('.wrapper').hide();
+      this.$('.tab #logo').click(function() {
+        return mpq.track('view-logo-click');
+      });
       return $(html).find('.pane_middle').jScrollPane();
     };
 
@@ -760,10 +765,12 @@
     };
 
     GroupView.prototype.nextItem = function() {
+      mpq.track('view-next-item');
       return this.itemViews[this.curItemNum + 1].go();
     };
 
     GroupView.prototype.prevItem = function() {
+      mpq.track('view-prev-item');
       return this.itemViews[this.curItemNum - 1].go();
     };
 
@@ -807,6 +814,7 @@
     };
 
     ItemView.prototype.clickLink = function(e) {
+      mpq.track('view-click-link');
       e.preventDefault();
       return this.go();
     };
