@@ -425,7 +425,11 @@ class GroupView extends Backbone.View
         'click .full .tab #logo': 'closed'
 
         'mouseenter .closed .tab': 'single'
-        'mouseleave .single .tab': 'closed'
+
+        'mouseleave .single .tab': 'closedIfLeft'
+        'mouseleave .single .pane_top': 'closedIfLeft'
+        'mouseleave .single .pane_middle': 'closedIfLeft'
+        'mouseleave .single .pane_bottom': 'closedIfLeft'
 
         'click .tab #left_arrow.arrow_on' : 'prevItem'
         'click .tab #right_arrow.arrow_on': 'nextItem'
@@ -484,6 +488,11 @@ class GroupView extends Backbone.View
             $('.wrapper').slideDown()
             $('.wrapper').promise().done(onComplete)
         @setState('full')
+
+    closedIfLeft: (e) ->
+        toEl = $(e.toElement)
+        if toEl.attr('id') == 'other_page'
+            @closed()
 
     _paneHeight: ->
         _.reduce(
