@@ -542,15 +542,17 @@ class ItemView extends Backbone.View
         mpq.track('view-click-link')
         e.preventDefault()
         @go()
+        if not @usesNewWindow()
+            @groupView.closed()
 
     go: ->
         url = @getURL()
         @groupView.selectItem(@num)
         if @usesNewWindow()
+            window.app.frameGo('/static/empty.html')
             window.open(url, '')
         else
             window.app.frameGo(url)
-            @groupView.closed()
 
     usesNewWindow: ->
         url = @model.get('url')

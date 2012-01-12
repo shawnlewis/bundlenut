@@ -671,7 +671,6 @@ html.show_other, body.show_other {
 }
 
 #table_of_contents a {
-    /*color: #222;*/
     color: green;
     text-decoration: none;
 }
@@ -690,6 +689,10 @@ html.show_other, body.show_other {
     width: 100%;
     font-size: 12px;
     color: #777;
+    border-spacing: 0;
+    margin: 0;
+    padding: 0;
+    padding-right: 3px;
 }
 
 #table_of_contents .item_view.selected .full_url .input {
@@ -717,14 +720,6 @@ html.show_other, body.show_other {
 
 #table_of_contents .item_view:hover a {
     text-decoration: underline;
-    /*
-    padding-left: 6px;
-    border-left: 2px solid rgb(70, 121, 179);
-    */
-}
-
-#table_of_contents a:visited {
-    /*color: #222;*/
 }
 
 #table_of_contents .comment {

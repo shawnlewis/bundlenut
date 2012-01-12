@@ -825,7 +825,8 @@
     ItemView.prototype.clickLink = function(e) {
       mpq.track('view-click-link');
       e.preventDefault();
-      return this.go();
+      this.go();
+      if (!this.usesNewWindow()) return this.groupView.closed();
     };
 
     ItemView.prototype.go = function() {
@@ -833,10 +834,10 @@
       url = this.getURL();
       this.groupView.selectItem(this.num);
       if (this.usesNewWindow()) {
+        window.app.frameGo('/static/empty.html');
         return window.open(url, '');
       } else {
-        window.app.frameGo(url);
-        return this.groupView.closed();
+        return window.app.frameGo(url);
       }
     };
 
