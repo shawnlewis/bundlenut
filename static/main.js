@@ -750,7 +750,7 @@
 
     GroupView.prototype.closedIfLeft = function(e) {
       var toEl;
-      toEl = $(e.toElement);
+      toEl = $(e.relatedTarget);
       if (toEl.attr('id') === 'other_page') return this.closed();
     };
 
@@ -844,7 +844,7 @@
     ItemView.prototype.usesNewWindow = function() {
       var url;
       url = this.model.get('url');
-      if (url.search('youtube.com') !== -1 || url.search('maps.google.com') !== -1) {
+      if (url && (url.search('youtube.com') !== -1 || url.search('maps.google.com')) !== -1) {
         return true;
       }
       return false;
@@ -954,13 +954,13 @@
     App.prototype.groupView = function(group) {
       $('body').removeClass().addClass('groupview');
       this.showOther();
+      this.frameGo('/static/empty.html');
       window.router.navigate('b/' + group.id);
       document.title = 'Bundlenut - Browse: ' + group.get('name');
-      this.view = new GroupView({
+      return this.view = new GroupView({
         el: this.tocEl,
         model: group
       });
-      return this.frameGo('/static/empty.html');
     };
 
     App.prototype.showHome = function() {

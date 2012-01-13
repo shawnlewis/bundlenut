@@ -490,7 +490,7 @@ class GroupView extends Backbone.View
         @setState('full')
 
     closedIfLeft: (e) ->
-        toEl = $(e.toElement)
+        toEl = $(e.relatedTarget)
         if toEl.attr('id') == 'other_page'
             @closed()
 
@@ -556,7 +556,7 @@ class ItemView extends Backbone.View
 
     usesNewWindow: ->
         url = @model.get('url')
-        if url.search('youtube.com') != -1 or url.search('maps.google.com') != -1
+        if url and (url.search('youtube.com') != -1 or url.search('maps.google.com')) != -1
             return true
         return false
         
@@ -620,12 +620,12 @@ class App extends Backbone.Router
     groupView: (group) ->
         $('body').removeClass().addClass('groupview')
         @showOther()
+        @frameGo('/static/empty.html')
         window.router.navigate('b/' + group.id)
         document.title = 'Bundlenut - Browse: ' + group.get('name')
         @view = new GroupView
             el: @tocEl
             model: group
-        @frameGo('/static/empty.html')
         
     showHome: ->
         $('html').removeClass('show_other')

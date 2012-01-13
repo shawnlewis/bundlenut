@@ -158,7 +158,7 @@ class APIPopularGroups(JSONRequestHandler):
     def get(self):
         group_data = memcache.get('popular') 
         if group_data is None:
-            ids = [19007, 17005, 17010]
+            ids = [19021, 17005, 18023, 17010, 18028, 19007]
             if DEBUG:
                 ids = [10, 111, 113]
             group_data = [json_group(models.Group.get_by_id(i)) for i in ids]

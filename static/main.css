@@ -86,7 +86,7 @@ html, body {
     text-decoration: none;
 }
 
-.header > img {
+.header img {
     margin-left: 8px;
 }
 
@@ -295,7 +295,7 @@ body.index .pop_bundle {
 
 body.index #pop1 {
     top: 585px;
-    left: 45px;
+    left: 50px;
 }
 
 body.index #pop2 {
@@ -305,6 +305,21 @@ body.index #pop2 {
 
 body.index #pop3 {
     top: 585px;
+    left: 750px;
+}
+
+body.index #pop4 {
+    top: 875px;
+    left: 50px;
+}
+
+body.index #pop5 {
+    top: 875px;
+    left: 400px;
+}
+
+body.index #pop6 {
+    top: 875px;
     left: 750px;
 }
 
@@ -671,7 +686,7 @@ html.show_other, body.show_other {
 }
 
 #table_of_contents a {
-    color: green;
+    color: rgb(143, 173, 49);
     text-decoration: none;
 }
 
@@ -720,6 +735,7 @@ html.show_other, body.show_other {
 
 #table_of_contents .item_view:hover a {
     text-decoration: underline;
+    color: rgb(183, 156, 46);
 }
 
 #table_of_contents .comment {
