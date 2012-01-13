@@ -253,10 +253,14 @@
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         _ref2 = _ref[_i], div = _ref2[0], group = _ref2[1];
-        _results.push(new GroupSummary({
-          el: div,
-          model: group
-        }));
+        if (div && group) {
+          _results.push(new GroupSummary({
+            el: div,
+            model: group
+          }));
+        } else {
+          _results.push(void 0);
+        }
       }
       return _results;
     };
@@ -567,12 +571,11 @@
     }
 
     GroupView.prototype.initialize = function(options) {
-      var overOther;
       var _this = this;
       this.curItemNum = -1;
       this.state = 'full';
       this.render();
-      $(window).resize(function() {
+      return $(window).resize(function() {
         var doingFix;
         doingFix = false;
         if (!doingFix) {
@@ -582,15 +585,6 @@
             return doingFix = false;
           }, 200);
         }
-      });
-      overOther = false;
-      $('iframe').hover(function() {
-        return overOther = true;
-      }, function() {
-        return overOther = false;
-      });
-      return $(window).blur(function() {
-        if (overOther) return _this.closed();
       });
     };
 
@@ -769,6 +763,7 @@
     };
 
     GroupView.prototype.selectItem = function(num) {
+      if (!this.curItemNum) this.initClickOther();
       this.curItemNum = num;
       return this.render();
     };
@@ -781,6 +776,20 @@
     GroupView.prototype.prevItem = function() {
       mpq.track('view-prev-item');
       return this.itemViews[this.curItemNum - 1].go();
+    };
+
+    GroupView.prototype.initClickOther = function() {
+      var overOther;
+      var _this = this;
+      overOther = false;
+      $('iframe').hover(function() {
+        return overOther = true;
+      }, function() {
+        return overOther = false;
+      });
+      return $(window).blur(function() {
+        if (overOther) return _this.closed();
+      });
     };
 
     return GroupView;
@@ -934,9 +943,12 @@
       this.showHome();
       window.router.navigate('');
       document.title = 'Bundlenut';
-      return this.view = new Index({
-        el: $('#index_content')
-      });
+      if (!this.indexView) {
+        this.indexView = new Index({
+          el: $('#index_content')
+        });
+      }
+      return this.view = this.indexView;
     };
 
     App.prototype.groupEdit = function(group) {

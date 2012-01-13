@@ -146,9 +146,10 @@ class Index extends Backbone.View
     
     render: =>
         for [div, group] in _.zip($('#popular_bundles > div'), @popular.models)
-            new GroupSummary
-                el: div
-                model: group
+            if div and group
+                new GroupSummary
+                    el: div
+                    model: group
 
     events:
         'click button[name="go"]': 'submit'
@@ -353,13 +354,6 @@ class GroupView extends Backbone.View
                         doingFix = false
                     ,200)
 
-        # detect iframe clicks. Thanks stackoverflow.
-        overOther = false
-        $('iframe').hover(
-            => overOther = true,
-            => overOther = false)
-        $(window).blur(=> if overOther then @closed())
-
     sizeFix: =>
         pane_middle = @$('.pane_middle')
         if pane_middle.data().jsp
@@ -504,6 +498,8 @@ class GroupView extends Backbone.View
         if @curItemNum == -1 then null else @itemViews[@curItemNum]
 
     selectItem: (num) ->
+        if not @curItemNum
+            @initClickOther()
         @curItemNum = num
         @render()
 
@@ -515,6 +511,14 @@ class GroupView extends Backbone.View
         mpq.track('view-prev-item')
         @itemViews[@curItemNum-1].go()
 
+
+    initClickOther: ->
+        # detect iframe clicks. Thanks stackoverflow.
+        overOther = false
+        $('iframe').hover(
+            => overOther = true,
+            => overOther = false)
+        $(window).blur(=> if overOther then @closed())
 
 class ItemView extends Backbone.View
     tagName: 'div'
@@ -605,7 +609,9 @@ class App extends Backbone.Router
         @showHome()
         window.router.navigate('')
         document.title = 'Bundlenut'
-        @view = new Index(el: $('#index_content'))
+        if not @indexView
+            @indexView = new Index(el: $('#index_content'))
+        @view = @indexView
 
     groupEdit: (group) ->
         $('body').removeClass().addClass('groupedit')
