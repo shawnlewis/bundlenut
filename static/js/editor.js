@@ -7,6 +7,8 @@
     __extends(GroupEdit, Backbone.View);
 
     function GroupEdit() {
+      this.itemRemoved = __bind(this.itemRemoved, this);
+      this.itemAdded = __bind(this.itemAdded, this);
       this.changeName = __bind(this.changeName, this);
       this.sortUpdate = __bind(this.sortUpdate, this);
       this.render = __bind(this.render, this);
@@ -15,6 +17,7 @@
 
     GroupEdit.prototype.initialize = function(options) {
       var _this = this;
+      this.itemViews = [];
       bn.lib.jsonRPC('group_edit_check', {
         'edit_hash': this.model.get('edit_hash'),
         'id': this.model.id
@@ -25,44 +28,38 @@
           return _this.renderDenied();
         }
       });
-      return this.model.bind('change', this.render);
+      this.model.itemSet.bind('reset', this.render);
+      this.model.itemSet.bind('add', this.itemAdded);
+      return this.model.itemSet.bind('remove', this.itemRemoved);
     };
 
     GroupEdit.prototype.render = function() {
+      var context;
       var _this = this;
-      return this.model.clean(function() {
-        var context, tbody;
-        context = _this.model.toJSON();
-        context.view_link = '/b/' + _this.model.id;
-        $(_this.el).html(ich.tpl_groupedit(context));
-        _this.nameField = new EditableField({
-          el: _this.$('.group_name'),
-          val: _this.model.get('name'),
-          blankText: 'Group Name'
-        });
-        _this.nameField.bind('change', _this.changeName);
-        tbody = _this.$('#items');
-        _this.model.itemSet.each(function(item) {
-          var el;
-          el = $(new ItemEdit({
-            model: item
-          }).el);
-          el.attr('data-id', item.id);
-          return tbody.append(el);
-        });
-        tbody.find('tr:last').addClass('last');
-        return tbody.sortable({
-          update: _this.sortUpdate,
-          helper: function(e, ui) {
-            var child, _i, _len, _ref;
-            _ref = ui.children();
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-              child = _ref[_i];
-              $(child).width($(child).width());
-            }
-            return ui;
+      context = this.model.toJSON();
+      context.view_link = '/b/' + this.model.id;
+      $(this.el).html(ich.tpl_groupedit(context));
+      this.nameField = new EditableField({
+        el: this.$('.group_name'),
+        val: this.model.get('name'),
+        blankText: 'Group Name'
+      });
+      this.nameField.bind('change', this.changeName);
+      this.tbody = this.$('#items');
+      this.model.itemSet.each(function(item) {
+        return _this.addItemView(item);
+      });
+      return this.tbody.sortable({
+        update: this.sortUpdate,
+        helper: function(e, ui) {
+          var child, _i, _len, _ref;
+          _ref = ui.children();
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            child = _ref[_i];
+            $(child).width($(child).width());
           }
-        });
+          return ui;
+        }
       });
     };
 
@@ -74,13 +71,9 @@
       'sortupdate #items tbody': 'sortUpdate'
     };
 
-    GroupEdit.prototype.addItem = function() {
-      return this.model.createItem();
-    };
-
     GroupEdit.prototype.sortUpdate = function() {
       var i;
-      return this.model.setOrdering((function() {
+      this.model.setOrdering((function() {
         var _i, _len, _ref, _results;
         _ref = this.$('#items tr');
         _results = [];
@@ -90,6 +83,7 @@
         }
         return _results;
       }).call(this));
+      return this.setLast();
     };
 
     GroupEdit.prototype.changeName = function(newName) {
@@ -97,6 +91,35 @@
         'name': newName
       });
       return this.model.save();
+    };
+
+    GroupEdit.prototype.itemAdded = function(item, itemSet) {
+      bn.lib.assert(item.id === itemSet.at(itemSet.length - 1).id);
+      return this.addItemView(item);
+    };
+
+    GroupEdit.prototype.itemRemoved = function(item, itemSet) {
+      return item.view.remove();
+    };
+
+    GroupEdit.prototype.addItemView = function(item) {
+      var el, itemView;
+      itemView = new ItemEdit({
+        model: item
+      });
+      this.itemViews.push(itemView);
+      item.view = itemView;
+      el = $(itemView.el);
+      el.attr('data-id', item.id);
+      if (this.tbody) {
+        this.tbody.append(el);
+        return this.setLast();
+      }
+    };
+
+    GroupEdit.prototype.setLast = function() {
+      this.tbody.find('tr').removeClass('last');
+      return this.tbody.find('tr:last').addClass('last');
     };
 
     return GroupEdit;

@@ -49,8 +49,14 @@ Backbone.sync = (method, model, options) ->
 class Group extends Backbone.Model
     urlRoot: '/api/group'
 
-    initialize: ->
+    initialize: (options) ->
+        if options.editHash
+            @set('edit_hash': options.editHash)
         @parseItemSet()
+
+        # bind to change instead of change:item_set because we want to fire
+        # when ordering has changed as well, and there's no need to fire twice
+        # if both ordering and item_set are being set at the same time.
         @bind('change', @parseItemSet)
 
     parseItemSet:  =>
@@ -67,41 +73,45 @@ class Group extends Backbone.Model
         for item in _.values(items)
             ordered.push(item)
 
-        @itemSet = new ItemSet ordered
+        if not @itemSet
+            @itemSet = new ItemSet ordered
+            @itemSet.group = @
+
+            @itemSet.bind('add', @fixOrdering)
+            @itemSet.bind('remove', @fixOrdering)
+
+            @itemSet.bind('change', @clean)
+            @itemSet.bind('remove', @clean)
+        else
+            @itemSet.reset(ordered)
         @unset('item_set', silent: true)
-        @itemSet.group = @
+        @clean()
 
-        @itemSet.bind('change', => @change())
-        @itemSet.bind('add', => @change)
-        @itemSet.bind('add', @fixOrdering)
-        @itemSet.bind('remove', => @change())
-        @itemSet.bind('remove', @fixOrdering)
-
-    createItem: (success) ->
-        @itemSet.create(
-            {group: @get('key')
-            edit_hash: @get('edit_hash')},
-            {success: success})
-        
     fixOrdering: =>
-        @set
-            ordering: item.id for item in @itemSet.models
-            silent: true
-        @save()
+        # silent so we don't trigger another parseItemSet
+        @set({ordering: item.id for item in @itemSet.models}, {silent: true})
+        @save(null, silent: true)
 
     setOrdering: (ordering) ->
         @set(
             {ordering: parseInt(i) for i in ordering},
             {silent: true})
-        @save()
+        # not silent, we want parseItemSet to fire so that the items in
+        # the collection follow ordering.
+        @save(null)
 
     # create a blank item at the end of the list if we don't have one.
-    clean: (success) ->
+    clean: =>
         lastIndex = @itemSet.models.length - 1
         if lastIndex == -1 or not @itemSet.models[lastIndex].isBlank()
-            @createItem(success)
-        else
-            success()
+            @_createItem()
+
+    _createItem: (success) ->
+        @itemSet.create(
+            {group: @get('key'),
+            edit_hash: @get('edit_hash')},
+            {success: success})
+        
 
 class GroupSet extends Backbone.Collection
     model: Group

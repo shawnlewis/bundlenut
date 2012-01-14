@@ -55,10 +55,11 @@ class Router extends Backbone.Router
         window.app.index()
 
     groupEdit: (groupID, editHash) ->
-        group = new bn.models.Group({'id': groupID})
+        group = new bn.models.Group
+            id: groupID
+            editHash: editHash
         group.fetch
             success: ->
-                group.set(edit_hash: editHash)
                 window.app.groupEdit group
 
     groupView: (groupID) ->

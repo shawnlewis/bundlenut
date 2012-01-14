@@ -46,6 +46,7 @@
     __extends(Group, Backbone.Model);
 
     function Group() {
+      this.clean = __bind(this.clean, this);
       this.fixOrdering = __bind(this.fixOrdering, this);
       this.parseItemSet = __bind(this.parseItemSet, this);
       Group.__super__.constructor.apply(this, arguments);
@@ -53,14 +54,18 @@
 
     Group.prototype.urlRoot = '/api/group';
 
-    Group.prototype.initialize = function() {
+    Group.prototype.initialize = function(options) {
+      if (options.editHash) {
+        this.set({
+          'edit_hash': options.editHash
+        });
+      }
       this.parseItemSet();
       return this.bind('change', this.parseItemSet);
     };
 
     Group.prototype.parseItemSet = function() {
       var id, item, items, ordered, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
-      var _this = this;
       if (!this.get('item_set')) return;
       items = {};
       _ref = this.get('item_set');
@@ -80,31 +85,20 @@
         item = _ref3[_k];
         ordered.push(item);
       }
-      this.itemSet = new ItemSet(ordered);
+      if (!this.itemSet) {
+        this.itemSet = new ItemSet(ordered);
+        this.itemSet.group = this;
+        this.itemSet.bind('add', this.fixOrdering);
+        this.itemSet.bind('remove', this.fixOrdering);
+        this.itemSet.bind('change', this.clean);
+        this.itemSet.bind('remove', this.clean);
+      } else {
+        this.itemSet.reset(ordered);
+      }
       this.unset('item_set', {
         silent: true
       });
-      this.itemSet.group = this;
-      this.itemSet.bind('change', function() {
-        return _this.change();
-      });
-      this.itemSet.bind('add', function() {
-        return _this.change;
-      });
-      this.itemSet.bind('add', this.fixOrdering);
-      this.itemSet.bind('remove', function() {
-        return _this.change();
-      });
-      return this.itemSet.bind('remove', this.fixOrdering);
-    };
-
-    Group.prototype.createItem = function(success) {
-      return this.itemSet.create({
-        group: this.get('key'),
-        edit_hash: this.get('edit_hash')
-      }, {
-        success: success
-      });
+      return this.clean();
     };
 
     Group.prototype.fixOrdering = function() {
@@ -119,10 +113,13 @@
             _results.push(item.id);
           }
           return _results;
-        }).call(this),
+        }).call(this)
+      }, {
         silent: true
       });
-      return this.save();
+      return this.save(null, {
+        silent: true
+      });
     };
 
     Group.prototype.setOrdering = function(ordering) {
@@ -140,17 +137,24 @@
       }, {
         silent: true
       });
-      return this.save();
+      return this.save(null);
     };
 
-    Group.prototype.clean = function(success) {
+    Group.prototype.clean = function() {
       var lastIndex;
       lastIndex = this.itemSet.models.length - 1;
       if (lastIndex === -1 || !this.itemSet.models[lastIndex].isBlank()) {
-        return this.createItem(success);
-      } else {
-        return success();
+        return this._createItem();
       }
+    };
+
+    Group.prototype._createItem = function(success) {
+      return this.itemSet.create({
+        group: this.get('key'),
+        edit_hash: this.get('edit_hash')
+      }, {
+        success: success
+      });
     };
 
     return Group;

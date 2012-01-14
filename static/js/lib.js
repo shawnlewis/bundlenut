@@ -1,3 +1,5 @@
+(function() {
+  var AssertException;
 
   bn.lib = {
     jsonRPC: function(funcName, data, success) {
@@ -15,5 +17,23 @@
     },
     max: function(array) {
       return Math.max.apply(Math, array);
+    },
+    AssertException: AssertException = (function() {
+
+      function AssertException(message) {
+        this.message = message;
+      }
+
+      AssertException.prototype.toString = function() {
+        return 'AssertException: ' + this.message;
+      };
+
+      return AssertException;
+
+    })(),
+    assert: function(exp, message) {
+      if (!exp) throw new AssertException(message);
     }
   };
+
+}).call(this);

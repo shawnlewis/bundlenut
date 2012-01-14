@@ -1,5 +1,6 @@
 class GroupEdit extends Backbone.View
     initialize: (options) ->
+        @itemViews = []
         bn.lib.jsonRPC(
             'group_edit_check',
             {'edit_hash': @model.get('edit_hash'),
@@ -10,35 +11,31 @@ class GroupEdit extends Backbone.View
                 else
                     @renderDenied()
         )
-        @model.bind('change', @render)
+        @model.itemSet.bind('reset', @render)
+        @model.itemSet.bind('add', @itemAdded)
+        @model.itemSet.bind('remove', @itemRemoved)
 
     render: =>
-        @model.clean =>
-            context = this.model.toJSON()
-            context.view_link = '/b/' + this.model.id
-            $(@el).html ich.tpl_groupedit(context)
+        context = this.model.toJSON()
+        context.view_link = '/b/' + this.model.id
+        $(@el).html ich.tpl_groupedit(context)
 
-            @nameField = new EditableField
-                el: @$('.group_name')
-                val: @model.get('name')
-                blankText: 'Group Name'
-            @nameField.bind('change', @changeName)
+        @nameField = new EditableField
+            el: @$('.group_name')
+            val: @model.get('name')
+            blankText: 'Group Name'
+        @nameField.bind('change', @changeName)
 
-            tbody = @$('#items')
-            @model.itemSet.each (item) ->
-                el = $(new ItemEdit(model: item).el)
-                el.attr('data-id', item.id)
-                tbody.append(el)
+        @tbody = @$('#items')
+        @model.itemSet.each (item) =>
+            @addItemView(item)
 
-            # last row is styled differently
-            tbody.find('tr:last').addClass('last')
-
-            tbody.sortable
-                update: @sortUpdate
-                helper: (e, ui) ->
-                    for child in ui.children()
-                        $(child).width($(child).width())
-                    return ui
+        @tbody.sortable
+            update: @sortUpdate
+            helper: (e, ui) ->
+                for child in ui.children()
+                    $(child).width($(child).width())
+                return ui
 
     renderDenied: ->
         $(@el).html ich.tpl_groupeditDenied()
@@ -46,15 +43,35 @@ class GroupEdit extends Backbone.View
     events:
         'sortupdate #items tbody': 'sortUpdate'
 
-    addItem: ->
-        @model.createItem()
-
     sortUpdate: =>
         @model.setOrdering($(i).attr('data-id') for i in @$('#items tr'))
+        @setLast()
 
     changeName: (newName) =>
         @model.set('name': newName)
         @model.save()
+
+    itemAdded: (item, itemSet) =>
+        bn.lib.assert(item.id == itemSet.at(itemSet.length-1).id)
+        @addItemView(item)
+
+    itemRemoved: (item, itemSet) =>
+        item.view.remove()
+
+    addItemView: (item) ->
+        itemView = new ItemEdit(model: item)
+        @itemViews.push(itemView)
+        item.view = itemView
+        el = $(itemView.el)
+        el.attr('data-id', item.id)
+        if @tbody
+            @tbody.append(el)
+            @setLast()
+
+    setLast: ->
+        # last row is styled differently
+        @tbody.find('tr').removeClass('last')
+        @tbody.find('tr:last').addClass('last')
 
 
 class ItemEdit extends Backbone.View

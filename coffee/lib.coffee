@@ -11,3 +11,13 @@ bn.lib =
 
     max: (array) ->
         Math.max.apply(Math, array)
+
+    AssertException: class AssertException
+        constructor: (message) ->
+            @message = message
+        toString: ->
+            'AssertException: ' + @message
+
+    assert: (exp, message) ->
+        if not exp
+            throw new AssertException(message)

@@ -114,13 +114,11 @@
     Router.prototype.groupEdit = function(groupID, editHash) {
       var group;
       group = new bn.models.Group({
-        'id': groupID
+        id: groupID,
+        editHash: editHash
       });
       return group.fetch({
         success: function() {
-          group.set({
-            edit_hash: editHash
-          });
           return window.app.groupEdit(group);
         }
       });
