@@ -1,3 +1,3 @@
 #!/bin/bash
 
-coffee -o static/ coffee/*
+coffee -o static/js/ coffee/*
