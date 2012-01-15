@@ -212,7 +212,7 @@ class ItemView extends Backbone.View
         url = @getURL()
         @groupView.selectItem(@num)
         if @usesNewWindow()
-            window.app.frameGo('/static/empty.html')
+            window.app.showOurOther()
             window.open(url, '')
         else
             window.app.frameGo(url)

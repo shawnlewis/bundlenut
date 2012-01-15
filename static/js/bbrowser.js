@@ -285,7 +285,7 @@
       url = this.getURL();
       this.groupView.selectItem(this.num);
       if (this.usesNewWindow()) {
-        window.app.frameGo('/static/empty.html');
+        window.app.showOurOther();
         return window.open(url, '');
       } else {
         return window.app.frameGo(url);
