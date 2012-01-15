@@ -1,6 +1,5 @@
 class GroupEdit extends Backbone.View
     initialize: (options) ->
-        @itemViews = []
         bn.lib.jsonRPC(
             'group_edit_check',
             {'edit_hash': @model.get('edit_hash'),
@@ -33,6 +32,8 @@ class GroupEdit extends Backbone.View
         @tbody.sortable
             update: @sortUpdate
             helper: (e, ui) ->
+                # fix width of helper, which is the object that follows the
+                # mouse pointer when dragged.
                 for child in ui.children()
                     $(child).width($(child).width())
                 return ui
@@ -60,7 +61,6 @@ class GroupEdit extends Backbone.View
 
     addItemView: (item) ->
         itemView = new ItemEdit(model: item)
-        @itemViews.push(itemView)
         item.view = itemView
         el = $(itemView.el)
         el.attr('data-id', item.id)

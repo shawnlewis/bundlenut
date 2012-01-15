@@ -14,11 +14,15 @@ from google.appengine.ext.webapp import template
 
 import models
 
-DEBUG = True
+DEBUG = False
 
 
 def get_file(rel_path):
     return os.path.join(os.path.dirname(__file__), rel_path)
+
+class TilRedirect(webapp2.RequestHandler):
+    def get(self):
+        self.redirect('/b/22047') 
 
 class IndexPage(webapp2.RequestHandler):
     def get(self):
@@ -199,6 +203,8 @@ routes = [
     ('/api/item/(\d+)/(\w+)', APIItem),
     ('/api/popular_groups', APIPopularGroups),
     ('/api/rpc/group_edit_check', APIEditCheck),
+
+    ('/til', TilRedirect),
 
     ('/', IndexPage),
     ('/.*', AppPage),

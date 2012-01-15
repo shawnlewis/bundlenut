@@ -17,7 +17,6 @@
 
     GroupEdit.prototype.initialize = function(options) {
       var _this = this;
-      this.itemViews = [];
       bn.lib.jsonRPC('group_edit_check', {
         'edit_hash': this.model.get('edit_hash'),
         'id': this.model.id
@@ -107,7 +106,6 @@
       itemView = new ItemEdit({
         model: item
       });
-      this.itemViews.push(itemView);
       item.view = itemView;
       el = $(itemView.el);
       el.attr('data-id', item.id);
