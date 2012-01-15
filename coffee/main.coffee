@@ -74,6 +74,7 @@ class App extends Backbone.Router
         @homeContentEl = $('#content')
         @tocEl = $('#table_of_contents')
         @otherPageEl = $('#other_page')
+        @ourOtherPageEl = $('#our_other_page')
         @otherPageEl.load(->$('#loading').addClass('hide'))
 
     index: ->
@@ -98,8 +99,7 @@ class App extends Backbone.Router
 
     groupView: (group) ->
         $('body').removeClass().addClass('groupview')
-        @showOther()
-        @frameGo('/static/empty.html')
+        @showOurOther()
         window.router.navigate('b/' + group.id)
         document.title = 'Bundlenut - Browse: ' + group.get('name')
         @view = new bn.bbrowser.GroupView
@@ -108,17 +108,27 @@ class App extends Backbone.Router
         
     showHome: ->
         $('html').removeClass('show_other')
-        @homeEl.removeClass('hide')
         @tocEl.addClass('hide')
+        @ourOtherPageEl.addClass('hide')
         @otherPageEl.addClass('hide')
+        @homeEl.removeClass('hide')
+
+    showOurOther: ->
+        $('html').addClass('show_other')
+        @homeEl.addClass('hide')
+        @otherPageEl.addClass('hide')
+        @tocEl.removeClass('hide')
+        @ourOtherPageEl.removeClass('hide')
 
     showOther: ->
         $('html').addClass('show_other')
         @homeEl.addClass('hide')
+        @ourOtherPageEl.addClass('hide')
         @tocEl.removeClass('hide')
         @otherPageEl.removeClass('hide')
 
     frameGo: (url) ->
+        @showOther()
         $('#loading').removeClass('hide')
         @otherPageEl[0].src = url
 

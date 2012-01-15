@@ -153,6 +153,7 @@
       this.homeContentEl = $('#content');
       this.tocEl = $('#table_of_contents');
       this.otherPageEl = $('#other_page');
+      this.ourOtherPageEl = $('#our_other_page');
       return this.otherPageEl.load(function() {
         return $('#loading').addClass('hide');
       });
@@ -186,8 +187,7 @@
 
     App.prototype.groupView = function(group) {
       $('body').removeClass().addClass('groupview');
-      this.showOther();
-      this.frameGo('/static/empty.html');
+      this.showOurOther();
       window.router.navigate('b/' + group.id);
       document.title = 'Bundlenut - Browse: ' + group.get('name');
       return this.view = new bn.bbrowser.GroupView({
@@ -198,19 +198,30 @@
 
     App.prototype.showHome = function() {
       $('html').removeClass('show_other');
-      this.homeEl.removeClass('hide');
       this.tocEl.addClass('hide');
-      return this.otherPageEl.addClass('hide');
+      this.ourOtherPageEl.addClass('hide');
+      this.otherPageEl.addClass('hide');
+      return this.homeEl.removeClass('hide');
+    };
+
+    App.prototype.showOurOther = function() {
+      $('html').addClass('show_other');
+      this.homeEl.addClass('hide');
+      this.otherPageEl.addClass('hide');
+      this.tocEl.removeClass('hide');
+      return this.ourOtherPageEl.removeClass('hide');
     };
 
     App.prototype.showOther = function() {
       $('html').addClass('show_other');
       this.homeEl.addClass('hide');
+      this.ourOtherPageEl.addClass('hide');
       this.tocEl.removeClass('hide');
       return this.otherPageEl.removeClass('hide');
     };
 
     App.prototype.frameGo = function(url) {
+      this.showOther();
       $('#loading').removeClass('hide');
       return this.otherPageEl[0].src = url;
     };

@@ -548,6 +548,51 @@ html.show_other, body.show_other {
     overflow: hidden;
 }
 
+#our_other_page {
+    position: absolute;
+    left: 55%;
+    top: 20px;
+    height: 80%;
+    width: 45%;
+}
+
+#our_other_page .header {
+    font-size: 52px;
+    font-family: 'Alfa Slab One';
+    color: rgb(143, 173, 49);
+    letter-spacing: 1px;
+    margin: 0;
+    padding: 0;
+    line-height: 52px;
+}
+
+#our_other_page .header a {
+    color: rgb(143, 173, 49);
+    text-decoration: none;
+    margin: 0;
+    padding: 0;
+}
+
+#our_other_page .header img {
+    margin-left: 8px;
+}
+
+#our_other_page .tag_line {
+    position: relative;
+    top: -5px;
+    font-family: 'Raleway';
+    font-size: 16px;
+    color: #444;
+}
+
+#our_other_page .directions {
+    font-size: 1.6em;
+    font-family: 'Raleway';
+    margin-bottom: 20px;
+    margin-top: 20px;
+    width: 350px;
+}
+
 #table_of_contents {
     position: fixed;
 }
