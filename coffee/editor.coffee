@@ -43,10 +43,26 @@ class GroupEdit extends Backbone.View
 
     events:
         'sortupdate #items tbody': 'sortUpdate'
+        'keydown': 'doTab'
 
     sortUpdate: =>
         @model.setOrdering($(i).attr('data-id') for i in @$('#items tr'))
         @setLast()
+
+    # tabs through the EditableFields within the #items table. Relies on
+    # some of the behavior of EditableField.
+    doTab: (e) ->
+        if e.keyCode != 9  # tab
+            return
+        editables = @$('#items .editable')
+        focusedIndex = editables.index($('.focused'))
+        if focusedIndex != -1
+            e.preventDefault()
+            $(editables[focusedIndex]).data('view').viewMode()
+            nextIndex = focusedIndex + 1
+            if nextIndex == editables.length
+                nextIndex = 0
+            $(editables[nextIndex]).data('view').editMode()
 
     changeName: (newName) =>
         @model.set('name': newName)
@@ -119,7 +135,11 @@ class ItemEdit extends Backbone.View
         
 
 class EditableField extends Backbone.View
+    className: 'editable'
+
     initialize: (options) ->
+        $(@el).addClass(@className)
+        $(@el).data('view', @)
         @editType = options.editType
         @val = options.val
         @blankText = options.blankText
@@ -129,6 +149,7 @@ class EditableField extends Backbone.View
     viewMode: ->
         if @inViewMode
             return
+        $(@el).removeClass('focused')
         @inViewMode = true
 
         $(@el).empty()
@@ -153,6 +174,7 @@ class EditableField extends Backbone.View
         if not @inViewMode
             return
         @inViewMode = false
+        $(@el).addClass('focused')
         $(@el).empty()
         if @editType and @editType == 'textarea'
             el = $('<textarea />')

@@ -67,7 +67,8 @@
     };
 
     GroupEdit.prototype.events = {
-      'sortupdate #items tbody': 'sortUpdate'
+      'sortupdate #items tbody': 'sortUpdate',
+      'keydown': 'doTab'
     };
 
     GroupEdit.prototype.sortUpdate = function() {
@@ -83,6 +84,20 @@
         return _results;
       }).call(this));
       return this.setLast();
+    };
+
+    GroupEdit.prototype.doTab = function(e) {
+      var editables, focusedIndex, nextIndex;
+      if (e.keyCode !== 9) return;
+      editables = this.$('#items .editable');
+      focusedIndex = editables.index($('.focused'));
+      if (focusedIndex !== -1) {
+        e.preventDefault();
+        $(editables[focusedIndex]).data('view').viewMode();
+        nextIndex = focusedIndex + 1;
+        if (nextIndex === editables.length) nextIndex = 0;
+        return $(editables[nextIndex]).data('view').editMode();
+      }
     };
 
     GroupEdit.prototype.changeName = function(newName) {
@@ -205,7 +220,11 @@
       EditableField.__super__.constructor.apply(this, arguments);
     }
 
+    EditableField.prototype.className = 'editable';
+
     EditableField.prototype.initialize = function(options) {
+      $(this.el).addClass(this.className);
+      $(this.el).data('view', this);
       this.editType = options.editType;
       this.val = options.val;
       this.blankText = options.blankText;
@@ -216,6 +235,7 @@
     EditableField.prototype.viewMode = function() {
       var val;
       if (this.inViewMode) return;
+      $(this.el).removeClass('focused');
       this.inViewMode = true;
       $(this.el).empty();
       $(this.el).removeClass('blank');
@@ -241,6 +261,7 @@
       var el;
       if (!this.inViewMode) return;
       this.inViewMode = false;
+      $(this.el).addClass('focused');
       $(this.el).empty();
       if (this.editType && this.editType === 'textarea') {
         el = $('<textarea />');
