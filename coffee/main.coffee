@@ -68,14 +68,67 @@ class Router extends Backbone.Router
             success: -> window.app.groupView group
 
 
+class OtherPage
+    constructor: ->
+        @used = -1
+        @source = ''
+        @frame = $('<iframe>').addClass('other_page')
+
+    hide: ->
+        @frame.hide()
+
+    show: ->
+        @frame.show()
+
+    setSource: (source) ->
+        @source = source
+        @frame[0].src = source
+
+    incUsed: ->
+        @used += 1
+
+
+class OtherPages
+    constructor: (numPages) ->
+        @time = 0
+        @pages = (new OtherPage() for [0..numPages-1])
+        @hide()
+        for page in @pages
+            $('body').append(page.frame)
+
+    hide: ->
+        for page in @pages
+            page.hide()
+    
+    # returns an iframe containing the requested URL
+    getPage: (url) ->
+        page = @_findPage(url)
+        if not page
+            page = @_findLRU()
+            page.setSource(url)
+        page.used = @time
+        @time += 1
+        return page
+
+    _findPage: (url) ->
+        _.find(@pages, (page) ->
+            page.source == url
+        )
+
+    _findLRU: ->
+        min = _.min(page.used for page in @pages)
+        _.find(@pages, (page) ->
+            page.used == min
+        )
+        
+
 class App extends Backbone.Router
     initialize: ->
         @homeEl = $('#home')
         @homeContentEl = $('#content')
         @tocEl = $('#table_of_contents')
-        @otherPageEl = $('#other_page')
         @ourOtherPageEl = $('#our_other_page')
-        @otherPageEl.load(->$('#loading').addClass('hide'))
+        @otherPages = new OtherPages(2)
 
     index: ->
         $('body').removeClass().addClass('index')
@@ -110,13 +163,13 @@ class App extends Backbone.Router
         $('html').removeClass('show_other')
         @tocEl.addClass('hide')
         @ourOtherPageEl.addClass('hide')
-        @otherPageEl.addClass('hide')
+        @otherPages.hide()
         @homeEl.removeClass('hide')
 
     showOurOther: ->
         $('html').addClass('show_other')
         @homeEl.addClass('hide')
-        @otherPageEl.addClass('hide')
+        @otherPages.hide()
         @tocEl.removeClass('hide')
         @ourOtherPageEl.removeClass('hide')
 
@@ -125,12 +178,12 @@ class App extends Backbone.Router
         @homeEl.addClass('hide')
         @ourOtherPageEl.addClass('hide')
         @tocEl.removeClass('hide')
-        @otherPageEl.removeClass('hide')
 
     frameGo: (url) ->
         @showOther()
-        $('#loading').removeClass('hide')
-        @otherPageEl[0].src = url
+        @otherPages.hide()
+        page = @otherPages.getPage(url)
+        page.show()
 
 window.bn = {}
 

@@ -13,11 +13,12 @@
     }
 
     GroupView.prototype.initialize = function(options) {
+      var i, _results;
       var _this = this;
       this.curItemNum = -1;
       this.state = 'full';
       this.render();
-      return $(window).resize(function() {
+      $(window).resize(function() {
         var doingFix;
         doingFix = false;
         if (!doingFix) {
@@ -28,6 +29,11 @@
           }, 200);
         }
       });
+      _results = [];
+      for (i = 0; i <= 1; i++) {
+        _results.push(app.otherPages.getPage(this.model.itemSet.at(i).getURL()));
+      }
+      return _results;
     };
 
     GroupView.prototype.sizeFix = function() {
@@ -205,9 +211,14 @@
     };
 
     GroupView.prototype.selectItem = function(num) {
+      var nextNum;
       if (!this.curItemNum) this.initClickOther();
       this.curItemNum = num;
-      return this.render();
+      this.render();
+      nextNum = this.curItemNum + 1;
+      if (nextNum !== this.model.itemSet.length) {
+        return app.otherPages.getPage(this.model.itemSet.at(nextNum).getURL());
+      }
     };
 
     GroupView.prototype.nextItem = function() {
@@ -259,7 +270,7 @@
     ItemView.prototype.render = function() {
       var context;
       context = this.model.toJSON();
-      context.url = this.getURL();
+      context.url = this.model.getURL();
       context.newWindow = this.usesNewWindow();
       return $(this.el).html(ich.tpl_itemview(context));
     };
@@ -282,14 +293,14 @@
 
     ItemView.prototype.go = function() {
       var url;
-      url = this.getURL();
-      this.groupView.selectItem(this.num);
+      url = this.model.getURL();
       if (this.usesNewWindow()) {
         window.app.showOurOther();
-        return window.open(url, '');
+        window.open(url, '');
       } else {
-        return window.app.frameGo(url);
+        window.app.frameGo(url);
       }
+      return this.groupView.selectItem(this.num);
     };
 
     ItemView.prototype.usesNewWindow = function() {
@@ -299,13 +310,6 @@
         return true;
       }
       return false;
-    };
-
-    ItemView.prototype.getURL = function() {
-      var url;
-      url = this.model.get('url');
-      if (url && url.search('//') === -1) url = 'http://' + url;
-      return url;
     };
 
     return ItemView;

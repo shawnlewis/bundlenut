@@ -128,6 +128,12 @@ class Item extends Backbone.Model
             return true
         return false
 
+    getURL: ->
+        url = @get('url')
+        if url and url.search('//') == -1
+            url = 'http://' + url
+        #url = toEmbedURL(url)
+        return url
 
 class ItemSet extends Backbone.Collection
     model: Item

@@ -196,6 +196,13 @@
       return false;
     };
 
+    Item.prototype.getURL = function() {
+      var url;
+      url = this.get('url');
+      if (url && url.search('//') === -1) url = 'http://' + url;
+      return url;
+    };
+
     return Item;
 
   })();

@@ -1,5 +1,5 @@
 (function() {
-  var App, GroupSummary, Index, Router;
+  var App, GroupSummary, Index, OtherPage, OtherPages, Router;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
   Index = (function() {
@@ -140,6 +140,106 @@
 
   })();
 
+  OtherPage = (function() {
+
+    function OtherPage() {
+      this.used = -1;
+      this.source = '';
+      this.frame = $('<iframe>').addClass('other_page');
+    }
+
+    OtherPage.prototype.hide = function() {
+      return this.frame.hide();
+    };
+
+    OtherPage.prototype.show = function() {
+      return this.frame.show();
+    };
+
+    OtherPage.prototype.setSource = function(source) {
+      this.source = source;
+      return this.frame[0].src = source;
+    };
+
+    OtherPage.prototype.incUsed = function() {
+      return this.used += 1;
+    };
+
+    return OtherPage;
+
+  })();
+
+  OtherPages = (function() {
+
+    function OtherPages(numPages) {
+      var page, _i, _len, _ref;
+      this.time = 0;
+      this.pages = (function() {
+        var _i, _ref, _results;
+        _results = [];
+        for (_i = 0, _ref = numPages - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; 0 <= _ref ? _i++ : _i--) {
+          _results.push(new OtherPage());
+        }
+        return _results;
+      })();
+      this.hide();
+      _ref = this.pages;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        page = _ref[_i];
+        $('body').append(page.frame);
+      }
+    }
+
+    OtherPages.prototype.hide = function() {
+      var page, _i, _len, _ref, _results;
+      _ref = this.pages;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        page = _ref[_i];
+        _results.push(page.hide());
+      }
+      return _results;
+    };
+
+    OtherPages.prototype.getPage = function(url) {
+      var page;
+      page = this._findPage(url);
+      if (!page) {
+        page = this._findLRU();
+        page.setSource(url);
+      }
+      page.used = this.time;
+      this.time += 1;
+      return page;
+    };
+
+    OtherPages.prototype._findPage = function(url) {
+      return _.find(this.pages, function(page) {
+        return page.source === url;
+      });
+    };
+
+    OtherPages.prototype._findLRU = function() {
+      var min, page;
+      min = _.min((function() {
+        var _i, _len, _ref, _results;
+        _ref = this.pages;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          page = _ref[_i];
+          _results.push(page.used);
+        }
+        return _results;
+      }).call(this));
+      return _.find(this.pages, function(page) {
+        return page.used === min;
+      });
+    };
+
+    return OtherPages;
+
+  })();
+
   App = (function() {
 
     __extends(App, Backbone.Router);
@@ -152,11 +252,8 @@
       this.homeEl = $('#home');
       this.homeContentEl = $('#content');
       this.tocEl = $('#table_of_contents');
-      this.otherPageEl = $('#other_page');
       this.ourOtherPageEl = $('#our_other_page');
-      return this.otherPageEl.load(function() {
-        return $('#loading').addClass('hide');
-      });
+      return this.otherPages = new OtherPages(2);
     };
 
     App.prototype.index = function() {
@@ -200,14 +297,14 @@
       $('html').removeClass('show_other');
       this.tocEl.addClass('hide');
       this.ourOtherPageEl.addClass('hide');
-      this.otherPageEl.addClass('hide');
+      this.otherPages.hide();
       return this.homeEl.removeClass('hide');
     };
 
     App.prototype.showOurOther = function() {
       $('html').addClass('show_other');
       this.homeEl.addClass('hide');
-      this.otherPageEl.addClass('hide');
+      this.otherPages.hide();
       this.tocEl.removeClass('hide');
       return this.ourOtherPageEl.removeClass('hide');
     };
@@ -216,14 +313,15 @@
       $('html').addClass('show_other');
       this.homeEl.addClass('hide');
       this.ourOtherPageEl.addClass('hide');
-      this.tocEl.removeClass('hide');
-      return this.otherPageEl.removeClass('hide');
+      return this.tocEl.removeClass('hide');
     };
 
     App.prototype.frameGo = function(url) {
+      var page;
       this.showOther();
-      $('#loading').removeClass('hide');
-      return this.otherPageEl[0].src = url;
+      this.otherPages.hide();
+      page = this.otherPages.getPage(url);
+      return page.show();
     };
 
     return App;

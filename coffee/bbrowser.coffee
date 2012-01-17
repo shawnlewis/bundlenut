@@ -13,6 +13,10 @@ class GroupView extends Backbone.View
                         doingFix = false
                     ,200)
 
+        # cache a few pages
+        for i in [0..1]
+            app.otherPages.getPage(@model.itemSet.at(i).getURL())
+
     sizeFix: =>
         pane_middle = @$('.pane_middle')
         if pane_middle.data().jsp
@@ -162,6 +166,11 @@ class GroupView extends Backbone.View
         @curItemNum = num
         @render()
 
+        # cache the next page
+        nextNum = @curItemNum + 1
+        if nextNum != @model.itemSet.length
+            app.otherPages.getPage(@model.itemSet.at(nextNum).getURL())
+
     nextItem: ->
         mpq.track('view-next-item')
         @itemViews[@curItemNum+1].go()
@@ -169,7 +178,6 @@ class GroupView extends Backbone.View
     prevItem: ->
         mpq.track('view-prev-item')
         @itemViews[@curItemNum-1].go()
-
 
     initClickOther: ->
         # detect iframe clicks. Thanks stackoverflow.
@@ -190,7 +198,7 @@ class ItemView extends Backbone.View
 
     render: ->
         context = @model.toJSON()
-        context.url = @getURL()
+        context.url = @model.getURL()
         context.newWindow = @usesNewWindow()
         $(@el).html(ich.tpl_itemview(context))
 
@@ -209,27 +217,20 @@ class ItemView extends Backbone.View
             @groupView.closed()
 
     go: ->
-        url = @getURL()
-        @groupView.selectItem(@num)
+        url = @model.getURL()
         if @usesNewWindow()
             window.app.showOurOther()
             window.open(url, '')
         else
             window.app.frameGo(url)
+        # must come after frameGo so that OtherPages cache is preserved.
+        @groupView.selectItem(@num)
 
     usesNewWindow: ->
         url = @model.get('url')
         if url and (url.search('youtube.com') != -1 or url.search('maps.google.com')) != -1
             return true
         return false
-        
-
-    getURL: ->
-        url = @model.get('url')
-        if url and url.search('//') == -1
-            url = 'http://' + url
-        #url = toEmbedURL(url)
-        return url
 
 bn.bbrowser =
     GroupView: GroupView
