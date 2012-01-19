@@ -103,12 +103,18 @@
 
     Router.prototype.routes = {
       '': 'index',
+      'my': 'myGroups',
       'e/:group_id/:edit_hash': 'groupEdit',
+      'e/:group_id': 'groupEdit',
       'b/:group_id': 'groupView'
     };
 
     Router.prototype.index = function() {
       return window.app.index();
+    };
+
+    Router.prototype.myGroups = function() {
+      return window.app.myGroups();
     };
 
     Router.prototype.groupEdit = function(groupID, editHash) {
@@ -250,7 +256,7 @@
 
     App.prototype.initialize = function() {
       this.homeEl = $('#home');
-      this.homeContentEl = $('#content');
+      this.standardContentEl = $('#standard_content');
       this.tocEl = $('#table_of_contents');
       this.ourOtherPageEl = $('#our_other_page');
       return this.otherPages = new OtherPages(2);
@@ -258,7 +264,7 @@
 
     App.prototype.index = function() {
       $('body').removeClass().addClass('index');
-      $('#content').hide();
+      this.standardContentEl.hide();
       this.showHome();
       window.router.navigate('');
       document.title = 'Bundlenut';
@@ -270,14 +276,31 @@
       return this.view = this.indexView;
     };
 
-    App.prototype.groupEdit = function(group) {
-      $('body').removeClass().addClass('groupedit');
-      $('#content').show();
+    App.prototype.myGroups = function() {
+      $('body').removeClass().addClass('mygroups');
+      $('#index_content').hide();
+      this.standardContentEl.show();
       this.showHome();
-      window.router.navigate('e/' + group.id + '/' + group.get('edit_hash'));
+      window.router.navigate('my');
+      document.title = 'Bundlenut - My bundles';
+      return this.view = new bn.userView.UserView({
+        el: this.standardContentEl.find('#standard_inner')
+      });
+    };
+
+    App.prototype.groupEdit = function(group) {
+      var editHash, url;
+      $('body').removeClass().addClass('groupedit');
+      $('#index_content').hide();
+      this.standardContentEl.show();
+      this.showHome();
+      url = 'e/' + group.id;
+      editHash = group.get('edit_hash');
+      if (editHash) url += '/' + editHash;
+      window.router.navigate(url);
       document.title = 'Bundlenut - Edit: ' + group.get('name');
       return this.view = new bn.editor.GroupEdit({
-        el: this.homeContentEl,
+        el: this.standardContentEl.find('#standard_inner'),
         model: group
       });
     };
@@ -295,6 +318,7 @@
 
     App.prototype.showHome = function() {
       $('html').removeClass('show_other');
+      $('body').addClass('standard');
       this.tocEl.addClass('hide');
       this.ourOtherPageEl.addClass('hide');
       this.otherPages.hide();
@@ -331,7 +355,7 @@
   window.bn = {};
 
   $(function() {
-    $('#create_group_name').hint();
+    $('input[name=group_name]').hint();
     window.app = new App();
     window.router = new Router();
     return Backbone.history.start({

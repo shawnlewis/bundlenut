@@ -193,7 +193,7 @@
     GroupView.prototype.closedIfLeft = function(e) {
       var toEl;
       toEl = $(e.relatedTarget);
-      if (toEl.attr('id') === 'other_page') return this.closed();
+      if (toEl.hasClass('other_page')) return this.closed();
     };
 
     GroupView.prototype._paneHeight = function() {

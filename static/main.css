@@ -75,6 +75,7 @@ html, body {
 }
 
 .header {
+    position: relative;
     font-size: 52px;
     font-family: 'Alfa Slab One';
     color: rgb(143, 173, 49);
@@ -84,7 +85,22 @@ html, body {
 .header a {
     color: rgb(143, 173, 49);
     text-decoration: none;
+    line-height: 1em;
 }
+
+.header .login {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 16px;
+    font-family: Arial;
+    color: #444
+}
+
+.header .login a {
+    text-decoration: underline;
+}
+
 
 .header img {
     margin-left: 8px;
@@ -97,7 +113,7 @@ html, body {
 
 .header .tag_line {
     position: relative;
-    top: -13px;
+    top: -3px;
     font-family: 'Raleway';
     font-size: 16px;
     color: #444;
@@ -139,6 +155,45 @@ input {
     font-style: italic;
     color: #bbb;
 }
+
+.create_form input[name="group_name"] {
+    color: rgb(143, 173, 49);
+    font-family: Palatino;
+    font-size: 1em;
+    height: 1.5em;
+    width: 280px;
+    padding-left: 5px;
+}
+
+.create_form input[name="group_name"].blur {
+    color: #bbb;
+}
+
+.create_form button[name="go"] {
+    font-size: 1em;
+    position: relative;
+    top: 1px;
+}
+
+/* standard content pages: editor, my bundles */
+
+body.standard #footer {
+    padding: 0 40px; 
+}
+
+body.standard #standard_content {
+    /*padding: 0 20px;*/
+    padding: 15px 40px 0 40px;
+    font-size: 16px;
+}
+
+body.standard .header > img {
+    margin-top: 10px;
+    margin-bottom: 20px;
+    margin-left: 0;
+    display: block;
+}
+
 
 /* index */
 
@@ -252,28 +307,9 @@ body.index #marketing_text li {
     margin: 10px 0;
 }
 
-body.index #create_form {
+body.index .create_form {
     float: right;
     margin-top: 10px;
-}
-
-body.index #create_form input[name="group_name"] {
-    color: rgb(143, 173, 49);
-    font-family: Palatino;
-    font-size: 1em;
-    height: 1.5em;
-    width: 280px;
-    padding-left: 5px;
-}
-
-body.index #create_form input[name="group_name"].blur {
-    color: #bbb;
-}
-
-body.index #create_form button[name="go"] {
-    font-size: 1em;
-    position: relative;
-    top: 1px;
 }
 
 body.index #popular_bundles_label {
@@ -364,20 +400,6 @@ body.index .comment {
 }
 
 /* tpl_groupedit */
-
-body.groupedit #footer {
-    padding: 0 40px; 
-}
-
-body.groupedit #groupedit_content {
-    /*padding: 0 20px;*/
-    padding: 15px 40px 0 40px;
-    font-size: 16px;
-}
-
-body.groupedit #groupedit_content > img {
-    margin-bottom: 20px;
-}
 
 body.groupedit .group_name_section {
     font-family: 'Raleway';
@@ -797,4 +819,32 @@ html.show_other, body.show_other {
 
 #table_of_contents .jspTrack {
     background: transparent;
+}
+
+/* mygroups */
+body.mygroups #standard_content {
+    font-size: 24px;
+}
+
+body.mygroups .your_bundles {
+    margin-top: 50px;
+}
+
+body.mygroups .heading {
+    font-family: 'Raleway';
+    margin-bottom: 20px;
+    color: #333;
+}
+
+body.mygroups .group {
+    margin-bottom: 10px;
+}
+
+body.mygroups a {
+    text-decoration: none;
+    color: rgb(143, 173, 49);
+}
+
+body.mygroups .my_link {
+    display: none;
 }

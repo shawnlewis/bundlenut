@@ -48,11 +48,16 @@ class GroupSummary extends Backbone.View
 class Router extends Backbone.Router
     routes:
         '': 'index'
+        'my': 'myGroups'
         'e/:group_id/:edit_hash': 'groupEdit'
+        'e/:group_id': 'groupEdit'
         'b/:group_id': 'groupView'
 
     index: ->
         window.app.index()
+
+    myGroups: ->
+        window.app.myGroups()
 
     groupEdit: (groupID, editHash) ->
         group = new bn.models.Group
@@ -125,14 +130,14 @@ class OtherPages
 class App extends Backbone.Router
     initialize: ->
         @homeEl = $('#home')
-        @homeContentEl = $('#content')
+        @standardContentEl = $('#standard_content')
         @tocEl = $('#table_of_contents')
         @ourOtherPageEl = $('#our_other_page')
         @otherPages = new OtherPages(2)
 
     index: ->
         $('body').removeClass().addClass('index')
-        $('#content').hide()
+        @standardContentEl.hide()
         @showHome()
         window.router.navigate('')
         document.title = 'Bundlenut'
@@ -140,14 +145,29 @@ class App extends Backbone.Router
             @indexView = new Index(el: $('#index_content'))
         @view = @indexView
 
+    myGroups: ->
+        $('body').removeClass().addClass('mygroups')
+        $('#index_content').hide()
+        @standardContentEl.show()
+        @showHome()
+        window.router.navigate('my')
+        document.title = 'Bundlenut - My bundles'
+        @view = new bn.userView.UserView
+            el: @standardContentEl.find('#standard_inner')
+
     groupEdit: (group) ->
         $('body').removeClass().addClass('groupedit')
-        $('#content').show()
+        $('#index_content').hide()
+        @standardContentEl.show()
         @showHome()
-        window.router.navigate('e/' + group.id + '/' + group.get('edit_hash'))
+        url = 'e/' + group.id
+        editHash = group.get('edit_hash')
+        if editHash
+            url += '/' + editHash
+        window.router.navigate(url)
         document.title = 'Bundlenut - Edit: ' + group.get('name')
         @view = new bn.editor.GroupEdit
-            el: @homeContentEl
+            el: @standardContentEl.find('#standard_inner')
             model: group
 
     groupView: (group) ->
@@ -161,6 +181,7 @@ class App extends Backbone.Router
         
     showHome: ->
         $('html').removeClass('show_other')
+        $('body').addClass('standard')
         @tocEl.addClass('hide')
         @ourOtherPageEl.addClass('hide')
         @otherPages.hide()
@@ -188,7 +209,7 @@ class App extends Backbone.Router
 window.bn = {}
 
 $( ->
-    $('#create_group_name').hint()
+    $('input[name=group_name]').hint()
     
     window.app = new App()
     window.router = new Router()

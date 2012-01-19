@@ -1,8 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div id="content">
-</div>
 <div id="index_content">
     <div id="page_background">
         <table>
@@ -28,6 +26,14 @@
                     <div class="tag_line">
                         Bundle the web. Share it.
                     </div>
+                    <span class="login">
+                        {% if login_url %}
+                            <a href="{{ login_url }}">Login</a>
+                        {% else %}
+                            <a href="/my">{{ user_name }}'s bundles</a> -
+                            <a href="{{ logout_url }}">Logout</a>
+                        {% endif %}
+                    </span>
                 </div>
                 <div id="index_actions">
                     <img class="header_sep" src="/static/img/large-arrow.png" />
@@ -39,14 +45,14 @@
                                 <li>Share!</li>
                             </ul>
                         </div> 
-                        <div id="create_form">
+                        <div class="create_form">
                             <div id="index_create_label">
                                 Create a Bundle
                                 <img src="/static/img/small-arrow-gray.png" />
                             </div>
                             <div>
                             <form>
-                                <input id="create_group_name" name="group_name" type="text" title="Title"/>
+                                <input name="group_name" type="text" title="Title"/>
                                 <button name="go"> Go </button>
                             </form>
                             </div>
@@ -68,6 +74,26 @@
             </div>
         </div>
     </div>
+</div>
+<div id="standard_content">
+    <div class="header">
+        <a href="/">
+            Bundlenut<img src="/static/img/nut-for-logo.png" />
+        </a>
+        <div class="tag_line">
+            Bundle the web. Share it.
+        </div>
+        <span class="login">
+            {% if login_url %}
+                <a href="{{ login_url }}">Login</a>
+            {% else %}
+                <span class="my_link"><a href="/my">{{ user_name }}'s bundles</a> -</span>
+                <a href="{{ logout_url }}">Logout</a>
+            {% endif %}
+        </span>
+        <img class="header_sep" src="/static/img/large-arrow.png" />
+    </div>
+    <div id="standard_inner"></div>
 </div>
 {% endblock %}
 
@@ -92,13 +118,6 @@
 </script>
 
 <script id="tpl_groupedit" type="text/html">
-<div id="groupedit_content">
-    <div class="header">
-        <a href="/">
-            Bundlenut<img src="/static/img/nut-for-logo.png" />
-        </a>
-    </div>
-    <img class="header_sep" src="/static/img/large-arrow.png" />
     <div class="group_name_section"> Bundle Title :
         <span class="group_name"></span>
         <a class="button" href="{{view_link}}"><button>Browse Bundle</button></a>
@@ -138,7 +157,6 @@
             </div>
         </tr>
     </table>
-</div>
 </script>
 
 <script id="tpl_groupeditDenied" type="text/html">
@@ -200,11 +218,37 @@
     </table>
 </script>
 
+<script id="tpl_usergroups" type="text/html">
+    <div class="create_form">
+        <div class="heading">
+            Create a Bundle
+            <img src="/static/img/small-arrow-gray.png" />
+        </div>
+        <div>
+        <form>
+            <input name="group_name" type="text" title="Title"/>
+            <button name="go"> Go </button>
+        </form>
+        </div>
+    </div>
+
+    <div class="your_bundles heading"> Your Bundles
+        <img src="/static/img/small-arrow-gray.png" />
+     </div>
+    {{#groups}}
+        <div class="group">
+            <a href="/b/{{id}}"> {{ name }} </a>
+            <a class="button" href="/e/{{id}}"><button>Edit</button></a>
+        </div>
+    {{/groups}}
+</script>
+
 {% endverbatim %}
 <script type="text/javascript" src="/static/js/main.js"></script>
 
 <script type="text/javascript" src="/static/js/lib.js"></script>
 <script type="text/javascript" src="/static/js/models.js"></script>
+<script type="text/javascript" src="/static/js/userView.js"></script>
 <script type="text/javascript" src="/static/js/editor.js"></script>
 <script type="text/javascript" src="/static/js/bbrowser.js"></script>
 {% endblock %}

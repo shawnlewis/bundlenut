@@ -148,7 +148,7 @@ class GroupView extends Backbone.View
 
     closedIfLeft: (e) ->
         toEl = $(e.relatedTarget)
-        if toEl.attr('id') == 'other_page'
+        if toEl.hasClass('other_page')
             @closed()
 
     _paneHeight: ->

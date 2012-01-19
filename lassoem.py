@@ -9,6 +9,7 @@ import webob.exc
 import webapp2
 
 from google.appengine.api import memcache
+from google.appengine.api import users
 from google.appengine.ext import db
 from google.appengine.ext.webapp import template
 
@@ -24,18 +25,33 @@ class TilRedirect(webapp2.RequestHandler):
     def get(self):
         self.redirect('/b/22047') 
 
-class IndexPage(webapp2.RequestHandler):
+
+class AppHandler(webapp2.RequestHandler):
     def get(self):
+        user = users.get_current_user()
+        if user:
+            user_name = user.nickname()
+            login_url = ''
+            logout_url = users.create_logout_url('/')
+        else:
+            user_name = ''
+            login_url = users.create_login_url('/my')
+            logout_url = ''
+           
         self.response.out.write(template.render(
             get_file('templates/index.html'),
             {'debug': DEBUG,
-             'body_class': 'index'
+             'body_class': self._body_class,
+             'user_name': user_name,
+             'login_url': login_url,
+             'logout_url': logout_url
             }))
 
-class AppPage(webapp2.RequestHandler):
-    def get(self):
-        self.response.out.write(template.render(
-            get_file('templates/index.html'), {'debug': DEBUG}))
+class IndexPage(AppHandler):
+    _body_class = 'index'
+
+class AppPage(AppHandler):
+    _body_class = ''
 
 class DebugPage(webapp2.RequestHandler):
     def get(self):
@@ -83,20 +99,25 @@ class APIGroup(JSONRequestHandler):
 
         group = models.Group()
         setattr(group, 'name', params['name'])
-        edit_hash = hashlib.md5()
-        edit_hash.update(os.urandom(1000))
-        group.edit_hash = edit_hash.hexdigest()
+        user = users.get_current_user()
+        if user:
+            group.user = user
+        else:
+            edit_hash = hashlib.md5()
+            edit_hash.update(os.urandom(1000))
+            group.edit_hash = edit_hash.hexdigest()
         group.put()
 
         resp = json_group(group)
-        resp['edit_hash'] = group.edit_hash
+        if group.edit_hash is not None:
+            resp['edit_hash'] = group.edit_hash
         self.json_response(resp)
 
     def put(self, id_, edit_hash):
         params = json.loads(self.request.body)
         group = models.Group.get_by_id(int(id_))
 
-        if group.edit_hash != edit_hash:
+        if not can_edit(group, edit_hash):
             raise webob.excHTTPUnauthorized
 
         if 'name' in params:
@@ -111,6 +132,7 @@ class APIGroup(JSONRequestHandler):
         # delete group
         pass
 
+
 class APIItem(JSONRequestHandler):
     def get(self, id_):
         item = models.Item.get_by_id(int(id_))
@@ -120,7 +142,7 @@ class APIItem(JSONRequestHandler):
         params = json.loads(self.request.body)
 
         group = db.get(db.Key(params['group']))
-        if group.edit_hash != params['edit_hash']:
+        if not can_edit(group, params.get('edit_hash')):
             raise webob.exc.HTTPUnauthorized
 
         item = models.Item()
@@ -136,7 +158,7 @@ class APIItem(JSONRequestHandler):
         params = json.loads(self.request.body)
 
         item = models.Item.get_by_id(int(id_))
-        if item.group.edit_hash != edit_hash:
+        if not can_edit(item, edit_hash):
             raise webob.exc.HTTPUnauthorized
 
         if 'title' in params:
@@ -151,7 +173,7 @@ class APIItem(JSONRequestHandler):
 
     def delete(self, id_, edit_hash):
         item = models.Item.get_by_id(int(id_))
-        if item.group.edit_hash != edit_hash:
+        if not can_edit(item, edit_hash):
             raise webob.exc.HTTPUnauthorized
 
         item.delete()
@@ -169,11 +191,36 @@ class APIPopularGroups(JSONRequestHandler):
             memcache.add('popular', group_data, 60)
         self.json_response(group_data)
 
+
+class APIMyGroups(JSONRequestHandler):
+    def get(self):
+        user = users.get_current_user()
+        if not user:
+            raise webob.exc.HTTPUnauthorized
+        groups = models.Group.all().filter('user =', user)
+        group_data = [json_group(g) for g in groups]
+        self.json_response(group_data)
+
+
+def can_edit(obj, edit_hash):
+    user = users.get_current_user()
+    if isinstance(obj, models.Item):
+        group = obj.group
+    elif isinstance(obj, models.Group):
+        group = obj
+    else:
+        raise Exception('Object type not editable')
+    if group.user == user or (
+        group.edit_hash is not None and group.edit_hash == edit_hash):
+        return True
+    else:
+        return False
+
 class APIEditCheck(JSONRequestHandler):
     def post(self):
         params = json.loads(self.request.body)
         group = models.Group.get_by_id(int(params['id']))
-        if group.edit_hash == params['edit_hash']:
+        if can_edit(group, params.get('edit_hash')):
             self.json_response('true')
         else:
             self.json_response('false')
@@ -202,6 +249,7 @@ routes = [
     ('/api/item/(\d+)', APIItem),
     ('/api/item/(\d+)/(\w+)', APIItem),
     ('/api/popular_groups', APIPopularGroups),
+    ('/api/my_groups', APIMyGroups),
     ('/api/rpc/group_edit_check', APIEditCheck),
 
     ('/til', TilRedirect),

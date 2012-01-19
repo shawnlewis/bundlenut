@@ -4,8 +4,9 @@ class Group(db.Model):
     name = db.StringProperty()
     num_views = db.IntegerProperty(default=0)
     num_unique_views = db.IntegerProperty(default=0)
-    edit_hash = db.StringProperty()
+    edit_hash = db.StringProperty(default=None)
     ordering = db.ListProperty(int)
+    user = db.UserProperty()
 
     
 class Item(db.Model):
