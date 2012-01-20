@@ -23,6 +23,7 @@ class UserView extends Backbone.View
     submit: (e)->
         if e.type == 'keydown' and e.keyCode != 13
             return
+
         mpq.track('index-bundle-created')
         e.preventDefault()
         group = new bn.models.Group

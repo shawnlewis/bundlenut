@@ -15,7 +15,7 @@ from google.appengine.ext.webapp import template
 
 import models
 
-DEBUG = True
+DEBUG = False
 
 
 def get_file(rel_path):

@@ -317,6 +317,7 @@
     };
 
     App.prototype.showHome = function() {
+      if (this.view) this.view.delegateEvents({});
       $('html').removeClass('show_other');
       $('body').addClass('standard');
       this.tocEl.addClass('hide');
@@ -334,6 +335,7 @@
     };
 
     App.prototype.showOther = function() {
+      if (this.view) this.view.delegateEvents({});
       $('html').addClass('show_other');
       this.homeEl.addClass('hide');
       this.ourOtherPageEl.addClass('hide');

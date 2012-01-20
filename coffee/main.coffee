@@ -180,6 +180,8 @@ class App extends Backbone.Router
             model: group
         
     showHome: ->
+        if @view
+            @view.delegateEvents({})
         $('html').removeClass('show_other')
         $('body').addClass('standard')
         @tocEl.addClass('hide')
@@ -188,6 +190,8 @@ class App extends Backbone.Router
         @homeEl.removeClass('hide')
 
     showOurOther: ->
+        if @view
+            @view.delegateEvents({})
         $('html').addClass('show_other')
         @homeEl.addClass('hide')
         @otherPages.hide()
@@ -195,6 +199,8 @@ class App extends Backbone.Router
         @ourOtherPageEl.removeClass('hide')
 
     showOther: ->
+        if @view
+            @view.delegateEvents({})
         $('html').addClass('show_other')
         @homeEl.addClass('hide')
         @ourOtherPageEl.addClass('hide')
