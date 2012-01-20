@@ -128,9 +128,13 @@ class APIGroup(JSONRequestHandler):
 
         self.json_response(json_group(group))
 
-    def delete(self, id_):
-        # delete group
-        pass
+    def delete(self, id_, edit_hash):
+        group = models.Group.get_by_id(int(id_))
+        if not can_edit(group, edit_hash):
+            raise webob.exc.HTTPUnauthorized
+        group.delete()
+
+        self.json_response('true')
 
 
 class APIItem(JSONRequestHandler):

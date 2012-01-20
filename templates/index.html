@@ -235,12 +235,13 @@
     <div class="your_bundles heading"> Your Bundles
         <img src="/static/img/small-arrow-gray.png" />
      </div>
-    {{#groups}}
-        <div class="group">
-            <a href="/b/{{id}}"> {{ name }} </a>
-            <a class="button" href="/e/{{id}}"><button>Edit</button></a>
-        </div>
-    {{/groups}}
+    <div class="groups"></div>
+</script>
+
+<script id="tpl_usergroup" type="text/html">
+    <a href="/b/{{id}}"> {{ name }} </a>
+    <a class="button" href="/e/{{id}}"><button>Edit</button></a>
+    <input class="delete" title="Delete" type="submit" value="&mdash;">
 </script>
 
 {% endverbatim %}

@@ -175,6 +175,26 @@ input {
     top: 1px;
 }
 
+input.delete {
+    width: 2em;
+    height: 2em;
+    border-radius: 1em;
+    font-weight: 900;
+    text-shadow: 0px 1px white;
+    color: white;
+    background: rgb(62, 73, 17);
+    box-shadow: 1px 1px 1px 0px #888;
+    cursor: pointer;
+}
+
+input.delete:active {
+    position: relative;
+    top: 1px;
+    left: 1px;
+    box-shadow: none;
+}
+
+
 /* standard content pages: editor, my bundles */
 
 body.standard #footer {
@@ -458,25 +478,6 @@ body.groupedit .step_dir .step_details {
 
 body.groupedit input {
     font-size: 1em;
-}
-
-body.groupedit input.delete {
-    width: 2em;
-    height: 2em;
-    border-radius: 1em;
-    font-weight: 900;
-    text-shadow: 0px 1px white;
-    color: white;
-    background: rgb(62, 73, 17);
-    box-shadow: 1px 1px 1px 0px #888;
-    cursor: pointer;
-}
-
-body.groupedit input.delete:active {
-    position: relative;
-    top: 1px;
-    left: 1px;
-    box-shadow: none;
 }
 
 body.groupedit table.items {
@@ -847,4 +848,8 @@ body.mygroups a {
 
 body.mygroups .my_link {
     display: none;
+}
+
+body.mygroups .delete {
+    font-size: 16px;
 }
