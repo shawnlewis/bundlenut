@@ -87,7 +87,10 @@ class OtherPage
 
     setSource: (source) ->
         @source = source
-        @frame[0].src = source
+        @frame[0].src = 'about:blank'
+        setTimeout(
+            => @frame[0].src = source
+        ,0)
 
     incUsed: ->
         @used += 1
@@ -199,8 +202,6 @@ class App extends Backbone.Router
         @ourOtherPageEl.removeClass('hide')
 
     showOther: ->
-        if @view
-            @view.delegateEvents({})
         $('html').addClass('show_other')
         @homeEl.addClass('hide')
         @ourOtherPageEl.addClass('hide')

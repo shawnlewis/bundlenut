@@ -163,8 +163,12 @@
     };
 
     OtherPage.prototype.setSource = function(source) {
+      var _this = this;
       this.source = source;
-      return this.frame[0].src = source;
+      this.frame[0].src = 'about:blank';
+      return setTimeout(function() {
+        return _this.frame[0].src = source;
+      }, 0);
     };
 
     OtherPage.prototype.incUsed = function() {
@@ -327,6 +331,7 @@
     };
 
     App.prototype.showOurOther = function() {
+      if (this.view) this.view.delegateEvents({});
       $('html').addClass('show_other');
       this.homeEl.addClass('hide');
       this.otherPages.hide();
@@ -335,7 +340,6 @@
     };
 
     App.prototype.showOther = function() {
-      if (this.view) this.view.delegateEvents({});
       $('html').addClass('show_other');
       this.homeEl.addClass('hide');
       this.ourOtherPageEl.addClass('hide');
