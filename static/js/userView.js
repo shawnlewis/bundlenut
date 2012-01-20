@@ -65,14 +65,17 @@
       UserGroupView.__super__.constructor.apply(this, arguments);
     }
 
-    UserGroupView.prototype.className = 'group';
+    UserGroupView.prototype.className = 'group_summary';
 
     UserGroupView.prototype.initialize = function(bla) {
       return this.render();
     };
 
     UserGroupView.prototype.render = function() {
-      return $(this.el).html(ich.tpl_usergroup(this.model.toJSON()));
+      var context;
+      context = this.model.toJSON();
+      context.item_set = this.model.itemSet.toJSON();
+      return $(this.el).html(ich.tpl_usergroup(context));
     };
 
     UserGroupView.prototype.events = {

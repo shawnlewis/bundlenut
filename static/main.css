@@ -194,6 +194,44 @@ input.delete:active {
     box-shadow: none;
 }
 
+.group_summary {
+    width: 220px;
+    height: 190px;
+    overflow: hidden;
+    font-size: 15px;
+}
+
+.group_summary .group_name {
+    color: rgb(143, 173, 49);
+    font-family: Palatino;
+    font-weight: bold;
+    font-size: 18px;
+    border-bottom: 1px solid #444;
+    padding-bottom: 3px;
+}
+
+.group_summary .item {
+    color: #444;
+    padding: 3px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    width: 100%;
+}
+
+.group_summary .items {
+    margin-top: 5px;
+}
+
+.group_summary .title {
+    font-size: 15px;
+}
+
+.group_summary .comment {
+    font-size: 13px;
+}
+
 
 /* standard content pages: editor, my bundles */
 
@@ -341,12 +379,9 @@ body.index #popular_bundles_label {
     color: rgb(220, 238, 238);
 }
 
-body.index .pop_bundle {
+body.index .group_summary {
     position: absolute;
-    width: 220px;
-    height: 190px;
     cursor: pointer;
-    overflow: hidden;
 }
 
 body.index #pop1 {
@@ -379,44 +414,13 @@ body.index #pop6 {
     left: 750px;
 }
 
-body.index .group_name {
-    color: rgb(143, 173, 49);
-    font-family: Palatino;
-    font-weight: bold;
-    font-size: 18px;
-    border-bottom: 1px solid #444;
-    padding-bottom: 3px;
-}
-
-body.index #popular_bundles .item {
-    color: #444;
-    padding: 3px 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: block;
-    width: 100%;
-}
-
-body.index #popular_bundles .pop_bundle:hover .item {
+body.index #popular_bundles .group_summary:hover .item {
     color: rgb(183, 156, 46);
 }
 
-body.index #popular_bundles .pop_bundle:hover .group_name {
+body.index #popular_bundles .group_summary:hover .group_name {
     color: rgb(183, 156, 46);
     border-bottom: 1px solid rgb(183, 156, 46);
-}
-
-body.index .items {
-    margin-top: 5px;
-}
-
-body.index .title {
-    font-size: 15px;
-}
-
-body.index .comment {
-    font-size: 13px;
 }
 
 /* tpl_groupedit */
@@ -827,23 +831,26 @@ body.mygroups #standard_content {
     font-size: 24px;
 }
 
-body.mygroups .your_bundles {
-    margin-top: 50px;
-}
-
 body.mygroups .heading {
+    background: rgb(143, 173, 49);
+    margin: 40px -10px 20px -10px;
     font-family: 'Raleway';
-    margin-bottom: 20px;
     color: #333;
-}
-
-body.mygroups .group {
-    margin-bottom: 10px;
+    padding: 10px 10px 10px 10px;
 }
 
 body.mygroups a {
     text-decoration: none;
     color: rgb(143, 173, 49);
+}
+
+body.mygroups .group_summary {
+    margin: 15px;
+    float: left;
+    background: #eee;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 1px 1px 2px #888;
 }
 
 body.mygroups .my_link {
@@ -852,4 +859,5 @@ body.mygroups .my_link {
 
 body.mygroups .delete {
     font-size: 16px;
+    float: right;
 }

@@ -33,12 +33,14 @@ class UserView extends Backbone.View
         )
 
 class UserGroupView extends Backbone.View
-    className: 'group'
+    className: 'group_summary'
 
     initialize: (bla) -> @render()
 
     render: ->
-        $(@el).html(ich.tpl_usergroup(@model.toJSON()))
+        context = @model.toJSON()
+        context.item_set = @model.itemSet.toJSON()
+        $(@el).html(ich.tpl_usergroup(context))
 
     events:
         'click .delete': 'delete'

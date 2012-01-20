@@ -65,12 +65,12 @@
                 <img src="/static/img/small-arrow-green.png" />
             </div>
             <div id="popular_bundles">
-                <div id="pop1" class="pop_bundle"></div>
-                <div id="pop2" class="pop_bundle"></div>
-                <div id="pop3" class="pop_bundle"></div>
-                <div id="pop4" class="pop_bundle"></div>
-                <div id="pop5" class="pop_bundle"></div>
-                <div id="pop6" class="pop_bundle"></div>
+                <div id="pop1" class="group_summary"></div>
+                <div id="pop2" class="group_summary"></div>
+                <div id="pop3" class="group_summary"></div>
+                <div id="pop4" class="group_summary"></div>
+                <div id="pop5" class="group_summary"></div>
+                <div id="pop6" class="group_summary"></div>
             </div>
         </div>
     </div>
@@ -236,12 +236,27 @@
         <img src="/static/img/small-arrow-gray.png" />
      </div>
     <div class="groups"></div>
+    <div class="clear"></div>
 </script>
 
 <script id="tpl_usergroup" type="text/html">
-    <a href="/b/{{id}}"> {{ name }} </a>
-    <a class="button" href="/e/{{id}}"><button>Edit</button></a>
-    <input class="delete" title="Delete" type="submit" value="&mdash;">
+    <div class="group_name">
+        <input class="delete" title="Delete" type="submit" value="&mdash;">
+        <a class="button" href="/e/{{id}}"><button>Edit</button></a>
+        <a href="/b/{{id}}"> {{ name }} </a>
+    </div>
+    <div class="items">
+        {{#item_set}}
+            {{#title}}
+            <div class="item">
+                <span class="title">{{ title }}</span>
+                {{#comment}}
+                    - <span class="comment">{{ comment }}</span>
+                {{/comment}} 
+            </div>
+            {{/title}}
+        {{/item_set}}
+    </div>
 </script>
 
 {% endverbatim %}
