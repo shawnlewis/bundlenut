@@ -113,7 +113,7 @@ class APIGroup(JSONRequestHandler):
             resp['edit_hash'] = group.edit_hash
         self.json_response(resp)
 
-    def put(self, id_, edit_hash):
+    def put(self, id_, edit_hash=None):
         params = json.loads(self.request.body)
         group = models.Group.get_by_id(int(id_))
 
@@ -128,7 +128,7 @@ class APIGroup(JSONRequestHandler):
 
         self.json_response(json_group(group))
 
-    def delete(self, id_, edit_hash):
+    def delete(self, id_, edit_hash=None):
         group = models.Group.get_by_id(int(id_))
         if not can_edit(group, edit_hash):
             raise webob.exc.HTTPUnauthorized
@@ -158,7 +158,7 @@ class APIItem(JSONRequestHandler):
 
         self.json_response(json_item(item))
 
-    def put(self, id_, edit_hash):
+    def put(self, id_, edit_hash=None):
         params = json.loads(self.request.body)
 
         item = models.Item.get_by_id(int(id_))
@@ -175,7 +175,7 @@ class APIItem(JSONRequestHandler):
 
         self.json_response(json_item(item))
 
-    def delete(self, id_, edit_hash):
+    def delete(self, id_, edit_hash=None):
         item = models.Item.get_by_id(int(id_))
         if not can_edit(item, edit_hash):
             raise webob.exc.HTTPUnauthorized

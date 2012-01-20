@@ -38,9 +38,12 @@ Backbone.sync = (method, model, options) ->
     # Custom code here.
     if params.type == 'PUT' or params.type == 'DELETE'
         if model instanceof Item
-            params.url += '/' + model.collection.group.get('edit_hash')
+            editHash = model.collection.group.get('edit_hash')
         else if model instanceof Group
-            params.url += '/' + model.get('edit_hash')
+            editHash = model.get('edit_hash')
+
+        if editHash
+            params.url += '/' + editHash
 
     # Make the request.
     return $.ajax(params)

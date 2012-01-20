@@ -19,7 +19,7 @@
   };
 
   Backbone.sync = function(method, model, options) {
-    var params, type;
+    var editHash, params, type;
     type = methodMap[method];
     params = _.extend({
       type: type,
@@ -33,10 +33,11 @@
     if (params.type !== 'GET') params.processData = false;
     if (params.type === 'PUT' || params.type === 'DELETE') {
       if (model instanceof Item) {
-        params.url += '/' + model.collection.group.get('edit_hash');
+        editHash = model.collection.group.get('edit_hash');
       } else if (model instanceof Group) {
-        params.url += '/' + model.get('edit_hash');
+        editHash = model.get('edit_hash');
       }
+      if (editHash) params.url += '/' + editHash;
     }
     return $.ajax(params);
   };
