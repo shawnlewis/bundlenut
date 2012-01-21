@@ -101,7 +101,8 @@
       this.$('.tab #logo').click(function() {
         return mpq.track('view-logo-click');
       });
-      return $(html).find('.pane_middle').jScrollPane();
+      $(html).find('.pane_middle').jScrollPane();
+      return this._scroll();
     };
 
     GroupView.prototype.events = {
@@ -168,12 +169,8 @@
       var onComplete;
       var _this = this;
       onComplete = function() {
-        var jsp;
         _this.$('.pane_middle').jScrollPane();
-        jsp = _this.$('.pane_middle').data('jsp');
-        if (_this.curItemView) {
-          return jsp.scrollTo(0, $(_this.curItemView().el).position().top);
-        }
+        return _this._scroll();
       };
       this.$('.pane_middle').data().jsp.destroy();
       if (this.state === 'closed') {
@@ -243,6 +240,14 @@
       return $(window).blur(function() {
         if (overOther) return _this.closed();
       });
+    };
+
+    GroupView.prototype._scroll = function() {
+      var jsp;
+      if (this.state === 'full' && this.curItemView()) {
+        jsp = this.$('.pane_middle').data('jsp');
+        return jsp.scrollTo(0, $(this.curItemView().el).position().top);
+      }
     };
 
     return GroupView;

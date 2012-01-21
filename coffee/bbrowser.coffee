@@ -75,6 +75,7 @@ class GroupView extends Backbone.View
             mpq.track('view-logo-click')
 
         $(html).find('.pane_middle').jScrollPane()
+        @_scroll()
 
     events:
         'click .closed .tab #logo': 'full'
@@ -131,9 +132,7 @@ class GroupView extends Backbone.View
     full: ->
         onComplete = =>
             @$('.pane_middle').jScrollPane()
-            jsp = @$('.pane_middle').data('jsp')
-            if @curItemView
-                jsp.scrollTo(0, $(@curItemView().el).position().top)
+            @_scroll()
                 
         @$('.pane_middle').data().jsp.destroy()
         if @state == 'closed'
@@ -186,6 +185,12 @@ class GroupView extends Backbone.View
             => overOther = true,
             => overOther = false)
         $(window).blur(=> if overOther then @closed())
+
+    _scroll: ->
+        if @state == 'full' and @curItemView()
+            jsp = @$('.pane_middle').data('jsp')
+            jsp.scrollTo(0, $(@curItemView().el).position().top)
+        
 
 class ItemView extends Backbone.View
     tagName: 'div'
