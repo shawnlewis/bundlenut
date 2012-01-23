@@ -10,6 +10,7 @@ class GroupEdit extends Backbone.View
                 else
                     @renderDenied()
         )
+        bn.setLoginNexts(null, null)
         @model.itemSet.bind('reset', @render)
         @model.itemSet.bind('add', @itemAdded)
         @model.itemSet.bind('remove', @itemRemoved)
@@ -17,9 +18,13 @@ class GroupEdit extends Backbone.View
     render: =>
         context = this.model.toJSON()
         context.view_link = '/b/' + this.model.id
-        context.login_url = bn.initData.loginUrl(window.location.pathname)
         context.user_name = bn.initData.userName
         $(@el).html ich.tpl_groupedit(context)
+
+        if @model.get('anonymous')
+            bn.setLoginNexts(null, null)
+        else
+            bn.setLoginNexts(null, '/')
 
         i = 1
         for numCell in $('.step_dir .number')

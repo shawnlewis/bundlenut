@@ -3,6 +3,7 @@
 {% block content %}
 <div id="data"
      data-login_url="{{ login_url }}"
+     data-logout_url="{{ logout_url }}"
      data-user_name="{{ user_name }}">
 </div>
 <div id="index_content">
@@ -31,12 +32,13 @@
                         Bundle the web. Share it.
                     </div>
                     <span class="login">
-                        {% if login_url %}
-                            <a href="{{ login_url }}">Login</a>
-                        {% else %}
+                        <span class="logged_in">
+                            <a class="login_link">Login</a>
+                        </span>
+                        <span class="logged_out">
                             <a href="/my">{{ user_name }}'s bundles</a> -
-                            <a href="{{ logout_url }}">Logout</a>
-                        {% endif %}
+                            <a class="logout_link">Logout</a>
+                        </span>
                     </span>
                 </div>
                 <div id="index_actions">
@@ -88,12 +90,13 @@
             Bundle the web. Share it.
         </div>
         <span class="login">
-            {% if login_url %}
-                <a href="{{ login_url }}">Login</a>
-            {% else %}
-                <span class="my_link"><a href="/my">{{ user_name }}'s bundles</a> -</span>
-                <a href="{{ logout_url }}">Logout</a>
-            {% endif %}
+            <span class="logged_in">
+                <a class="login_link">Login</a>
+            </span>
+            <span class="logged_out">
+                <a href="/my">{{ user_name }}'s bundles</a> -
+                <a class="logout_link">Logout</a>
+            </span>
         </span>
         <img class="header_sep" src="/static/img/large-arrow.png" />
     </div>
@@ -142,7 +145,7 @@
             <tr>
                 <td class="number"></td>
                 <td class="step_title">Save this Page</td>
-                <td class="step_details">In order to modify your bundle in the future you'll need to return to this page. Bookmark it! Or <a href={{ login_url }}>login</a> to add this bundle to your account</td>
+                <td class="step_details">In order to modify your bundle in the future you'll need to return to this page. Bookmark it! Or <a class="login_link">login</a> to add this bundle to your account</td>
             </tr>
         </table>
     {{/user_name}}

@@ -27,6 +27,7 @@
           return _this.renderDenied();
         }
       });
+      bn.setLoginNexts(null, null);
       this.model.itemSet.bind('reset', this.render);
       this.model.itemSet.bind('add', this.itemAdded);
       return this.model.itemSet.bind('remove', this.itemRemoved);
@@ -37,9 +38,13 @@
       var _this = this;
       context = this.model.toJSON();
       context.view_link = '/b/' + this.model.id;
-      context.login_url = bn.initData.loginUrl(window.location.pathname);
       context.user_name = bn.initData.userName;
       $(this.el).html(ich.tpl_groupedit(context));
+      if (this.model.get('anonymous')) {
+        bn.setLoginNexts(null, null);
+      } else {
+        bn.setLoginNexts(null, '/');
+      }
       i = 1;
       _ref = $('.step_dir .number');
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {

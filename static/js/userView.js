@@ -16,6 +16,7 @@
       this.groups.url = '/api/my_groups';
       $(this.el).html(ich.tpl_usergroups());
       $('input[name=group_name]').hint();
+      bn.setLoginNexts(null, '/');
       this.groups.fetch({
         success: this.render
       });

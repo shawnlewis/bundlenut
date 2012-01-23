@@ -14,9 +14,11 @@
     Index.prototype.initialize = function() {
       this.popular = new bn.models.GroupSet();
       this.popular.url = '/api/popular_groups';
-      return this.popular.fetch({
-        success: this.render
+      this.popular.fetch({
+        success: this.render,
+        error: this.render
       });
+      return bn.setLoginNexts('/my', null);
     };
 
     Index.prototype.render = function() {
@@ -90,59 +92,6 @@
     };
 
     return GroupSummary;
-
-  })();
-
-  Router = (function() {
-
-    __extends(Router, Backbone.Router);
-
-    function Router() {
-      Router.__super__.constructor.apply(this, arguments);
-    }
-
-    Router.prototype.routes = {
-      '': 'index',
-      'my': 'myGroups',
-      'e/:group_id/:edit_hash': 'groupEdit',
-      'e/:group_id': 'groupEdit',
-      'b/:group_id': 'groupView'
-    };
-
-    Router.prototype.index = function() {
-      return window.app.index();
-    };
-
-    Router.prototype.myGroups = function() {
-      return window.app.myGroups();
-    };
-
-    Router.prototype.groupEdit = function(groupID, editHash) {
-      var group;
-      group = new bn.models.Group({
-        id: groupID,
-        editHash: editHash
-      });
-      return group.fetch({
-        success: function() {
-          return window.app.groupEdit(group);
-        }
-      });
-    };
-
-    Router.prototype.groupView = function(groupID) {
-      var group;
-      group = new bn.models.Group({
-        'id': groupID
-      });
-      return group.fetch({
-        success: function() {
-          return window.app.groupView(group);
-        }
-      });
-    };
-
-    return Router;
 
   })();
 
@@ -247,6 +196,59 @@
     };
 
     return OtherPages;
+
+  })();
+
+  Router = (function() {
+
+    __extends(Router, Backbone.Router);
+
+    function Router() {
+      Router.__super__.constructor.apply(this, arguments);
+    }
+
+    Router.prototype.routes = {
+      '': 'index',
+      'my': 'myGroups',
+      'e/:group_id/:edit_hash': 'groupEdit',
+      'e/:group_id': 'groupEdit',
+      'b/:group_id': 'groupView'
+    };
+
+    Router.prototype.index = function() {
+      return window.app.index();
+    };
+
+    Router.prototype.myGroups = function() {
+      return window.app.myGroups();
+    };
+
+    Router.prototype.groupEdit = function(groupID, editHash) {
+      var group;
+      group = new bn.models.Group({
+        id: groupID,
+        editHash: editHash
+      });
+      return group.fetch({
+        success: function() {
+          return window.app.groupEdit(group);
+        }
+      });
+    };
+
+    Router.prototype.groupView = function(groupID) {
+      var group;
+      group = new bn.models.Group({
+        'id': groupID
+      });
+      return group.fetch({
+        success: function() {
+          return window.app.groupView(group);
+        }
+      });
+    };
+
+    return Router;
 
   })();
 
@@ -362,6 +364,7 @@
 
     function InitialData(dataEl) {
       this._loginUrl = dataEl.attr('data-login_url');
+      this._logoutUrl = dataEl.attr('data-logout_url');
       this.userName = dataEl.attr('data-user_name');
     }
 
@@ -370,11 +373,30 @@
       return this._loginUrl.replace('__NEXT__', next);
     };
 
+    InitialData.prototype.logoutUrl = function(next) {
+      if (next[0] = '/') next = next.substr(1);
+      return this._logoutUrl.replace('__NEXT__', next);
+    };
+
     return InitialData;
 
   })();
 
   window.bn = {};
+
+  window.bn.setLoginNexts = function(loginNext, logoutNext) {
+    if (loginNext === null) loginNext = window.location.pathname;
+    if (logoutNext === null) logoutNext = window.location.pathname;
+    $('.login_link').attr('href', bn.initData.loginUrl(loginNext));
+    $('.logout_link').attr('href', bn.initData.logoutUrl(logoutNext));
+    if (bn.initData.userName) {
+      $('.login .logged_out').show();
+      return $('.login .logged_in').hide();
+    } else {
+      $('.login .logged_in').show();
+      return $('.login .logged_out').hide();
+    }
+  };
 
   $(function() {
     $('input[name=group_name]').hint();

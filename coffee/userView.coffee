@@ -6,6 +6,8 @@ class UserView extends Backbone.View
         $(@el).html ich.tpl_usergroups()
         $('input[name=group_name]').hint()
 
+        bn.setLoginNexts(null, '/')
+
         @groups.fetch
             success: @render
         @groups.bind('remove', @render)

@@ -28,15 +28,13 @@ class TilRedirect(webapp2.RequestHandler):
 
 class AppHandler(webapp2.RequestHandler):
     def get(self):
+        login_url = users.create_login_url('__NEXT__')
+        logout_url = users.create_logout_url('__NEXT__')
         user = users.get_current_user()
         if user:
             user_name = user.nickname()
-            login_url = ''
-            logout_url = users.create_logout_url('/')
         else:
             user_name = ''
-            login_url = users.create_login_url('__NEXT__')
-            logout_url = ''
            
         self.response.out.write(template.render(
             get_file('templates/index.html'),
