@@ -17,8 +17,15 @@ class GroupEdit extends Backbone.View
     render: =>
         context = this.model.toJSON()
         context.view_link = '/b/' + this.model.id
+        context.login_url = bn.initData.loginUrl(window.location.pathname)
+        context.user_name = bn.initData.userName
         $(@el).html ich.tpl_groupedit(context)
 
+        i = 1
+        for numCell in $('.step_dir .number')
+            $(numCell).append($('<div/>').html('#' + i))
+            i++
+                
         @nameField = new EditableField
             el: @$('.group_name')
             val: @model.get('name')

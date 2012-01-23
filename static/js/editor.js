@@ -33,11 +33,20 @@
     };
 
     GroupEdit.prototype.render = function() {
-      var context;
+      var context, i, numCell, _i, _len, _ref;
       var _this = this;
       context = this.model.toJSON();
       context.view_link = '/b/' + this.model.id;
+      context.login_url = bn.initData.loginUrl(window.location.pathname);
+      context.user_name = bn.initData.userName;
       $(this.el).html(ich.tpl_groupedit(context));
+      i = 1;
+      _ref = $('.step_dir .number');
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        numCell = _ref[_i];
+        $(numCell).append($('<div/>').html('#' + i));
+        i++;
+      }
       this.nameField = new EditableField({
         el: this.$('.group_name'),
         val: this.model.get('name'),
@@ -51,10 +60,10 @@
       return this.tbody.sortable({
         update: this.sortUpdate,
         helper: function(e, ui) {
-          var child, _i, _len, _ref;
-          _ref = ui.children();
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            child = _ref[_i];
+          var child, _j, _len2, _ref2;
+          _ref2 = ui.children();
+          for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+            child = _ref2[_j];
             $(child).width($(child).width());
           }
           return ui;

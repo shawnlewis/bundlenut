@@ -35,7 +35,7 @@ class AppHandler(webapp2.RequestHandler):
             logout_url = users.create_logout_url('/')
         else:
             user_name = ''
-            login_url = users.create_login_url('/my')
+            login_url = users.create_login_url('__NEXT__')
             logout_url = ''
            
         self.response.out.write(template.render(
@@ -64,7 +64,8 @@ def json_group(group):
         'key': str(group.key()),
         'id': str(group.key().id()),
         'item_set': [json_item(i) for i in group.item_set],
-        'ordering': group.ordering
+        'ordering': group.ordering,
+        'anonymous': not group.user
     }
 
 def json_item(item):

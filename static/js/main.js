@@ -1,5 +1,5 @@
 (function() {
-  var App, GroupSummary, Index, OtherPage, OtherPages, Router;
+  var App, GroupSummary, Index, InitialData, OtherPage, OtherPages, Router;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
   Index = (function() {
@@ -358,10 +358,27 @@
 
   })();
 
+  InitialData = (function() {
+
+    function InitialData(dataEl) {
+      this._loginUrl = dataEl.attr('data-login_url');
+      this.userName = dataEl.attr('data-user_name');
+    }
+
+    InitialData.prototype.loginUrl = function(next) {
+      if (next[0] = '/') next = next.substr(1);
+      return this._loginUrl.replace('__NEXT__', next);
+    };
+
+    return InitialData;
+
+  })();
+
   window.bn = {};
 
   $(function() {
     $('input[name=group_name]').hint();
+    window.bn.initData = new InitialData($('#data'));
     window.app = new App();
     window.router = new Router();
     return Backbone.history.start({

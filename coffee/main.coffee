@@ -213,10 +213,24 @@ class App extends Backbone.Router
         page = @otherPages.getPage(url)
         page.show()
 
+
+class InitialData
+    constructor: (dataEl) ->
+        @_loginUrl = dataEl.attr('data-login_url')
+        @userName = dataEl.attr('data-user_name')
+
+    loginUrl: (next) ->
+        if next[0] = '/'
+            next = next.substr(1)
+        @_loginUrl.replace('__NEXT__', next)
+
+
 window.bn = {}
 
 $( ->
     $('input[name=group_name]').hint()
+
+    window.bn.initData = new InitialData $('#data')
     
     window.app = new App()
     window.router = new Router()
