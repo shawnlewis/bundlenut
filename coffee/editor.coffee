@@ -56,11 +56,25 @@ class GroupEdit extends Backbone.View
     events:
         'sortupdate #items tbody': 'sortUpdate'
         'keydown': 'doTab'
+        'click .add_to_account': 'addToAccount'
 
     sortUpdate: =>
         @model.setOrdering($(i).attr('data-id') for i in @$('#items tr'))
         @setLast()
 
+    addToAccount: ->
+        bn.lib.jsonRPC(
+            'add_to_account',
+            {'edit_hash': @model.get('edit_hash'),
+            'id': @model.id},
+            (data) =>
+                if data
+                    # hacky, we don't replace @model so we still have
+                    # editHash even though the rpc just removed it.
+                    window.router.navigate('e/' + @model.id)
+                        
+        )
+         
     # tabs through the EditableFields within the #items table. Relies on
     # some of the behavior of EditableField.
     doTab: (e) ->

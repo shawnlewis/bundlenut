@@ -82,7 +82,8 @@
 
     GroupEdit.prototype.events = {
       'sortupdate #items tbody': 'sortUpdate',
-      'keydown': 'doTab'
+      'keydown': 'doTab',
+      'click .add_to_account': 'addToAccount'
     };
 
     GroupEdit.prototype.sortUpdate = function() {
@@ -98,6 +99,16 @@
         return _results;
       }).call(this));
       return this.setLast();
+    };
+
+    GroupEdit.prototype.addToAccount = function() {
+      var _this = this;
+      return bn.lib.jsonRPC('add_to_account', {
+        'edit_hash': this.model.get('edit_hash'),
+        'id': this.model.id
+      }, function(data) {
+        if (data) return window.router.navigate('e/' + _this.model.id);
+      });
     };
 
     GroupEdit.prototype.doTab = function(e) {

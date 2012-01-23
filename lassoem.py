@@ -228,6 +228,18 @@ class APIEditCheck(JSONRequestHandler):
         else:
             self.json_response('false')
 
+class APIAddToAccount(JSONRequestHandler):
+    def post(self):
+        params = json.loads(self.request.body)
+        group = models.Group.get_by_id(int(params['id']))
+        if can_edit(group, params.get('edit_hash')):
+            group.user = users.get_current_user()
+            group.edit_hash = None
+            group.put()
+            self.json_response('true')
+        else:
+            self.json_response('false')
+
 class APIGroupDebug(JSONRequestHandler):
     def get(self, id_=None):
         if id_ is None:
@@ -254,6 +266,7 @@ routes = [
     ('/api/popular_groups', APIPopularGroups),
     ('/api/my_groups', APIMyGroups),
     ('/api/rpc/group_edit_check', APIEditCheck),
+    ('/api/rpc/add_to_account', APIAddToAccount),
 
     ('/til', TilRedirect),
 

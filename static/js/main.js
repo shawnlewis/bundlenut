@@ -269,17 +269,17 @@
     };
 
     App.prototype.index = function() {
+      var indexView;
       $('body').removeClass().addClass('index');
+      $('#index_content').show();
       this.standardContentEl.hide();
       this.showHome();
       window.router.navigate('');
       document.title = 'Bundlenut';
-      if (!this.indexView) {
-        this.indexView = new Index({
-          el: $('#index_content')
-        });
-      }
-      return this.view = this.indexView;
+      indexView = new Index({
+        el: $('#index_content')
+      });
+      return this.view = indexView;
     };
 
     App.prototype.myGroups = function() {

@@ -142,13 +142,13 @@ class App extends Backbone.Router
 
     index: ->
         $('body').removeClass().addClass('index')
+        $('#index_content').show()
         @standardContentEl.hide()
         @showHome()
         window.router.navigate('')
         document.title = 'Bundlenut'
-        if not @indexView
-            @indexView = new Index(el: $('#index_content'))
-        @view = @indexView
+        indexView = new Index(el: $('#index_content'))
+        @view = indexView
 
     myGroups: ->
         $('body').removeClass().addClass('mygroups')

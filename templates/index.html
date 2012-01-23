@@ -135,7 +135,7 @@
             <tr>
                 <td class="number"></td>
                 <td class="step_title">Save this Page</td>
-                <td class="step_details"><a href="bla">Click</a> to add this bundle to your account.</td>
+                <td class="step_details"><span class="link add_to_account">Click</span> to add this bundle to your account.</td>
             </tr>
         </table>
         {{/anonymous}}
@@ -170,7 +170,7 @@
             <td class="number"></td>
             <td class="step_title">Browse and Share</td>
             <td class="step_details">
-                To share, send this link to your friends: {{ view_link }}
+                To share, send this <a href="{{view_link}}">link</a> to your friends.
             </td>
             <td class="extra">
                 <a class="button" href="{{view_link}}"><button>Browse Bundle</button></a>
