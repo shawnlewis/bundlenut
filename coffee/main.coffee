@@ -45,34 +45,6 @@ class GroupSummary extends Backbone.View
         window.app.groupView(@model)
 
 
-class Router extends Backbone.Router
-    routes:
-        '': 'index'
-        'my': 'myGroups'
-        'e/:group_id/:edit_hash': 'groupEdit'
-        'e/:group_id': 'groupEdit'
-        'b/:group_id': 'groupView'
-
-    index: ->
-        window.app.index()
-
-    myGroups: ->
-        window.app.myGroups()
-
-    groupEdit: (groupID, editHash) ->
-        group = new bn.models.Group
-            id: groupID
-            editHash: editHash
-        group.fetch
-            success: ->
-                window.app.groupEdit group
-
-    groupView: (groupID) ->
-        group = new bn.models.Group({'id': groupID})
-        group.fetch
-            success: -> window.app.groupView group
-
-
 class OtherPage
     constructor: ->
         @used = -1
@@ -129,6 +101,34 @@ class OtherPages
             page.used == min
         )
         
+
+class Router extends Backbone.Router
+    routes:
+        '': 'index'
+        'my': 'myGroups'
+        'e/:group_id/:edit_hash': 'groupEdit'
+        'e/:group_id': 'groupEdit'
+        'b/:group_id': 'groupView'
+
+    index: ->
+        window.app.index()
+
+    myGroups: ->
+        window.app.myGroups()
+
+    groupEdit: (groupID, editHash) ->
+        group = new bn.models.Group
+            id: groupID
+            editHash: editHash
+        group.fetch
+            success: ->
+                window.app.groupEdit group
+
+    groupView: (groupID) ->
+        group = new bn.models.Group({'id': groupID})
+        group.fetch
+            success: -> window.app.groupView group
+
 
 class App extends Backbone.Router
     initialize: ->
