@@ -1,10 +1,12 @@
 (function() {
-  var GroupView, ItemView;
-  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+  var GroupView, ItemView,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-  GroupView = (function() {
+  GroupView = (function(_super) {
 
-    __extends(GroupView, Backbone.View);
+    __extends(GroupView, _super);
 
     function GroupView() {
       this.closed = __bind(this.closed, this);
@@ -13,8 +15,8 @@
     }
 
     GroupView.prototype.initialize = function(options) {
-      var i, _results;
-      var _this = this;
+      var i, _results,
+        _this = this;
       this.curItemNum = -1;
       this.state = 'full';
       this.render();
@@ -66,8 +68,8 @@
     };
 
     GroupView.prototype.render = function() {
-      var context, html, i;
-      var _this = this;
+      var context, html, i,
+        _this = this;
       context = this.model.toJSON();
       html = ich.tpl_groupview(context);
       this.itemViews = [];
@@ -151,8 +153,8 @@
     };
 
     GroupView.prototype.closed = function() {
-      var el;
-      var _this = this;
+      var el,
+        _this = this;
       if (this.state === 'closed') return;
       el = this.$('#groupview_content');
       return el.animate({
@@ -166,8 +168,8 @@
     };
 
     GroupView.prototype.full = function() {
-      var onComplete;
-      var _this = this;
+      var onComplete,
+        _this = this;
       onComplete = function() {
         _this.$('.pane_middle').jScrollPane();
         return _this._scroll();
@@ -229,8 +231,8 @@
     };
 
     GroupView.prototype.initClickOther = function() {
-      var overOther;
-      var _this = this;
+      var overOther,
+        _this = this;
       overOther = false;
       $('iframe').hover(function() {
         return overOther = true;
@@ -252,11 +254,11 @@
 
     return GroupView;
 
-  })();
+  })(Backbone.View);
 
-  ItemView = (function() {
+  ItemView = (function(_super) {
 
-    __extends(ItemView, Backbone.View);
+    __extends(ItemView, _super);
 
     function ItemView() {
       ItemView.__super__.constructor.apply(this, arguments);
@@ -319,7 +321,7 @@
 
     return ItemView;
 
-  })();
+  })(Backbone.View);
 
   bn.bbrowser = {
     GroupView: GroupView

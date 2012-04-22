@@ -140,6 +140,11 @@ class App extends Backbone.Router
         @ourOtherPageEl = $('#our_other_page')
         @otherPages = new OtherPages(2)
 
+    setView: (view) ->
+        if @view
+            @view.delegateEvents({})
+        @view = view
+
     index: ->
         $('body').removeClass().addClass('index')
         $('#index_content').show()
@@ -147,8 +152,7 @@ class App extends Backbone.Router
         @showHome()
         window.router.navigate('')
         document.title = 'Bundlenut'
-        indexView = new Index(el: $('#index_content'))
-        @view = indexView
+        @setView new Index(el: $('#index_content'))
 
     myGroups: ->
         $('body').removeClass().addClass('mygroups')
@@ -157,7 +161,7 @@ class App extends Backbone.Router
         @showHome()
         window.router.navigate('my')
         document.title = 'Bundlenut - My bundles'
-        @view = new bn.userView.UserView
+        @setView new bn.userView.UserView
             el: @standardContentEl.find('#standard_inner')
 
     groupEdit: (group) ->
@@ -171,7 +175,7 @@ class App extends Backbone.Router
             url += '/' + editHash
         window.router.navigate(url)
         document.title = 'Bundlenut - Edit: ' + group.get('name')
-        @view = new bn.editor.GroupEdit
+        @setView new bn.editor.GroupEdit
             el: @standardContentEl.find('#standard_inner')
             model: group
 
@@ -180,13 +184,11 @@ class App extends Backbone.Router
         @showOurOther()
         window.router.navigate('b/' + group.id)
         document.title = 'Bundlenut - Browse: ' + group.get('name')
-        @view = new bn.bbrowser.GroupView
+        @setView = new bn.bbrowser.GroupView
             el: @tocEl
             model: group
         
     showHome: ->
-        if @view
-            @view.delegateEvents({})
         $('html').removeClass('show_other')
         $('body').addClass('standard')
         @tocEl.addClass('hide')
@@ -195,8 +197,6 @@ class App extends Backbone.Router
         @homeEl.removeClass('hide')
 
     showOurOther: ->
-        if @view
-            @view.delegateEvents({})
         $('html').addClass('show_other')
         @homeEl.addClass('hide')
         @otherPages.hide()

@@ -1,10 +1,12 @@
 (function() {
-  var App, GroupSummary, Index, InitialData, OtherPage, OtherPages, Router;
-  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+  var App, GroupSummary, Index, InitialData, OtherPage, OtherPages, Router,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-  Index = (function() {
+  Index = (function(_super) {
 
-    __extends(Index, Backbone.View);
+    __extends(Index, _super);
 
     function Index() {
       this.render = __bind(this.render, this);
@@ -61,11 +63,11 @@
 
     return Index;
 
-  })();
+  })(Backbone.View);
 
-  GroupSummary = (function() {
+  GroupSummary = (function(_super) {
 
-    __extends(GroupSummary, Backbone.View);
+    __extends(GroupSummary, _super);
 
     function GroupSummary() {
       GroupSummary.__super__.constructor.apply(this, arguments);
@@ -93,7 +95,7 @@
 
     return GroupSummary;
 
-  })();
+  })(Backbone.View);
 
   OtherPage = (function() {
 
@@ -199,9 +201,9 @@
 
   })();
 
-  Router = (function() {
+  Router = (function(_super) {
 
-    __extends(Router, Backbone.Router);
+    __extends(Router, _super);
 
     function Router() {
       Router.__super__.constructor.apply(this, arguments);
@@ -250,11 +252,11 @@
 
     return Router;
 
-  })();
+  })(Backbone.Router);
 
-  App = (function() {
+  App = (function(_super) {
 
-    __extends(App, Backbone.Router);
+    __extends(App, _super);
 
     function App() {
       App.__super__.constructor.apply(this, arguments);
@@ -268,18 +270,21 @@
       return this.otherPages = new OtherPages(2);
     };
 
+    App.prototype.setView = function(view) {
+      if (this.view) this.view.delegateEvents({});
+      return this.view = view;
+    };
+
     App.prototype.index = function() {
-      var indexView;
       $('body').removeClass().addClass('index');
       $('#index_content').show();
       this.standardContentEl.hide();
       this.showHome();
       window.router.navigate('');
       document.title = 'Bundlenut';
-      indexView = new Index({
+      return this.setView(new Index({
         el: $('#index_content')
-      });
-      return this.view = indexView;
+      }));
     };
 
     App.prototype.myGroups = function() {
@@ -289,9 +294,9 @@
       this.showHome();
       window.router.navigate('my');
       document.title = 'Bundlenut - My bundles';
-      return this.view = new bn.userView.UserView({
+      return this.setView(new bn.userView.UserView({
         el: this.standardContentEl.find('#standard_inner')
-      });
+      }));
     };
 
     App.prototype.groupEdit = function(group) {
@@ -305,10 +310,10 @@
       if (editHash) url += '/' + editHash;
       window.router.navigate(url);
       document.title = 'Bundlenut - Edit: ' + group.get('name');
-      return this.view = new bn.editor.GroupEdit({
+      return this.setView(new bn.editor.GroupEdit({
         el: this.standardContentEl.find('#standard_inner'),
         model: group
-      });
+      }));
     };
 
     App.prototype.groupView = function(group) {
@@ -316,14 +321,13 @@
       this.showOurOther();
       window.router.navigate('b/' + group.id);
       document.title = 'Bundlenut - Browse: ' + group.get('name');
-      return this.view = new bn.bbrowser.GroupView({
+      return this.setView = new bn.bbrowser.GroupView({
         el: this.tocEl,
         model: group
       });
     };
 
     App.prototype.showHome = function() {
-      if (this.view) this.view.delegateEvents({});
       $('html').removeClass('show_other');
       $('body').addClass('standard');
       this.tocEl.addClass('hide');
@@ -333,7 +337,6 @@
     };
 
     App.prototype.showOurOther = function() {
-      if (this.view) this.view.delegateEvents({});
       $('html').addClass('show_other');
       this.homeEl.addClass('hide');
       this.otherPages.hide();
@@ -358,7 +361,7 @@
 
     return App;
 
-  })();
+  })(Backbone.Router);
 
   InitialData = (function() {
 
