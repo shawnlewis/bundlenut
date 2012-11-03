@@ -14,3 +14,9 @@ run
     dev_appserver .
 
 in this directory.
+
+
+Notes
+-----
+
+The original title for Bundlenut Was LassoEm, so you may see references to that here and there.
